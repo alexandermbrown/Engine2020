@@ -1,0 +1,10 @@
+Article/vendor/steam/lib/linux-x86_64/* !text !filter !merge !diff
+Article/vendor/steam/lib/linux32/* !text !filter !merge !diff
+Article/vendor/steam/lib/win32/* !text !filter !merge !diff
+Article/vendor/steam/lib/windows-x86_64/* !text !filter !merge !diff
+AssetBase/vendor/ShaderConductor/lib/Debug-linux-x86_64/* !text !filter !merge !diff
+AssetBase/vendor/ShaderConductor/lib/linux-x86_64/* !text !filter !merge !diff
+AssetBase/vendor/ShaderConductor/lib/windows-x86_64/* !text !filter !merge !diff
+bin/* !text !filter !merge !diff
+bin/msdfgen/* !text !filter !merge !diff
+bin/premake/win64/* !text !filter !merge !diff
