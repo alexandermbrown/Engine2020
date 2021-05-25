@@ -35,6 +35,9 @@ struct TextureAtlasBuilder;
 struct GlyphEntry;
 struct GlyphEntryBuilder;
 
+struct FontImage;
+struct FontImageBuilder;
+
 struct Font;
 struct FontBuilder;
 
@@ -815,7 +818,8 @@ struct GlyphEntry FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef GlyphEntryBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_CODEPOINT = 4,
-    VT_TEXTURE_OFFSET = 6
+    VT_TEXTURE_OFFSET = 6,
+    VT_TEXTURE_INDEX = 8
   };
   uint32_t codepoint() const {
     return GetField<uint32_t>(VT_CODEPOINT, 0);
@@ -823,10 +827,14 @@ struct GlyphEntry FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const Assets::Vec2 *texture_offset() const {
     return GetStruct<const Assets::Vec2 *>(VT_TEXTURE_OFFSET);
   }
+  uint8_t texture_index() const {
+    return GetField<uint8_t>(VT_TEXTURE_INDEX, 0);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_CODEPOINT) &&
            VerifyField<Assets::Vec2>(verifier, VT_TEXTURE_OFFSET) &&
+           VerifyField<uint8_t>(verifier, VT_TEXTURE_INDEX) &&
            verifier.EndTable();
   }
 };
@@ -840,6 +848,9 @@ struct GlyphEntryBuilder {
   }
   void add_texture_offset(const Assets::Vec2 *texture_offset) {
     fbb_.AddStruct(GlyphEntry::VT_TEXTURE_OFFSET, texture_offset);
+  }
+  void add_texture_index(uint8_t texture_index) {
+    fbb_.AddElement<uint8_t>(GlyphEntry::VT_TEXTURE_INDEX, texture_index, 0);
   }
   explicit GlyphEntryBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -856,11 +867,77 @@ struct GlyphEntryBuilder {
 inline flatbuffers::Offset<GlyphEntry> CreateGlyphEntry(
     flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t codepoint = 0,
-    const Assets::Vec2 *texture_offset = 0) {
+    const Assets::Vec2 *texture_offset = 0,
+    uint8_t texture_index = 0) {
   GlyphEntryBuilder builder_(_fbb);
   builder_.add_texture_offset(texture_offset);
   builder_.add_codepoint(codepoint);
+  builder_.add_texture_index(texture_index);
   return builder_.Finish();
+}
+
+struct FontImage FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef FontImageBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_WIDTH = 4,
+    VT_IMAGE = 6
+  };
+  int16_t width() const {
+    return GetField<int16_t>(VT_WIDTH, 0);
+  }
+  const flatbuffers::Vector<uint8_t> *image() const {
+    return GetPointer<const flatbuffers::Vector<uint8_t> *>(VT_IMAGE);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int16_t>(verifier, VT_WIDTH) &&
+           VerifyOffset(verifier, VT_IMAGE) &&
+           verifier.VerifyVector(image()) &&
+           verifier.EndTable();
+  }
+};
+
+struct FontImageBuilder {
+  typedef FontImage Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_width(int16_t width) {
+    fbb_.AddElement<int16_t>(FontImage::VT_WIDTH, width, 0);
+  }
+  void add_image(flatbuffers::Offset<flatbuffers::Vector<uint8_t>> image) {
+    fbb_.AddOffset(FontImage::VT_IMAGE, image);
+  }
+  explicit FontImageBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  FontImageBuilder &operator=(const FontImageBuilder &);
+  flatbuffers::Offset<FontImage> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<FontImage>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<FontImage> CreateFontImage(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int16_t width = 0,
+    flatbuffers::Offset<flatbuffers::Vector<uint8_t>> image = 0) {
+  FontImageBuilder builder_(_fbb);
+  builder_.add_image(image);
+  builder_.add_width(width);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<FontImage> CreateFontImageDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int16_t width = 0,
+    const std::vector<uint8_t> *image = nullptr) {
+  auto image__ = image ? _fbb.CreateVector<uint8_t>(*image) : 0;
+  return Assets::CreateFontImage(
+      _fbb,
+      width,
+      image__);
 }
 
 struct Font FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -868,11 +945,10 @@ struct Font FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_NAME = 4,
     VT_GLYPH_WIDTH = 6,
-    VT_TEXTURE_WIDTH = 8,
-    VT_DISTANCE_GRADIENT = 10,
-    VT_GLYPHS = 12,
-    VT_IMAGE = 14,
-    VT_TTF = 16
+    VT_DISTANCE_GRADIENT = 8,
+    VT_GLYPHS = 10,
+    VT_IMAGES = 12,
+    VT_TTF = 14
   };
   const flatbuffers::String *name() const {
     return GetPointer<const flatbuffers::String *>(VT_NAME);
@@ -880,17 +956,14 @@ struct Font FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   int16_t glyph_width() const {
     return GetField<int16_t>(VT_GLYPH_WIDTH, 0);
   }
-  int16_t texture_width() const {
-    return GetField<int16_t>(VT_TEXTURE_WIDTH, 0);
-  }
   float distance_gradient() const {
     return GetField<float>(VT_DISTANCE_GRADIENT, 0.0f);
   }
   const flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>> *glyphs() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>> *>(VT_GLYPHS);
   }
-  const flatbuffers::Vector<uint8_t> *image() const {
-    return GetPointer<const flatbuffers::Vector<uint8_t> *>(VT_IMAGE);
+  const flatbuffers::Vector<flatbuffers::Offset<Assets::FontImage>> *images() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Assets::FontImage>> *>(VT_IMAGES);
   }
   const flatbuffers::Vector<uint8_t> *ttf() const {
     return GetPointer<const flatbuffers::Vector<uint8_t> *>(VT_TTF);
@@ -900,13 +973,13 @@ struct Font FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_NAME) &&
            verifier.VerifyString(name()) &&
            VerifyField<int16_t>(verifier, VT_GLYPH_WIDTH) &&
-           VerifyField<int16_t>(verifier, VT_TEXTURE_WIDTH) &&
            VerifyField<float>(verifier, VT_DISTANCE_GRADIENT) &&
            VerifyOffset(verifier, VT_GLYPHS) &&
            verifier.VerifyVector(glyphs()) &&
            verifier.VerifyVectorOfTables(glyphs()) &&
-           VerifyOffset(verifier, VT_IMAGE) &&
-           verifier.VerifyVector(image()) &&
+           VerifyOffset(verifier, VT_IMAGES) &&
+           verifier.VerifyVector(images()) &&
+           verifier.VerifyVectorOfTables(images()) &&
            VerifyOffset(verifier, VT_TTF) &&
            verifier.VerifyVector(ttf()) &&
            verifier.EndTable();
@@ -923,17 +996,14 @@ struct FontBuilder {
   void add_glyph_width(int16_t glyph_width) {
     fbb_.AddElement<int16_t>(Font::VT_GLYPH_WIDTH, glyph_width, 0);
   }
-  void add_texture_width(int16_t texture_width) {
-    fbb_.AddElement<int16_t>(Font::VT_TEXTURE_WIDTH, texture_width, 0);
-  }
   void add_distance_gradient(float distance_gradient) {
     fbb_.AddElement<float>(Font::VT_DISTANCE_GRADIENT, distance_gradient, 0.0f);
   }
   void add_glyphs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>>> glyphs) {
     fbb_.AddOffset(Font::VT_GLYPHS, glyphs);
   }
-  void add_image(flatbuffers::Offset<flatbuffers::Vector<uint8_t>> image) {
-    fbb_.AddOffset(Font::VT_IMAGE, image);
+  void add_images(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::FontImage>>> images) {
+    fbb_.AddOffset(Font::VT_IMAGES, images);
   }
   void add_ttf(flatbuffers::Offset<flatbuffers::Vector<uint8_t>> ttf) {
     fbb_.AddOffset(Font::VT_TTF, ttf);
@@ -954,18 +1024,16 @@ inline flatbuffers::Offset<Font> CreateFont(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> name = 0,
     int16_t glyph_width = 0,
-    int16_t texture_width = 0,
     float distance_gradient = 0.0f,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>>> glyphs = 0,
-    flatbuffers::Offset<flatbuffers::Vector<uint8_t>> image = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::FontImage>>> images = 0,
     flatbuffers::Offset<flatbuffers::Vector<uint8_t>> ttf = 0) {
   FontBuilder builder_(_fbb);
   builder_.add_ttf(ttf);
-  builder_.add_image(image);
+  builder_.add_images(images);
   builder_.add_glyphs(glyphs);
   builder_.add_distance_gradient(distance_gradient);
   builder_.add_name(name);
-  builder_.add_texture_width(texture_width);
   builder_.add_glyph_width(glyph_width);
   return builder_.Finish();
 }
@@ -974,23 +1042,21 @@ inline flatbuffers::Offset<Font> CreateFontDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *name = nullptr,
     int16_t glyph_width = 0,
-    int16_t texture_width = 0,
     float distance_gradient = 0.0f,
     const std::vector<flatbuffers::Offset<Assets::GlyphEntry>> *glyphs = nullptr,
-    const std::vector<uint8_t> *image = nullptr,
+    const std::vector<flatbuffers::Offset<Assets::FontImage>> *images = nullptr,
     const std::vector<uint8_t> *ttf = nullptr) {
   auto name__ = name ? _fbb.CreateString(name) : 0;
   auto glyphs__ = glyphs ? _fbb.CreateVector<flatbuffers::Offset<Assets::GlyphEntry>>(*glyphs) : 0;
-  auto image__ = image ? _fbb.CreateVector<uint8_t>(*image) : 0;
+  auto images__ = images ? _fbb.CreateVector<flatbuffers::Offset<Assets::FontImage>>(*images) : 0;
   auto ttf__ = ttf ? _fbb.CreateVector<uint8_t>(*ttf) : 0;
   return Assets::CreateFont(
       _fbb,
       name__,
       glyph_width,
-      texture_width,
       distance_gradient,
       glyphs__,
-      image__,
+      images__,
       ttf__);
 }
 

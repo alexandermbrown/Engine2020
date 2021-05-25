@@ -2,7 +2,7 @@
 ### Shaders ###
 shader_batched:
   type: shader
-  path: "./res/shaders/batched"
+  dir: "./res/shaders/batched"
   samplers:
     0: ["u_Texture0", "u_Sampler0"]
     1: ["u_Texture1", "u_Sampler1"]
@@ -15,25 +15,56 @@ shader_batched:
 
 shader_label:
   type: shader
-  path: "./res/shaders/label"
-  samplers: { 0: ["u_Texture", "u_Sampler"] }
+  dir: "./res/shaders/label"
+  samplers:
+    0: ["u_Texture0", "u_Sampler0"]
+    1: ["u_Texture1", "u_Sampler1"]
+    2: ["u_Texture2", "u_Sampler2"]
+    3: ["u_Texture3", "u_Sampler3"]
+    4: ["u_Texture4", "u_Sampler4"]
+    5: ["u_Texture5", "u_Sampler5"]
+    6: ["u_Texture6", "u_Sampler6"]
+    7: ["u_Texture7", "u_Sampler7"]
 
 shader_line:
   type: shader
-  path: "./res/shaders/line"
+  dir: "./res/shaders/line"
 
 shader_terrain:
   type: shader
-  path: "./res/shaders/terrain"
-  samplers: 
+  dir: "./res/shaders/terrain"
+  samplers:
     0: ["u_Texture", "u_TextureSampler"]
     1: ["u_Noise1", "u_Noise1Sampler"]
     2: ["u_Noise2", "u_Noise2Sampler"]
     3: ["u_Noise3", "u_Noise3Sampler"]
 
-# shader_emitter_emit:
-#   type: shader
-#   path: "./res/shaders/emitter_emit"
+# Particle emitter.
+shader_emitter_update_begin:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_update_begin_cs.hlsl"
+
+shader_emitter_emit:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_emit_cs.hlsl"
+
+shader_emitter_simulate:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_simulate_cs.hlsl"
+
+shader_emitter_update_end:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_update_end_cs.hlsl"
+
+shader_emitter_render:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_render_vs.hlsl"
+    - "./res/shaders/emitter/emitter_render_ps.hlsl"
 
 ### Textures ###
 texture_default:
@@ -44,14 +75,6 @@ texture_default:
   wrap_s: REPEAT
   wrap_t: REPEAT
 
-texture_horizons_splash:
-  type: texture2d
-  path: './res/textures/ui/horizons_splash.png'
-  min_filter: LINEAR
-  mag_filter: NEAREST
-  wrap_s: CLAMP_TO_EDGE
-  wrap_t: CLAMP_TO_EDGE
-
 texture_terrain_test:
   type: texture2d
   path: './res/textures/terrain_test.png'
@@ -60,32 +83,36 @@ texture_terrain_test:
   wrap_s: REPEAT
   wrap_t: REPEAT
 
-texture_space_scene_1:
-  type: texture2d
-  path: './res/textures/ui/space_scene_1.png'
-  min_filter: LINEAR
-  mag_filter: NEAREST
-  wrap_s: CLAMP_TO_EDGE
-  wrap_t: CLAMP_TO_EDGE
-
 ### Fonts ###
 Lato-Regular:
   type: font
   path: './res/fonts/Lato/Lato-Regular.ttf'
   glyph_width: 64
-  texture_width: 2048
 
 Lora-Regular:
   type: font
   path: './res/fonts/Lora/Lora-Regular.ttf'
   glyph_width: 64
-  texture_width: 2048
 
 Tomorrow-Regular:
   type: font
   path: './res/fonts/Tomorrow/Tomorrow-Regular.ttf'
   glyph_width: 64
-  texture_width: 2048
+
+SourceCodePro-Regular:
+  type: font
+  path: './res/fonts/SourceCodePro/SourceCodePro-Regular.ttf'
+  glyph_width: 64
+
+SourceCodePro-Light:
+  type: font
+  path: './res/fonts/SourceCodePro/SourceCodePro-Light.ttf'
+  glyph_width: 64
+
+SourceCodePro-Bold:
+  type: font
+  path: './res/fonts/SourceCodePro/SourceCodePro-Bold.ttf'
+  glyph_width: 64
 
 ### Texture Atlases ###
 atlas_default:
@@ -103,26 +130,10 @@ atlas_terrain_earth:
     terrain_stone: { x: 0.0, y: 0.0, width: 0.5, height: 0.25 }
     terrain_sand: { x: 0.5, y: 0.5, width: 0.5, height: 0.25 }
 
-atlas_space_scene_1:
-  type: texture_atlas
-  texture: texture_space_scene_1
-  entries:
-    space_scene_1_star_glow: { x: 0.0, y: 0.75, width: 0.5, height: 0.25 }
-    space_scene_1_stars: { x: 0.5, y: 0.75, width: 0.5, height: 0.25 }
-    space_scene_1_nebula: { x: 0.0, y: 0.5, width: 0.5, height: 0.25 }
-
 ### Audio ###
 audio_wind:
   type: audio
   path: './res/audio/wind.ogg'
-
-audio_laser_splat1:
-  type: audio
-  path: './res/audio/laser_splat1.ogg'
-
-audio_ship_startup_spin:
-  type: audio
-  path: './res/audio/ship_startup_spin.ogg'
 
 ### Locales ###
 en-us:

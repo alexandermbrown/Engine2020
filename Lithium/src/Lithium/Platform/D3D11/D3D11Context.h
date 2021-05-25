@@ -21,12 +21,14 @@ namespace Li
 		virtual void DrawIndexed(uint32_t index_count) override;
 		virtual void DrawIndexedInstanced(uint32_t index_count, uint32_t instance_count) override;
 		virtual void DispatchCompute(uint32_t num_groups_x, uint32_t num_groups_y, uint32_t num_groups_z) override;
-		virtual void ShaderStorageBarrier() override {};
 		virtual void ResizeView(int width, int height) override;
+		virtual void ShaderStorageBarrier() override {};
 		virtual void SetClearColor(const glm::vec4& color) override { m_ClearColor = color; }
 		virtual void SetDepthTest(bool enabled) override;
 		virtual void SetDrawMode(DrawMode mode) override;
 		virtual void SwapBuffers() override;
+		virtual void UnbindResources(uint32_t slot, uint32_t count) override;
+		virtual void UnbindUAVs(uint32_t slot, uint32_t count) override;
 
 		inline const Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() { return m_Device; }
 		inline const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() { return m_DeviceContext; }

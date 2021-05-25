@@ -120,17 +120,33 @@ fb::Offset<Assets::Shader> SerializeShader(
 	const std::string& name, YAML::Node shader, bool debug_mode)
 {
 	ShaderStore store;
-	fs::path shader_path{ GetOptionalString(shader, "path") };
 
-	// SHADER SOURCES //
-	for (const fs::directory_entry& entry : fs::directory_iterator(shader_path))
+	YAML::Node dir = shader["dir"];
+	YAML::Node sources = shader["sources"];
+	if (dir && dir.IsScalar())
 	{
-		const fs::path& entry_path = entry.path();
-		if (!fs::is_regular_file(entry_path))
-			continue;
+		fs::path shader_path = dir.Scalar();
+		for (const fs::directory_entry& entry : fs::directory_iterator(shader_path))
+		{
+			const fs::path& entry_path = entry.path();
+			if (!fs::is_regular_file(entry_path))
+				continue;
 
-		if (entry_path.extension() == ".hlsl")
-			CompileHLSL(builder, store, entry_path, debug_mode);
+			if (entry_path.extension() == ".hlsl")
+				CompileHLSL(builder, store, entry_path, debug_mode);
+		}
+	}
+	else if (sources && sources.IsSequence())
+	{
+		for (const YAML::Node& source : sources)
+		{
+			if (!source || !source.IsScalar())
+				throw std::runtime_error("Invalid source in shader 'sources'.");
+			CompileHLSL(builder, store, source.Scalar(), debug_mode);
+		}
+	}
+	else {
+		throw std::runtime_error("Cannot find 'dir' or 'sources' in shader.");
 	}
 
 	auto samplers_offset = LoadSamplers(builder, shader);
@@ -233,7 +249,8 @@ static void CompileHLSL(fb::FlatBufferBuilder& builder, ShaderStore& store, cons
 		const SC::Compiler::ResultDesc& glsl_result = results[GlslIndex];
 		*glsl_offset = builder.CreateString((const char*)glsl_result.target.Data(), glsl_result.target.Size());
 
-		//std::cout.write((const char*)glsl_result.target.Data(), glsl_result.target.Size());
+		//if (stage_char == 'c')
+		//	std::cout.write((const char*)glsl_result.target.Data(), glsl_result.target.Size());
 
 		// TODO: SPIR-V Bytecode.
 	}

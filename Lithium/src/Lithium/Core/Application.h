@@ -1,12 +1,15 @@
 #pragma once
 
-#include "Lithium/Core/Memory.h"
-#include "Lithium/Core/Window.h"
-#include "Lithium/Core/LayerStack.h"
+#include "Lithium/Core/Cursor.h"
 #include "Lithium/Core/Input.h"
+#include "Lithium/Core/LayerStack.h"
+#include "Lithium/Core/Memory.h"
 #include "Lithium/Core/Scene.h"
+#include "Lithium/Core/Window.h"
 
 #include "Lithium/Renderer/RendererAPI.h"
+
+#include "Lithium/Utility/Random.h"
 
 #ifndef LI_DIST
 #include "Lithium/ImGui/ImGuiRenderer.h"
@@ -15,6 +18,7 @@
 #include <functional>
 #include <chrono>
 #include <string>
+#include <unordered_map>
 
 namespace Li
 {
@@ -53,13 +57,16 @@ namespace Li
 		inline Window& GetWindow() { return *m_Window; }
 		inline const EventCallbackFn& GetEventCallbackFn() { return m_EventCallbackFn; }
 		inline const Input& GetInput() { return m_Input; }
+		inline void SetCursor(SDL_SystemCursor cursor) { m_Cursor.Set(cursor); }
+		inline Random& GetRandom() { return m_Random; }
 		inline RendererAPI GetAPI() const { return m_RendererAPI; }
 #ifndef LI_DIST
 		inline const Unique<ImGuiRenderer>& GetImGuiRenderer() { return m_ImGuiRenderer; }
 #endif
 
 	protected:
-		inline void ClearScene() {
+		inline void ClearScene()
+		{
 			m_CurrentScene.reset();
 			m_NextScene.reset();
 		}
@@ -69,11 +76,13 @@ namespace Li
 		void OnWindowEvent(SDL_Event* event);
 
 		bool m_Running;
+		std::chrono::time_point<std::chrono::steady_clock> m_StartTime;
 		std::chrono::time_point<std::chrono::steady_clock> m_LastUpdateTime;
 
 		RendererAPI m_RendererAPI;
 		Unique<Window> m_Window;
 		Input m_Input;
+		Random m_Random;
 #ifndef LI_DIST
 		Unique<ImGuiRenderer> m_ImGuiRenderer;
 #endif
@@ -87,6 +96,8 @@ namespace Li
 		Unique<Scene> m_NextScene;
 		bool m_CallOnTransition;
 		bool m_TransitionFinished;
+
+		Cursor m_Cursor;
 
 		static Application* s_Instance;
 	};

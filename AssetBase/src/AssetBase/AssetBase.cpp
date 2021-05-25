@@ -11,7 +11,7 @@ AssetBase::AssetBase()
 		throw "AssetBase singleton already instanitated.";
 	s_Instance = this;
 
-	std::cout << "-------------------\n AssetBase v0.4.0 \n-------------------\n";
+	std::cout << "-------------------\n AssetBase v0.4.1 \n-------------------\n";
 
 	YAML::Node config = YAML::LoadFile("config.yaml");
 	if (!config || !config.IsMap())

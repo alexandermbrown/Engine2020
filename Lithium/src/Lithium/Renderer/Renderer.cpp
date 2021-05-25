@@ -4,9 +4,11 @@
 #include "Lithium/Core/Application.h"
 #include "Lithium/Resources/ResourceManager.h"
 
+#include "ShaderInterop/FrameCB.h"
 #include "ShaderInterop/ViewProjCB.h"
 #include "ShaderInterop/TransformCB.h"
 #include "ShaderInterop/FontCB.h"
+#include "ShaderInterop/ParticleEmitterSI.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -22,15 +24,21 @@ namespace Li
 		Application::Get().GetWindow().GetContext()->SetDepthTest(false);
 		Application::Get().GetWindow().GetContext()->SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 
+		s_Data->FrameUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
+		s_Data->FrameUB->BindBase();
+
 		s_Data->ViewProjUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(ViewProjCB), sizeof(ViewProjCB));
-		s_Data->ViewProjUB->BindToSlot();
+		s_Data->ViewProjUB->BindBase();
 
 		s_Data->TransformMatrixUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(TransformCB), sizeof(TransformCB));
-		s_Data->TransformMatrixUB->BindToSlot();
+		s_Data->TransformMatrixUB->BindBase();
 
 		s_Data->FontUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FontCB), sizeof(FontCB));
-		s_Data->FontUB->BindToSlot();
+		s_Data->FontUB->BindBase();
 		
+		s_Data->EmitterUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(EmitterCB), sizeof(EmitterCB));
+		s_Data->EmitterUB->BindBase();
+
 		s_Data->Camera = nullptr;
 
 		s_Data->TextureShader = Li::ResourceManager::GetShader("shader_splash");
@@ -97,6 +105,19 @@ namespace Li
 	{
 		s_Data->SceneRenderer->AddTextureAtlas(atlas);
 		s_Data->UIRenderer->AddTextureAtlas(atlas);
+	}
+
+	void Renderer::BeginFrame(Duration::us run_time, Duration::us delta_time)
+	{
+		s_Data->FrameNumber++;
+		Li::GraphicsContext* context = Li::Application::Get().GetWindow().GetContext();
+		context->BindDefaultRenderTarget();
+		context->Clear();
+		
+		FrameCB frame_cb;
+		frame_cb.u_RunTime = Duration::Cast<Duration::fsec>(run_time).count();
+		frame_cb.u_DeltaTime = Duration::Cast<Duration::fsec>(delta_time).count();
+		s_Data->FrameUB->SetData(&frame_cb);
 	}
 
 	void Renderer::BeginScene(OrthographicCamera* camera)
@@ -233,8 +254,6 @@ namespace Li
 		view_proj.u_ViewProj = view_projection;
 		s_Data->ViewProjUB->SetData(&view_proj);
 
-		s_Data->TextureShader->SetTexture("u_Texture", 0);
-
 		s_Data->ViewProjUB->Bind(ShaderType::Vertex);
 		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
 		texture->Bind();
@@ -245,7 +264,7 @@ namespace Li
 
 	void Renderer::RenderLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
 	{
-		const Ref<VertexArray>& vertexArray = label->GetVertexArray();
+		const Ref<VertexArray>& vertex_array = label->GetVertexArray();
 		s_Data->FontShader->Bind();
 
 		TransformCB transform_cb;
@@ -257,15 +276,19 @@ namespace Li
 		font_cb.u_DistanceFactor = label->GetDistanceFactor();
 		s_Data->FontUB->SetData(&font_cb);
 
-		s_Data->FontShader->SetTexture("u_Texture", 0);
-
 		s_Data->ViewProjUB->Bind(ShaderType::Vertex);
 		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
 		s_Data->FontUB->Bind(ShaderType::Fragment);
-		label->GetFont()->GetTexture()->Bind();
-		vertexArray->Bind();
+
+		const auto& font = label->GetFont();
+		const auto& textures = font->GetTextures();
+		for (int i = 0; i < font->GetTextureCount(); i++) {
+			textures[i]->Bind(i);
+		}
+		
+		vertex_array->Bind();
 		Application::Get().GetWindow().GetContext()->SetDrawMode(DrawMode::Triangles);
-		Application::Get().GetWindow().GetContext()->DrawIndexed(vertexArray->GetIndexBuffer()->GetCount());
-		vertexArray->Unbind();
+		Application::Get().GetWindow().GetContext()->DrawIndexed(vertex_array->GetIndexBuffer()->GetCount());
+		vertex_array->Unbind();
 	}
 }

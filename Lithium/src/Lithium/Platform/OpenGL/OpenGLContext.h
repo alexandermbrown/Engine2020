@@ -17,12 +17,14 @@ namespace Li
 		virtual void DrawIndexed(uint32_t indexCount) override;
 		virtual void DrawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount) override;
 		virtual void DispatchCompute(uint32_t num_groups_x, uint32_t num_groups_y, uint32_t num_groups_z) override;
-		virtual void ShaderStorageBarrier() override;
 		virtual void ResizeView(int width, int height) override;
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void SetDepthTest(bool enabled) override;
 		virtual void SetDrawMode(DrawMode mode) override { m_DrawMode = mode; }
+		virtual void ShaderStorageBarrier() override;
 		virtual void SwapBuffers() override;
+		virtual void UnbindResources(uint32_t slot, uint32_t count) override {};
+		virtual void UnbindUAVs(uint32_t slot, uint32_t count) override {};
 
 		inline SDL_GLContext* GetGLContext() { return &m_Context; }
 

@@ -7,10 +7,10 @@
 namespace Li {
 #endif
 
-LI_CBUFFER(FontCB, 2)
+LI_CBUFFER(FontCB, 3)
 {
-	float4 u_Color;
-	float u_DistanceFactor;
+	aligned_float4 u_Color;
+	aligned_float u_DistanceFactor;
 };
 
 #ifdef __cplusplus

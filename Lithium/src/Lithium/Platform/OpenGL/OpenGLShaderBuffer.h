@@ -7,11 +7,12 @@ namespace Li
 	class OpenGLShaderBuffer : public ShaderBuffer
 	{
 	public:
-		OpenGLShaderBuffer(uint32_t size);
+		OpenGLShaderBuffer(const void* data, uint32_t size);
 		virtual ~OpenGLShaderBuffer();
 
-		virtual void Bind(uint32_t slot) const;
-		virtual void SetSubData(uint32_t* data, uint32_t size, uint32_t offset, bool discard);
+		virtual void BindBase(uint32_t slot) const override;
+		virtual void BindSRV(ShaderType type, uint32_t slot) const override {};
+		virtual void BindUAV(uint32_t slot) const override {};
 
 	private:
 		uint32_t m_RendererID;

@@ -1,7 +1,7 @@
 
 includes:
   - "../Lithium/src/Lithium/Renderer/ShaderInterop"
-  - "../Horizons/src/Horizons/Rendering/ShaderInterop"
+  - "../Article/src/Article/Rendering/ShaderInterop"
 
 packs:
   - ["preload.yaml", "output/preload.lab"]

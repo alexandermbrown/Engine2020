@@ -9,7 +9,8 @@
 #include "Lithium/Renderer/BatchRenderer.h"
 #include "Lithium/Renderer/LineBatchRenderer.h"
 #include "Lithium/Renderer/RenderStage.h"
-#include "Lithium/Renderer/Font.h"
+#include "Lithium/Renderer/Text/Label.h"
+#include "Lithium/Utility/Time.h"
 
 #include "glm/glm.hpp"
 
@@ -24,6 +25,8 @@ namespace Li
 		static void Shutdown();
 
 		static void AddTextureAtlas(Ref<TextureAtlas> atlas);
+
+		static void BeginFrame(Duration::us run_time, Duration::us delta_time);
 
 		static void BeginScene(OrthographicCamera* camera);
 		static void EndScene();
@@ -59,6 +62,7 @@ namespace Li
 
 		inline static const Ref<UniformBuffer>& GetViewProjUniformBuffer() { return s_Data->ViewProjUB; }
 		inline static const Ref<UniformBuffer>& GetTransformUniformBuffer() { return s_Data->TransformMatrixUB; }
+		inline static const Ref<UniformBuffer>& GetEmitterUB() { return s_Data->EmitterUB; }
 		inline static const Ref<Shader>& GetFontShader() { return s_Data->FontShader; }
 
 	private:
@@ -76,14 +80,17 @@ namespace Li
 			Ref<Shader> TextureShader;
 			Ref<VertexArray> QuadVA;
 
+			Ref<UniformBuffer> FrameUB;
 			Ref<UniformBuffer> ViewProjUB;
 			Ref<UniformBuffer> TransformMatrixUB;
 			Ref<UniformBuffer> FontUB;
+			Ref<UniformBuffer> EmitterUB;
 
 			OrthographicCamera* Camera;
 			Unique<OrthographicCamera> UICamera;
 
-			bool ResourcesLoaded = false;
+			bool ResourcesLoaded{ false };
+			uint64_t FrameNumber{ 0 };
 		};
 
 		static Unique<RendererData> s_Data;

@@ -44,25 +44,25 @@ Remove-Item "$libav_build_path\Release-windows-x86_64\*.pdb" -ErrorAction Ignore
 7z e $libav_archive_path "-o$libav_build_path\Release-windows-x86_64" "$archive_release_location\*.lib" "$archive_release_location\*.pdb"
 
 # Create build directories.
-New-Item -ItemType "Directory" -Force -Path "build\Debug-windows-x86_64\Horizons"
-New-Item -ItemType "Directory" -Force -Path "build\Release-windows-x86_64\Horizons"
-New-Item -ItemType "Directory" -Force -Path "build\Dist-windows-x86_64\Horizons"
+New-Item -ItemType "Directory" -Force -Path "build\Debug-windows-x86_64\Article"
+New-Item -ItemType "Directory" -Force -Path "build\Release-windows-x86_64\Article"
+New-Item -ItemType "Directory" -Force -Path "build\Dist-windows-x86_64\Article"
 New-Item -ItemType "Directory" -Force -Path "build\Debug-windows-x86_64\AssetBase"
 New-Item -ItemType "Directory" -Force -Path "build\Release-windows-x86_64\AssetBase"
 New-Item -ItemType "Directory" -Force -Path "build\Dist-windows-x86_64\AssetBase"
 
 # Copy PDBs
 Write-Host "[Win-Setup.ps1] Copying PDB files..." -ForegroundColor DarkGreen
-Copy-Item "$libav_build_path\Debug-windows-x86_64\*.pdb" -Destination "build\Debug-windows-x86_64\Horizons\"
-Copy-Item "$libav_build_path\Release-windows-x86_64\*.pdb" -Destination "build\Release-windows-x86_64\Horizons\"
-Copy-Item "$libav_build_path\Release-windows-x86_64\*.pdb" -Destination "build\Dist-windows-x86_64\Horizons\"
+Copy-Item "$libav_build_path\Debug-windows-x86_64\*.pdb" -Destination "build\Debug-windows-x86_64\Article\"
+Copy-Item "$libav_build_path\Release-windows-x86_64\*.pdb" -Destination "build\Release-windows-x86_64\Article\"
+Copy-Item "$libav_build_path\Release-windows-x86_64\*.pdb" -Destination "build\Dist-windows-x86_64\Article\"
 
 # Copy DLLs
 Write-Host "[Win-Setup.ps1] Copying DLL files..." -ForegroundColor DarkGreen
 $sdl_dll_path = "Lithium\vendor\SDL2\lib\win64\SDL2.dll"
-Copy-Item $sdl_dll_path -Destination "build\Debug-windows-x86_64\Horizons\"
-Copy-Item $sdl_dll_path -Destination "build\Release-windows-x86_64\Horizons\"
-Copy-Item $sdl_dll_path -Destination "build\Dist-windows-x86_64\Horizons\"
+Copy-Item $sdl_dll_path -Destination "build\Debug-windows-x86_64\Article\"
+Copy-Item $sdl_dll_path -Destination "build\Release-windows-x86_64\Article\"
+Copy-Item $sdl_dll_path -Destination "build\Dist-windows-x86_64\Article\"
 
 $shader_conductor_dll_path = "AssetBase\vendor\ShaderConductor\lib\win64\*.dll"
 Copy-Item $shader_conductor_dll_path -Destination "build\Debug-windows-x86_64\AssetBase"

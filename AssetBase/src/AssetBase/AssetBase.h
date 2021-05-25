@@ -11,7 +11,7 @@ class AssetBase
 public:
 	AssetBase();
 
-	const FontSerializer& GetFontSerializer() const { return m_FontSerializer; }
+	FontSerializer& GetFontSerializer() { return m_FontSerializer; }
 	const std::vector<std::string>& GetIncludePaths() const { return m_IncludePaths; }
 	inline static AssetBase* Get() { return s_Instance; }
 

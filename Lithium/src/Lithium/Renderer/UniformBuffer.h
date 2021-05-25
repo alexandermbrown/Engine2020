@@ -15,8 +15,8 @@ namespace Li
 	public:
 		virtual ~UniformBuffer() = default;
 
+		virtual void BindBase() const = 0;
 		virtual void Bind(ShaderType type) const = 0;
-		virtual void BindToSlot() const = 0;
 		virtual uint32_t GetSlot() const = 0;
 		virtual void SetData(const void* data) = 0;
 

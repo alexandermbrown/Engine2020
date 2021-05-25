@@ -7,17 +7,28 @@ project "msdfgen"
 	objdir ("build-int/" .. outputdir .. "/%{prj.name}")
 
 	files {
-		"msdfgen/**.h",
-		"msdfgen/**.hpp",
-		"msdfgen/**.cpp"
+		"core/*.h",
+		"core/*.hpp",
+		"core/*.cpp",
+		"ext/*.h",
+		"ext/*.hpp",
+		"ext/*.cpp",
+		"include/*.h",
+		"freetype/include/**.h",
+		"lib/*.cpp",
 	}
 
 	includedirs {
-		"freetype/include"
+		"include",
+		"freetype/include",
+		"skia/include",
+		"skia/include/core",
+		"skia/include/config"
 	}
 
-	links {
-		"freetype/win64/freetype.lib"
+	defines {
+		"MSDFGEN_USE_CPP11",
+		"MSDFGEN_USE_SKIA"
 	}
 
 	warnings "Off"
@@ -25,6 +36,15 @@ project "msdfgen"
 	filter "system:windows"
 		systemversion "latest"
 		cppdialect "C++17"
+		buildoptions {
+			"/openmp"
+		}
+		defines {
+			"MSDFGEN_USE_OPENMP"
+		}
+		links {
+			"freetype/win64/freetype.lib"
+		}
 
 	filter "configurations:Debug"
 		runtime "Debug"

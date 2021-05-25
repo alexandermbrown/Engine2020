@@ -15,7 +15,7 @@ namespace Li
 		virtual ~OpenGLUniformBuffer();
 
 		virtual void Bind(ShaderType type) const override {};
-		virtual void BindToSlot() const override;
+		virtual void BindBase() const override;
 		virtual inline uint32_t GetSlot() const override { return m_Slot; }
 		virtual void SetData(const void* data) override;
 

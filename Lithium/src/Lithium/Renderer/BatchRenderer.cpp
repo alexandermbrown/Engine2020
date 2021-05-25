@@ -175,8 +175,9 @@ namespace Li
 			m_ViewProjUB->Bind(ShaderType::Vertex);
 			m_TransformUB->Bind(ShaderType::Vertex);
 			m_VertexArray->Bind();
-			Application::Get().GetWindow().GetContext()->SetDrawMode(Li::DrawMode::Triangles);
-			Application::Get().GetWindow().GetContext()->DrawIndexed(m_QuadCount * 6);
+			GraphicsContext* context = Application::Get().GetWindow().GetContext();
+			context->SetDrawMode(Li::DrawMode::Triangles);
+			context->DrawIndexed(m_QuadCount * 6);
 			m_VertexArray->Unbind();
 		}
 		m_QuadCount = 0;

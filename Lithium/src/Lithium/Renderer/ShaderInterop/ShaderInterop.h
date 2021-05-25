@@ -15,16 +15,33 @@
 #define LI_ALIGN_16 __attribute__((aligned(16)))
 #endif
 
-typedef LI_ALIGN_16 uint32_t uint;
-typedef LI_ALIGN_16 glm::vec3 float3;
-typedef LI_ALIGN_16 glm::vec4 float4;
-typedef LI_ALIGN_16 glm::mat4 float4x4;
+typedef uint32_t  uint;
+typedef glm::vec2 float2;
+typedef glm::vec3 float3;
+typedef glm::vec4 float4;
+typedef glm::mat4 float4x4;
+
+typedef LI_ALIGN_16 uint  aligned_uint;
+typedef LI_ALIGN_16 float     aligned_float;
+typedef LI_ALIGN_16 float2 aligned_float2;
+typedef LI_ALIGN_16 float3 aligned_float3;
+typedef LI_ALIGN_16 float4 aligned_float4;
+typedef LI_ALIGN_16 float4x4 aligned_float4x4;
 
 #define LI_CB_GETBINDSLOT(name) __CBUFFERBINDSLOT__##name##__
 #define LI_CBUFFER(name, slot) static const int LI_CB_GETBINDSLOT(name) = slot; struct alignas(16) name
 
 #else
+typedef uint     aligned_uint;
+typedef float    aligned_float;
+typedef float2   aligned_float2;
+typedef float3   aligned_float3;
+typedef float4   aligned_float4;
+typedef float4x4 aligned_float4x4;
+
 #define LI_CBUFFER(name, slot) cbuffer name : register(b ## slot)
+#define LI_RWStructuredBuffer(name, type, slot) RWStructuredBuffer<type> name : register(u ## slot)
+#define LI_RWByteAddressBuffer(name, slot) RWByteAddressBuffer name : register(u ## slot)
 
 #endif // __cplusplus
 

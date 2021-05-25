@@ -12,7 +12,8 @@ namespace Li
 		None = 0,
 		Vertex,
 		Geometry,
-		Fragment
+		Fragment,
+		Compute
 	};
 
 	enum class BufferUsage

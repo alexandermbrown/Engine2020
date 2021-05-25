@@ -7,22 +7,22 @@ struct PS_IN
 	int texindex : TEXINDEX;
 };
 
-Texture2D u_Texture0 : register( t0 );
-Texture2D u_Texture1 : register( t1 );
-Texture2D u_Texture2 : register( t2 );
-Texture2D u_Texture3 : register( t3 );
-Texture2D u_Texture4 : register( t4 );
-Texture2D u_Texture5 : register( t5 );
-Texture2D u_Texture6 : register( t6 );
-Texture2D u_Texture7 : register( t7 );
-SamplerState u_Sampler0 : register( s0 );
-SamplerState u_Sampler1 : register( s1 );
-SamplerState u_Sampler2 : register( s2 );
-SamplerState u_Sampler3 : register( s3 );
-SamplerState u_Sampler4 : register( s4 );
-SamplerState u_Sampler5 : register( s5 );
-SamplerState u_Sampler6 : register( s6 );
-SamplerState u_Sampler7 : register( s7 );
+Texture2D u_Texture0 : register(t0);
+Texture2D u_Texture1 : register(t1);
+Texture2D u_Texture2 : register(t2);
+Texture2D u_Texture3 : register(t3);
+Texture2D u_Texture4 : register(t4);
+Texture2D u_Texture5 : register(t5);
+Texture2D u_Texture6 : register(t6);
+Texture2D u_Texture7 : register(t7);
+SamplerState u_Sampler0 : register(s0);
+SamplerState u_Sampler1 : register(s1);
+SamplerState u_Sampler2 : register(s2);
+SamplerState u_Sampler3 : register(s3);
+SamplerState u_Sampler4 : register(s4);
+SamplerState u_Sampler5 : register(s5);
+SamplerState u_Sampler6 : register(s6);
+SamplerState u_Sampler7 : register(s7);
 
 float4 ps_main(PS_IN input) : SV_TARGET
 {

@@ -7,8 +7,8 @@
 
 namespace Li
 {
-	D3D11UniformBuffer::D3D11UniformBuffer(uint32_t bindingSlot, uint32_t size)
-		: m_Slot(bindingSlot), m_Size(size)
+	D3D11UniformBuffer::D3D11UniformBuffer(uint32_t slot, uint32_t size)
+		: m_Slot(slot), m_Size(size)
 	{
 		D3D11_BUFFER_DESC desc;
 		desc.ByteWidth = m_Size;
@@ -21,7 +21,7 @@ namespace Li
 		D3D11Context* context = (D3D11Context*)Application::Get().GetWindow().GetContext();
 		m_ContextHandle = context->GetDeviceContext();
 
-		D3D11Call(context->GetDevice()->CreateBuffer(&desc, NULL, &m_Buffer));
+		D3D11Call(context->GetDevice()->CreateBuffer(&desc, nullptr, &m_Buffer));
 	}
 
 	void D3D11UniformBuffer::Bind(ShaderType type) const
@@ -37,6 +37,11 @@ namespace Li
 		case ShaderType::Fragment:
 			m_ContextHandle->PSSetConstantBuffers(m_Slot, 1, m_Buffer.GetAddressOf());
 			break;
+		case ShaderType::Compute:
+			m_ContextHandle->CSSetConstantBuffers(m_Slot, 1, m_Buffer.GetAddressOf());
+			break;
+		default:
+			LI_CORE_ASSERT(false, "Unsupported shader type.");
 		}
 	}
 

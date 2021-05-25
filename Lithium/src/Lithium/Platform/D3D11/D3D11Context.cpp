@@ -11,6 +11,10 @@ using namespace Microsoft::WRL;
 
 namespace Li
 {
+	// Initialized to nullptrs, used to unbind resources.
+	constexpr int NullBlobCount = 128;
+	const void* const s_NullBlob[NullBlobCount] = {};
+
 	D3D11Context::D3D11Context(HWND hwnd, int width, int height)
 	{
 		UINT device_flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
@@ -67,6 +71,23 @@ namespace Li
 	void D3D11Context::SwapBuffers()
 	{
 		m_SwapChain->Present(0, 0);
+	}
+
+	void D3D11Context::UnbindResources(uint32_t slot, uint32_t count)
+	{
+		LI_CORE_ASSERT(count <= NullBlobCount, "Count too large");
+		m_DeviceContext->PSSetShaderResources(slot, count, (ID3D11ShaderResourceView**)s_NullBlob);
+		m_DeviceContext->VSSetShaderResources(slot, count, (ID3D11ShaderResourceView**)s_NullBlob);
+		m_DeviceContext->GSSetShaderResources(slot, count, (ID3D11ShaderResourceView**)s_NullBlob);
+		m_DeviceContext->HSSetShaderResources(slot, count, (ID3D11ShaderResourceView**)s_NullBlob);
+		m_DeviceContext->DSSetShaderResources(slot, count, (ID3D11ShaderResourceView**)s_NullBlob);
+		m_DeviceContext->CSSetShaderResources(slot, count, (ID3D11ShaderResourceView**)s_NullBlob);
+	}
+
+	void D3D11Context::UnbindUAVs(uint32_t slot, uint32_t count)
+	{
+		LI_CORE_ASSERT(count <= NullBlobCount, "Count too large");
+		m_DeviceContext->CSSetUnorderedAccessViews(slot, count, (ID3D11UnorderedAccessView**)s_NullBlob, nullptr);
 	}
 
 	void D3D11Context::ResizeView(int width, int height)
@@ -134,19 +155,19 @@ namespace Li
 		m_DeviceContext->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 
-	void D3D11Context::DrawArrays(uint32_t vertexCount)
+	void D3D11Context::DrawArrays(uint32_t vertex_count)
 	{
-		m_DeviceContext->Draw(vertexCount, 0);
+		m_DeviceContext->Draw(vertex_count, 0);
 	}
 
-	void D3D11Context::DrawIndexed(uint32_t indexCount)
+	void D3D11Context::DrawIndexed(uint32_t index_count)
 	{
-		m_DeviceContext->DrawIndexed(indexCount, 0, 0);
+		m_DeviceContext->DrawIndexed(index_count, 0, 0);
 	}
 
-	void D3D11Context::DrawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount)
+	void D3D11Context::DrawIndexedInstanced(uint32_t index_count, uint32_t instance_count)
 	{
-		m_DeviceContext->DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+		m_DeviceContext->DrawIndexedInstanced(index_count, instance_count, 0, 0, 0);
 	}
 
 	void D3D11Context::DispatchCompute(uint32_t num_groups_x, uint32_t num_groups_y, uint32_t num_groups_z)
@@ -196,7 +217,7 @@ namespace Li
 		swap_chain_desc.SampleDesc.Count = 1;
 		swap_chain_desc.SampleDesc.Quality = 0;
 		swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swap_chain_desc.BufferCount = 1;
+		swap_chain_desc.BufferCount = NumSwapChainBuffers;
 		swap_chain_desc.OutputWindow = hwnd;
 		swap_chain_desc.Windowed = true;
 

@@ -5,7 +5,7 @@
 #include "Lithium/Renderer/Texture.h"
 #include "Lithium/Renderer/Shader.h"
 #include "Lithium/Renderer/TextureAtlas.h"
-#include "Lithium/Renderer/Font.h"
+#include "Lithium/Renderer/Text/Font.h"
 #include "Lithium/Audio/AudioBuffer.h"
 
 #include <unordered_map>

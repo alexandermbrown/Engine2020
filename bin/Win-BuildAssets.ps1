@@ -1,6 +1,5 @@
 param (
-	[switch]$copy = $false,
-	[switch]$noprompt = $false
+	[switch]$copy = $false
 )
 
 Push-Location "${PSScriptRoot}\..\AssetBase"
@@ -18,7 +17,7 @@ catch {
 ..\build\Release-windows-x86_64\AssetBase\AssetBase.exe
 
 function Copy-Assets {
-	Copy-Item ".\output\*.*" -Destination "..\Horizons\data\"
+	Copy-Item ".\output\*.*" -Destination "..\Article\data\"
 	Write-Host "Copied asset bundles."
 }
 
@@ -26,7 +25,7 @@ if ($copy) {
 	Copy-Assets
 }
 else {
-	$confirmation = Read-Host "Copy asset bundles to Horizons/data? (y/N)"
+	$confirmation = Read-Host "Copy asset bundles to Article/data? (y/N)"
 	$confirmation = $confirmation.ToLower()
 	if ($confirmation -eq "y" -Or $confirmation -eq "yes") {
 		Copy-Assets
@@ -34,8 +33,3 @@ else {
 }
 
 Pop-Location
-
-if (-Not $noprompt) {
-	Write-Host "Press any key to finish...";
-	$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
-}

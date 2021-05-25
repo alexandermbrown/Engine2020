@@ -7,9 +7,9 @@
 namespace Li {
 #endif
 
-LI_CBUFFER(ViewProjCB, 0)
+LI_CBUFFER(ViewProjCB, 1)
 {
-	float4x4 u_ViewProj;
+	aligned_float4x4 u_ViewProj;
 };
 
 #ifdef __cplusplus

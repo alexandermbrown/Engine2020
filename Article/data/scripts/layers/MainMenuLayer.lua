@@ -1,0 +1,97 @@
+local Class = require("data.scripts.Class")
+local Layer = require("data.scripts.Layer")
+local UIContext = require("data.scripts.UIContext")
+
+local function CreateMenuButton(context, name, text, transition_scene)
+	local button = context:NewElement(name)
+	button:SetContain(UI.Contain.Column)
+	button:SetBehave(UI.Behave.Top)
+	button:SetSize(300, 70)
+	button:SetMargins({ top = 16, bottom = 16 })
+	button:SetColor(0.0, 0.0, 0.0, 1.0)
+
+	local inner = context:NewElement(name .. "__INNER")
+	inner:SetContain(UI.Contain.Column)
+	inner:SetBehave(UI.Behave.Fill)
+	inner:SetMargins({ bottom = 2 })
+	inner:SetColor(1.0, 1.0, 1.0, 1.0)
+	button:AddChild(inner)
+
+	-- TODO: make labels a lua class.
+	local label = context:NewElement(name .. "__LABEL")
+	label:SetContain(UI.Contain.Column)
+	label:SetBehave(UI.Behave.Left)
+	label:SetSize(1, 1)
+	label:SetColor(0.0, 0.0, 0.0, 1.0)
+	label:SetMargins({ top = 56, left = 12 })
+	label:SetLabel({
+		text = text,
+		pt_size = 36,
+		font = "Lora-Regular"
+	})
+
+	button:SetEvents({
+		OnClick = function(registry, entity, button)
+			if button == 1 then
+				App.TransitionScene(transition_scene, true)
+				return true;
+			end
+			return false;
+		end,
+		OnMouseEnter = function(registry, entity)
+			inner:SetColor(0.9, 0.9, 0.9, 1.0)
+			return true;
+		end,
+		OnMouseLeave = function(registry, entity)
+			inner:SetColor(1.0, 1.0, 1.0, 1.0)
+			return true;
+		end,
+	})
+
+	inner:AddChild(label)
+
+	return button
+end
+
+local MainMenuLayer = Class(Layer)
+function MainMenuLayer:Init(registry)
+	self:_InitBase("MainMenuLayer", registry, {
+		"RNG",
+		"Flicker",
+		"UIClick",
+		"UIHover",
+		"UILayout",
+		"UISortTransforms",
+		"UIRender"
+	})
+
+	self.context = UIContext(self.registry, 0.1, 0.9)
+
+	-- Background layers.
+	local bg_black = self.context:NewElement("bg_black")
+	bg_black:SetContain(UI.Contain.Column)
+	bg_black:SetBehave(UI.Behave.Fill)
+	bg_black:SetColor(0.0, 0.0, 0.0, 1.0)
+	bg_black:SetMargins({ left = 6, right = 6, top = 6, bottom = 6 })
+	self.context:AddChild(bg_black)
+
+	local bg_white = self.context:NewElement("bg_white")
+	bg_white:SetContain(UI.Contain.Column)
+	bg_white:SetBehave(UI.Behave.Fill)
+	bg_white:SetColor(1.0, 1.0, 1.0, 1.0)
+	bg_black:AddChild(bg_white)
+
+	-- Buttons.
+	local button_play = CreateMenuButton(self.context, "button_play", "PLAY", "GameScene")
+	bg_white:AddChild(button_play)
+
+	local button_level_editor = CreateMenuButton(self.context, "button_level_editor", "LEVEL EDITOR", "LevelEditorScene")
+	bg_white:AddChild(button_level_editor)
+
+	local button_example_video = CreateMenuButton(self.context, "button_example_video", "VIDEO", "VideoPlayerScene")
+	bg_white:AddChild(button_example_video)
+
+	self.context:Rebuild()
+end
+
+return MainMenuLayer

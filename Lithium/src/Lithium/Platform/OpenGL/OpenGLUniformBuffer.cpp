@@ -2,7 +2,6 @@
 #include "OpenGLUniformBuffer.h"
 
 #include "OpenGLCore.h"
-
 #include "glad/glad.h"
 
 namespace Li
@@ -21,7 +20,7 @@ namespace Li
 		glDeleteBuffers(1, &m_RendererID);
 	}
 
-	void OpenGLUniformBuffer::BindToSlot() const
+	void OpenGLUniformBuffer::BindBase() const
 	{
 		glBindBufferBase(GL_UNIFORM_BUFFER, m_Slot, m_RendererID);
 	}

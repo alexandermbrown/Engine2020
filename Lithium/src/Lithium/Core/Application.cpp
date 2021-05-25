@@ -75,7 +75,8 @@ namespace Li
 	void Application::Run()
 	{
 		m_Running = true;
-		m_LastUpdateTime = std::chrono::steady_clock::now();
+		m_StartTime = std::chrono::steady_clock::now();
+		m_LastUpdateTime = m_StartTime;
 
 		while (m_Running)
 		{
@@ -83,7 +84,8 @@ namespace Li
 			// Calculate Delta Time //
 			//////////////////////////
 			std::chrono::time_point<std::chrono::steady_clock> current_time = std::chrono::steady_clock::now();
-			Duration::us dt = Duration::Cast<Duration::us>(current_time - m_LastUpdateTime);
+			Duration::us delta_time = Duration::Cast<Duration::us>(current_time - m_LastUpdateTime);
+			Duration::us run_time = Duration::Cast<Duration::us>(current_time - m_StartTime);
 			m_LastUpdateTime = current_time;
 
 			//////////////////////
@@ -114,8 +116,7 @@ namespace Li
 			///////////////////
 			// Update Layers //
 			///////////////////
-			m_Window->GetContext()->BindDefaultRenderTarget();
-			m_Window->GetContext()->Clear();
+			Renderer::BeginFrame(run_time, delta_time);
 
 			if (!m_FocusedLayer.empty())
 				m_Input.Disable();
@@ -128,7 +129,7 @@ namespace Li
 					m_Input.Enable();
 					reached_focused = true;
 				}
-				layer->OnUpdate(dt);
+				layer->OnUpdate(delta_time);
 			}
 
 #ifndef LI_DIST

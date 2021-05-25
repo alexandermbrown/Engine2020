@@ -7,9 +7,9 @@
 namespace Li {
 #endif
 
-LI_CBUFFER(TransformCB, 1)
+LI_CBUFFER(TransformCB, 2)
 {
-	float4x4 u_Transform;
+	aligned_float4x4 u_Transform;
 };
 
 #ifdef __cplusplus

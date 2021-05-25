@@ -1,6 +1,6 @@
-workspace "Horizons"
+workspace "Article"
 	architecture "x86_64"
-	startproject "Horizons"
+	startproject "Article"
 
 	configurations {
 		"Debug",
@@ -33,18 +33,19 @@ IncludeDir["libav"] = "Lithium/vendor/libav/include"
 
 IncludeDir["freetype"] = "AssetBase/vendor/freetype/include"
 IncludeDir["msdfgen"] = "AssetBase/vendor/msdfgen"
+IncludeDir["msdfatlasgen"] = "AssetBase/vendor/msdf-atlas-gen"
 IncludeDir["flatbuffers"] = "AssetBase/vendor/flatbuffers/include"
 IncludeDir["yamlcpp"] = "AssetBase/vendor/yaml-cpp/include"
 IncludeDir["ShaderConductor"] = "AssetBase/vendor/ShaderConductor/include"
 IncludeDir["lab_serial"] = "FlatBuffers/include"
 
-IncludeDir["entt"] = "Horizons/vendor/entt/include"
-IncludeDir["box2d"] = "Horizons/vendor/box2d/include"
-IncludeDir["steam"] = "Horizons/vendor/steam/include"
-IncludeDir["layout"] = "Horizons/vendor/layout/include"
-IncludeDir["lua"] = "Horizons/vendor/lua/include"
-IncludeDir["sol"] = "Horizons/vendor/sol"
-IncludeDir["nativefiledialog"] = "Horizons/vendor/nativefiledialog/src/include"
+IncludeDir["entt"] = "Article/vendor/entt/include"
+IncludeDir["box2d"] = "Article/vendor/box2d/include"
+IncludeDir["steam"] = "Article/vendor/steam/include"
+IncludeDir["layout"] = "Article/vendor/layout/include"
+IncludeDir["lua"] = "Article/vendor/lua/include"
+IncludeDir["sol"] = "Article/vendor/sol"
+IncludeDir["nativefiledialog"] = "Article/vendor/nativefiledialog/src/include"
 
 group "vendor"
 include "Lithium/vendor/glad"
@@ -53,10 +54,10 @@ include "Lithium/vendor/zlib"
 include "Lithium/vendor/libvorbis"
 include "Lithium/vendor/openal-soft"
 include "Lithium/vendor/harfbuzz"
-include "AssetBase/vendor/msdfgen"
+include "AssetBase/vendor/msdf-atlas-gen"
 include "AssetBase/vendor/yaml-cpp"
-include "Horizons/vendor/box2d"
-include "Horizons/vendor/nativefiledialog"
+include "Article/vendor/box2d"
+include "Article/vendor/nativefiledialog"
 group  ""
 
 ------------------------------ Lithium ----------------------------------
@@ -174,10 +175,10 @@ project "Lithium"
 
 		links "vpxmd"
 
------------------------------- Horizons ------------------------------
+------------------------------ Article ------------------------------
 
-project "Horizons"
-	location "Horizons"
+project "Article"
+	location "Article"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
@@ -188,7 +189,7 @@ project "Horizons"
 	objdir ("build-int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "pch.h"
-	pchsource "Horizons/src/pch.cpp"
+	pchsource "Article/src/pch.cpp"
 	
 	files {
 		"%{prj.name}/src/**.h",
@@ -197,7 +198,7 @@ project "Horizons"
 
 	includedirs {
 		"Lithium/src",
-		"Horizons/src",
+		"Article/src",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.SDL2}",
@@ -234,8 +235,8 @@ project "Horizons"
 		}
 
 		libdirs { 
-			"Horizons/vendor/steam/lib/win64",
-			"Horizons/vendor/lua/lib/win64"
+			"Article/vendor/steam/lib/win64",
+			"Article/vendor/lua/lib/win64"
 		}
 		links { "steam_api64" }
 
@@ -295,6 +296,7 @@ project "AssetBase"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.freetype}",
 		"%{IncludeDir.msdfgen}",
+		"%{IncludeDir.msdfatlasgen}",
 		"%{IncludeDir.flatbuffers}",
 		"%{IncludeDir.lab_serial}",
 		"%{IncludeDir.yamlcpp}",
@@ -302,7 +304,7 @@ project "AssetBase"
 	}
 
 	links {
-		"msdfgen",
+		"msdf-atlas-gen",
 		"zlib",
 		"yaml-cpp",
 		"ShaderConductor",
