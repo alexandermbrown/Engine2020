@@ -14,21 +14,19 @@ project "msdfgen"
 		"ext/*.hpp",
 		"ext/*.cpp",
 		"include/*.h",
-		"freetype/include/**.h",
 		"lib/*.cpp",
 	}
 
 	includedirs {
 		"include",
-		"freetype/include",
+		"../freetype/include",
 		"skia/include",
 		"skia/include/core",
 		"skia/include/config"
 	}
 
 	defines {
-		"MSDFGEN_USE_CPP11",
-		"MSDFGEN_USE_SKIA"
+		"MSDFGEN_USE_CPP11"
 	}
 
 	warnings "Off"
@@ -43,7 +41,7 @@ project "msdfgen"
 			"MSDFGEN_USE_OPENMP"
 		}
 		links {
-			"freetype/win64/freetype.lib"
+			"../freetype/win64/freetype.lib"
 		}
 
 	filter "configurations:Debug"

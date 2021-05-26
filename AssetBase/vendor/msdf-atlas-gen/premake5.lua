@@ -17,12 +17,11 @@ project "msdf-atlas-gen"
 	includedirs {
 		"../msdfgen",
 		"../msdfgen/include",
-		"../msdfgen/freetype/include"
+		"../freetype/include"
 	}
 
 	defines {
-		"MSDFGEN_USE_CPP11",
-		"MSDFGEN_USE_SKIA"
+		"MSDFGEN_USE_CPP11"
 	}
 
 	warnings "Off"

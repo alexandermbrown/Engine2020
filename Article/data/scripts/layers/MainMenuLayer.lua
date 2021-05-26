@@ -6,8 +6,8 @@ local function CreateMenuButton(context, name, text, transition_scene)
 	local button = context:NewElement(name)
 	button:SetContain(UI.Contain.Column)
 	button:SetBehave(UI.Behave.Top)
-	button:SetSize(300, 70)
-	button:SetMargins({ top = 16, bottom = 16 })
+	button:SetSize(200, 40)
+	button:SetMargins({ top = 10, bottom = 10 })
 	button:SetColor(0.0, 0.0, 0.0, 1.0)
 
 	local inner = context:NewElement(name .. "__INNER")
@@ -20,14 +20,14 @@ local function CreateMenuButton(context, name, text, transition_scene)
 	-- TODO: make labels a lua class.
 	local label = context:NewElement(name .. "__LABEL")
 	label:SetContain(UI.Contain.Column)
-	label:SetBehave(UI.Behave.Left)
+	label:SetBehave(UI.Behave.Left, UI.Behave.Bottom)
 	label:SetSize(1, 1)
 	label:SetColor(0.0, 0.0, 0.0, 1.0)
-	label:SetMargins({ top = 56, left = 12 })
+	label:SetMargins({ bottom = -20, left = 12 })
 	label:SetLabel({
 		text = text,
-		pt_size = 36,
-		font = "Lora-Regular"
+		pt_size = 24,
+		font = "SourceCodePro-Regular"
 	})
 
 	button:SetEvents({

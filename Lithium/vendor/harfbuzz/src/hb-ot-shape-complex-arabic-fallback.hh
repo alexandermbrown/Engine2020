@@ -92,7 +92,7 @@ arabic_fallback_synthesize_lookup_single (const hb_ot_shape_plan_t *plan HB_UNUS
 				       hb_array (substitutes, num_glyphs));
   c.end_serialize ();
 
-  return ret ? c.copy<OT::SubstLookup> () : nullptr;
+  return ret && !c.in_error () ? c.copy<OT::SubstLookup> () : nullptr;
 }
 
 static OT::SubstLookup *
@@ -170,7 +170,7 @@ arabic_fallback_synthesize_lookup_ligature (const hb_ot_shape_plan_t *plan HB_UN
   c.end_serialize ();
   /* TODO sanitize the results? */
 
-  return ret ? c.copy<OT::SubstLookup> () : nullptr;
+  return ret && !c.in_error () ? c.copy<OT::SubstLookup> () : nullptr;
 }
 
 static OT::SubstLookup *
@@ -208,11 +208,11 @@ struct ManifestLookup
 {
   public:
   OT::Tag tag;
-  OT::OffsetTo<OT::SubstLookup> lookupOffset;
+  OT::Offset16To<OT::SubstLookup> lookupOffset;
   public:
   DEFINE_SIZE_STATIC (6);
 };
-typedef OT::ArrayOf<ManifestLookup> Manifest;
+typedef OT::Array16Of<ManifestLookup> Manifest;
 
 static bool
 arabic_fallback_plan_init_win1256 (arabic_fallback_plan_t *fallback_plan HB_UNUSED,

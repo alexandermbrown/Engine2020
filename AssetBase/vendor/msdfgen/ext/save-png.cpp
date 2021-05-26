@@ -62,4 +62,12 @@ bool savePng(const BitmapConstRef<float, 4> &bitmap, const char *filename) {
     return !lodepng::encode(filename, pixels, bitmap.width, bitmap.height, LCT_RGBA);
 }
 
+bool savePng(const BitmapConstRef<byte, 3>& bitmap, std::vector<unsigned char>& out)
+{
+    std::vector<byte> pixels(3 * bitmap.width * bitmap.height);
+    for (int y = 0; y < bitmap.height; ++y)
+        memcpy(&pixels[3 * bitmap.width * y], bitmap(0, bitmap.height - y - 1), 3 * bitmap.width);
+    return !lodepng::encode(out, pixels, bitmap.width, bitmap.height, LCT_RGB);
+}
+
 }

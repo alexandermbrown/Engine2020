@@ -65,8 +65,9 @@ table TextureAtlas {
 }
 
 table GlyphEntry {
-	codepoint:uint;
-	texture_offset:Vec2;
+	gindex:uint;
+	atlas_bounds:Vec4; // left bottom right top
+	plane_bounds:Vec4; // left bottom right top
 	texture_index:ubyte;
 }
 
@@ -77,8 +78,9 @@ table FontImage {
 
 table Font {
 	name:string;
-	glyph_width:short;
-	distance_gradient:float;
+	glyph_scale:short;
+	//distance_gradient:float;
+	em_size:float;
 	glyphs:[GlyphEntry];
 	images:[FontImage];
 	ttf:[ubyte];

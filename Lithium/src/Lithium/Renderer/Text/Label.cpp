@@ -4,12 +4,21 @@
 #include "Lithium/Renderer/Renderer.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+
 namespace Li
 {
 	Label::Label(const char* utf8_text, int point_size, Ref<Font> font, bool dynamic, int excess)
 		: m_PointSize(point_size), m_Font(font), m_BufferLength(0u), m_Dynamic(dynamic), m_Excess(excess)
 	{
-		m_DistanceFactor = font->GetProps().DistanceGradient * (float)m_PointSize + 2.0f;
+		const FontProps& font_props = m_Font->GetProps();
+
+		m_DistanceFactor = m_PointSize / font_props.GlyphScale * 2.0f;
+		if (m_DistanceFactor < 1.0f)
+		{
+			Li::Log::CoreWarn("pt size {} too small for label '{}'. Anti-aliasing may not work.", point_size, utf8_text);
+			m_DistanceFactor = 1.0f;
+		}
+
 		m_Buffer = hb_buffer_create();
 
 		LoadLayout(utf8_text);
@@ -49,7 +58,11 @@ namespace Li
 	{
 		bool resize = false;
 
+		//hb_buffer_clear_contents(m_Buffer);
+
 		hb_buffer_add_utf8(m_Buffer, utf8_text, -1, 0, -1);
+		//hb_buffer_set_content_type(m_Buffer, HB_BUFFER_CONTENT_TYPE_UNICODE);
+		//hb_buffer_set_language(m_Buffer, hb_language_from_string("en", -1));
 		hb_buffer_guess_segment_properties(m_Buffer);
 
 		hb_shape(m_Font->GetHBFont(m_PointSize), m_Buffer, NULL, 0);
@@ -77,18 +90,19 @@ namespace Li
 			float x_position = (current_x + glyph_position[i].x_offset) / 64.0f;
 			float y_position = (current_y + glyph_position[i].y_offset) / 64.0f;
 
-			float left = x_position - (4.0f * (float)m_PointSize / (float)font_info.GlyphWidth);
-			float right = left + (float)m_PointSize * 1.33f;
-			float bottom = y_position - (4.0f * (float)m_PointSize / (float)font_info.GlyphWidth);
-			float top = bottom + (float)m_PointSize * 1.33f;
-
+			// glyph_info[i].codepoint is actually gindex for some reason.
 			const GlyphProps& glyph_props = m_Font->GetGlyphProps(glyph_info[i].codepoint);
-			float texture_width = (float)m_Font->GetTextures()[glyph_props.texture_index]->GetWidth();
 
-			float texture_left = glyph_props.texture_offset.x + 0.002f;
-			float texture_bottom = glyph_props.texture_offset.y + 0.002f;
-			float texture_right = glyph_props.texture_offset.x + font_info.GlyphWidth / texture_width - 0.002f;
-			float texture_top = glyph_props.texture_offset.y + font_info.GlyphWidth / texture_width - 0.002f;
+			float pos_scale = m_PointSize / font_info.EmSize;
+			float left = x_position + glyph_props.plane_bounds.x * pos_scale;
+			float bottom = y_position + glyph_props.plane_bounds.y * pos_scale;
+			float right = x_position + glyph_props.plane_bounds.z * pos_scale;
+			float top = y_position + glyph_props.plane_bounds.w * pos_scale;
+
+			float texture_left = glyph_props.atlas_bounds.x;
+			float texture_bottom = glyph_props.atlas_bounds.y;
+			float texture_right = glyph_props.atlas_bounds.z;
+			float texture_top = glyph_props.atlas_bounds.w;
 
 			uint32_t index_offset = i * 4;
 			m_GlyphIndices.insert(m_GlyphIndices.end(), {

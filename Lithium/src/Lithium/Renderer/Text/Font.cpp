@@ -16,16 +16,14 @@ namespace Li
 	Font::~Font()
 	{
 		for (auto [pt, font] : m_Fonts)
-		{
 			hb_font_destroy(font);
-		}
 		
 		hb_face_destroy(m_Face);
 	}
 
-	const GlyphProps& Font::GetGlyphProps(int16_t character) const
+	const GlyphProps& Font::GetGlyphProps(uint32_t gindex) const
 	{
-		auto iter = m_GlyphProps.find(character);
+		auto iter = m_GlyphProps.find(gindex);
 		if (iter != m_GlyphProps.end())
 			return iter->second;
 		else

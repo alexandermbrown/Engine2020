@@ -304,22 +304,24 @@ project "AssetBase"
 	}
 
 	links {
+		"msdfgen",
 		"msdf-atlas-gen",
 		"zlib",
 		"yaml-cpp",
-		"ShaderConductor",
+		"ShaderConductor"
 		-- "SPIRV-Tools",
 		-- "SPIRV-Tools-opt"
 	}
+	
 	libdirs "AssetBase/vendor/ShaderConductor/lib/win64"
-
 	filter "system:windows"
 		systemversion "latest"
 
 		links {
 			"d3d11.lib",
 			"dxgi.lib",
-			"d3dcompiler.lib"
+			"d3dcompiler.lib",
+			"AssetBase/vendor/freetype/win64/freetype.lib"
 		}
 
 	--filter { "system:windows", "configurations:Debug" }

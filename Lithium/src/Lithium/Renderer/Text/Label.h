@@ -26,7 +26,10 @@ namespace Li
 		virtual ~Label();
 
 		inline int GetPointSize() const { return m_PointSize; }
-		inline float GetDistanceFactor() const { return m_DistanceFactor; }
+		inline float GetDistanceFactor() const
+		{
+			return m_DistanceFactor;
+		}
 
 		inline const Ref<VertexArray>& GetVertexArray() { return m_VertexArray; }
 		inline const Ref<Font>& GetFont() { return m_Font; }

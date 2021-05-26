@@ -5,10 +5,13 @@
 #include "yaml-cpp/yaml.h"
 
 #define MSDFGEN_USE_CPP11
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include "msdf-atlas-gen/msdf-atlas-gen.h"
 #undef MSDFGEN_USE_CPP11
 
 #include <filesystem>
+
 
 class FontSerializer
 {
@@ -21,14 +24,16 @@ public:
 private:
 	flatbuffers::Offset<flatbuffers::Vector<uint8_t>> LoadTTF(flatbuffers::FlatBufferBuilder& builder, const std::filesystem::path& path);
 	bool TryLoadCache(flatbuffers::FlatBufferBuilder& builder, const std::string& name, const std::filesystem::path& cache_path,
-		int16_t glyph_width, float* out_dist_gradient,
+		int16_t glyph_scale, float* out_em_size,
 		flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::FontImage>>>* out_images,
 		flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>>>* out_glyphs);
 
 	void GenerateMSDF(flatbuffers::FlatBufferBuilder& builder, const std::string& name, const std::filesystem::path& cache_path,
-		int16_t glyph_width, const std::filesystem::path& font_path, float* out_dist_gradient,
+		int16_t glyph_scale, const std::filesystem::path& font_path, float* out_em_size,
 		flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::FontImage>>>* out_images,
 		flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>>>* out_glyphs);
 
-	msdfgen::FreetypeHandle* ft = nullptr;
+	FT_Library m_FT;
+
+	static constexpr int MSDFChannels = 3;
 };

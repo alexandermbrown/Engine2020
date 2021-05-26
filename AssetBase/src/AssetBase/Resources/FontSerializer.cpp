@@ -5,45 +5,46 @@
 #include "AssetBase/Util/OptionalField.h"
 
 #include <math.h>
+#include <thread>
 
 namespace fb = flatbuffers;
 namespace fs = std::filesystem;
-constexpr int MaxTextureWidth = 2048;
-constexpr int MaxTextureWidthSquared = MaxTextureWidth * MaxTextureWidth;
+//constexpr int MaxTextureWidth = 2048;
+//constexpr int MaxTextureWidthSquared = MaxTextureWidth * MaxTextureWidth;
 
 FontSerializer::FontSerializer()
-	: ft(msdfgen::initializeFreetype())
 {
-	if (!ft)
-		throw "Failed to initialize freetype.";
+	FT_Error error = FT_Init_FreeType(&m_FT);
+	if (error != 0)
+		throw std::runtime_error("Failed to initialize freetype!");
 }
 
 FontSerializer::~FontSerializer()
 {
-	msdfgen::deinitializeFreetype(ft);
-	ft = nullptr;
+	FT_Done_FreeType(m_FT);
+	m_FT = nullptr;
 }
 
-fb::Offset<Assets::Font> FontSerializer::Serialize(fb::FlatBufferBuilder& builder, const fs::path& base_path, const std::string& name, YAML::Node atlas, bool debug_mode)
+fb::Offset<Assets::Font> FontSerializer::Serialize(fb::FlatBufferBuilder& builder, const fs::path& base_path, const std::string& name, YAML::Node font, bool debug_mode)
 {
 	fb::Offset<fb::String> name_offset = builder.CreateString(name);
 
-	fs::path font_path = base_path.parent_path() / GetOptionalString(atlas, "path");
+	fs::path font_path = base_path.parent_path() / GetOptionalString(font, "path");
 
-	int16_t glyph_width = Convert::StringToInt(GetOptionalString(atlas, "glyph_width"), "glyph_width");
+	int16_t glyph_scale = Convert::StringToInt(GetOptionalString(font, "glyph_scale"), "glyph_scale");
 
 	fb::Offset<fb::Vector<fb::Offset<Assets::FontImage>>> images_offset = NULL;
 	fb::Offset<fb::Vector<fb::Offset<Assets::GlyphEntry>>> glyphs_offset = NULL;
 	fb::Offset<fb::Vector<uint8_t>> ttf = LoadTTF(builder, font_path);
-	float distance_gradient;
 
+	float em_size;
 	fs::path cache_path = "./.lab-cache/fonts/" + name + ".fontcache";
-	bool use_cache = TryLoadCache(builder, name, cache_path, glyph_width, &distance_gradient, &images_offset, &glyphs_offset);
+	bool use_cache = TryLoadCache(builder, name, cache_path, glyph_scale, &em_size, &images_offset, &glyphs_offset);
 
 	if (!use_cache)
-		GenerateMSDF(builder, name, cache_path, glyph_width, font_path, &distance_gradient, &images_offset, &glyphs_offset);
+		GenerateMSDF(builder, name, cache_path, glyph_scale, font_path, &em_size, &images_offset, &glyphs_offset);
 
-	return Assets::CreateFont(builder, name_offset, glyph_width, distance_gradient, glyphs_offset, images_offset, ttf);
+	return Assets::CreateFont(builder, name_offset, glyph_scale, em_size, glyphs_offset, images_offset, ttf);
 }
 
 fb::Offset<fb::Vector<uint8_t>> FontSerializer::LoadTTF(fb::FlatBufferBuilder& builder, const fs::path& path)
@@ -67,7 +68,7 @@ fb::Offset<fb::Vector<uint8_t>> FontSerializer::LoadTTF(fb::FlatBufferBuilder& b
 }
 
 bool FontSerializer::TryLoadCache(fb::FlatBufferBuilder& builder, const std::string& name,
-	const fs::path& cache_path, int16_t glyph_width, float* out_dist_gradient,
+	const fs::path& cache_path, int16_t glyph_scale, float* out_em_size,
 	fb::Offset<fb::Vector<fb::Offset<Assets::FontImage>>>* out_images,
 	fb::Offset<fb::Vector<fb::Offset<Assets::GlyphEntry>>>* out_glyphs)
 {
@@ -88,13 +89,13 @@ bool FontSerializer::TryLoadCache(fb::FlatBufferBuilder& builder, const std::str
 	if (!font->Verify(fb::Verifier(buffer.data(), file_size)))
 		return false;
 	
-	if (name != font->name()->c_str() || glyph_width != font->glyph_width())
+	if (name != font->name()->c_str() || glyph_scale != font->glyph_scale())
 		return false;
 
 	std::vector<fb::Offset<Assets::FontImage>> images_vec;
 	std::vector<fb::Offset<Assets::GlyphEntry>> glyphs_vec;
 
-	*out_dist_gradient = font->distance_gradient();
+	*out_em_size = font->em_size();
 
 	const auto* images_vector = font->images();
 	for (const Assets::FontImage* cached_image : *images_vector)
@@ -106,9 +107,7 @@ bool FontSerializer::TryLoadCache(fb::FlatBufferBuilder& builder, const std::str
 
 	const auto* glyphs_vector = font->glyphs();
 	for (const Assets::GlyphEntry* cached_glyph : *glyphs_vector)
-	{
-		glyphs_vec.push_back(Assets::CreateGlyphEntry(builder, cached_glyph->codepoint(), cached_glyph->texture_offset()));
-	}
+		glyphs_vec.push_back(Assets::CreateGlyphEntry(builder, cached_glyph->gindex(), cached_glyph->atlas_bounds(), cached_glyph->plane_bounds(), cached_glyph->texture_index()));
 
 	*out_images = builder.CreateVector(images_vec);
 	*out_glyphs = builder.CreateVector(glyphs_vec);
@@ -117,116 +116,142 @@ bool FontSerializer::TryLoadCache(fb::FlatBufferBuilder& builder, const std::str
 }
 
 void FontSerializer::GenerateMSDF(fb::FlatBufferBuilder& builder, const std::string& name, const fs::path& cache_path,
-	int16_t glyph_width, const fs::path& font_path, float* out_dist_gradient,
+	int16_t glyph_scale, const fs::path& font_path, float* out_em_size,
 	fb::Offset<fb::Vector<fb::Offset<Assets::FontImage>>>* out_images,
 	fb::Offset<fb::Vector<fb::Offset<Assets::GlyphEntry>>>* out_glyphs)
 {
-	msdfgen::FontHandle* font = msdfgen::loadFont(ft, font_path.u8string().c_str());
-	if (!font)
-		throw "Failed to load font.";
+	FT_Face face;
+	FT_New_Face(m_FT, font_path.u8string().c_str(), 0, &face);
 
-	int num_glyphs = msdfgen::getGlyphCount(font);
-	int num_glyphs_left = num_glyphs;
-	
-	int glyph_width_squared = (int)glyph_width * (int)glyph_width;
-	int max_glyphs_per_texture = MaxTextureWidthSquared / glyph_width_squared;
-
-	if (num_glyphs > 8 * max_glyphs_per_texture)
-		throw std::runtime_error("Cannot fit glyphs into textures");
-
-	int count = 0;
-	std::cout << "Generating " << num_glyphs << " glyphs.\n";
-	std::cout << "[" << count << " / " << num_glyphs << "]\r";
-
-	fb::FlatBufferBuilder cache_builder;
-
-	std::vector<fb::Offset<Assets::GlyphEntry>> glyphs, cache_glyphs;
-	std::vector<fb::Offset<Assets::FontImage>> images, cache_images;
+	msdfgen::FontHandle* font = msdfgen::adoptFreetypeFont(face);
 
 	msdfgen::FontMetrics metrics;
 	msdfgen::getFontMetrics(metrics, font);
-	*out_dist_gradient = static_cast<float>(1.953125 / metrics.emSize);
 
-	// Generate multiple textures to fit all glyphs
-	// All 2048x2048 except last which is just big enough to fit leftover glyphs, 2^n.
-	uint32_t codepoint;
-	unsigned long charcode = msdfgen::getFirstChar(font, &codepoint);
+	*out_em_size = static_cast<float>(metrics.emSize);
 
-
-	while (num_glyphs_left > 0)
+	std::vector<msdf_atlas::GlyphGeometry> glyphs;
+	std::vector<FT_UInt> glyph_indices;
+	FT_UInt gindex;
+	FT_ULong charcode = FT_Get_First_Char(face, &gindex);
+	while (gindex != 0)
 	{
-		int num_in_image = std::min(max_glyphs_per_texture, num_glyphs_left);
-
-		double required_width = sqrt(num_in_image * glyph_width_squared);
-		int image_width = static_cast<long>(pow(2, ceil(log2(required_width))));
-		
-		msdfgen::Bitmap<float, 3> atlas(image_width, image_width);
-
-		for (int image_count = 0; image_count < num_in_image; image_count++)
+		msdf_atlas::GlyphGeometry glyph;
+		if (glyph.load(font, charcode))
 		{
-			msdfgen::Shape shape;
-			if (!msdfgen::loadGlyph(shape, font, charcode))
-				throw std::stringstream("Failed to load glyph ") << charcode << " in font " << name << ".\n";
-
-			shape.normalize();
-			msdfgen::edgeColoringSimple(shape, 3.0);
-			msdfgen::Bitmap<float, 3> msdf(glyph_width, glyph_width);
-			msdfgen::generateMSDF(msdf, shape, 4.0, msdfgen::Vector2(0.6f * (float)glyph_width / (float)metrics.emSize), msdfgen::Vector2(4.0, 10.0));
-
-			// Combine images.
-			for (int y = 0; y < glyph_width; y++) {
-				for (int x = 0; x < glyph_width; x++) {
-					for (uint32_t channel = 0; channel < 3; channel++) {
-						atlas(
-							(glyph_width * image_count) % image_width + x,
-							(int)std::floor((float)(glyph_width * image_count) / (float)image_width) * glyph_width + y
-						)[channel] = msdf(x, y)[channel];
-					}
-				}
-			}
-
-			Assets::Vec2 texture_offset = {
-				((glyph_width * image_count) % image_width) / (float)image_width,
-				(std::floor((float)(glyph_width * image_count) / (float)image_width) * glyph_width) / (float)image_width
-			};
-
-			uint8_t texture_index = (uint8_t)images.size();
-			glyphs.push_back(Assets::CreateGlyphEntry(builder, codepoint, &texture_offset, texture_index));
-			cache_glyphs.push_back(Assets::CreateGlyphEntry(cache_builder, codepoint, &texture_offset, texture_index));
-
-			if (count % 10 == 0)
-				std::cout << "[" << count << " / " << num_glyphs << "]\r";
-
-			count++;
-			charcode = msdfgen::getNextChar(font, charcode, &codepoint);
+			glyph.edgeColoring(3.0, 0);
+			glyphs.push_back(std::move(glyph));
+			glyph_indices.push_back(gindex);
 		}
-
-		std::vector<uint8_t> image_data;
-		msdfgen::savePng(atlas, (name + std::to_string(images.size()) + ".png").c_str());
-		msdfgen::savePng(atlas, image_data);
+		else
+			std::cout << "Glyph for charcode " << charcode << " missing.";
 		
-		images.push_back(Assets::CreateFontImageDirect(builder, image_width, &image_data));
-		cache_images.push_back(Assets::CreateFontImageDirect(cache_builder, image_width, &image_data));
-
-		num_glyphs_left -= num_in_image;
+		charcode = FT_Get_Next_Char(face, charcode, &gindex);
 	}
+	if (glyphs.size() == 0)
+		throw std::runtime_error("No glyphs loaded.");
+
+	msdf_atlas::TightAtlasPacker packer;
+	packer.setDimensionsConstraint(msdf_atlas::TightAtlasPacker::DimensionsConstraint::POWER_OF_TWO_SQUARE);
+	packer.setPadding(0);
+	packer.setScale(glyph_scale / metrics.emSize);
+	packer.setPixelRange(2.0);
+	packer.setUnitRange(0.0);
+	packer.setMiterLimit(1.0);
+
+	if (int remaining = packer.pack(glyphs.data(), (int)glyphs.size()))
+	{
+		if (remaining < 0)
+			throw std::runtime_error("Failed to pack glyphs into atlas.");
+		else
+			throw std::runtime_error("Could not fit glyphs into atlas.");
+	}
+
+	int image_width, image_height;
+	packer.getDimensions(image_width, image_height);
+
+	if (image_width != image_height)
+		throw std::runtime_error("Image width does not equal height");
+	if (image_width > 2048)
+		throw std::runtime_error("Image width greater than 2048. Implement multiple atlases.");
+
+	using BitmapStorageType = msdf_atlas::byte;
+	msdf_atlas::ImmediateAtlasGenerator<float, MSDFChannels, msdf_atlas::msdfGenerator,
+		msdf_atlas::BitmapAtlasStorage<BitmapStorageType, MSDFChannels>> generator(image_width, image_height);
+
+	msdf_atlas::GeneratorAttributes attributes;
+	attributes.overlapSupport = false;
+	attributes.scanlinePass = false;
+	attributes.errorCorrectionThreshold = MSDFGEN_DEFAULT_ERROR_CORRECTION_THRESHOLD;
+
+	int n_threads = std::max((int)std::thread::hardware_concurrency(), 1);
+	generator.setAttributes(attributes);
+	generator.setThreadCount(n_threads);
+
+	generator.generate(glyphs.data(), (int)glyphs.size());
+	msdfgen::BitmapConstRef<BitmapStorageType, MSDFChannels> bitmap = generator.atlasStorage();
+
 	msdfgen::destroyFont(font);
+	FT_Done_Face(face);
 
-	*out_glyphs = builder.CreateVector(cache_glyphs);
-	*out_images = builder.CreateVector(cache_images);
+	fb::FlatBufferBuilder cache_builder;
+	std::vector<fb::Offset<Assets::GlyphEntry>> out_glyphs_vec, cache_glyphs_vec;
+	std::vector<fb::Offset<Assets::FontImage>> out_images_vec, cache_images_vec;
+	// Save glyph bounds.
+	auto it = glyph_indices.begin();
+	for (const msdf_atlas::GlyphGeometry& glyph : glyphs)
+	{
+		double left, bottom, right, top;
 
-	auto cache_glyphs_offset = cache_builder.CreateVector(cache_glyphs);
-	auto cache_images_offset = cache_builder.CreateVector(cache_images);
+		glyph.getQuadAtlasBounds(left, bottom, right, top);
+		Assets::Vec4 atlas_bounds = { 
+			static_cast<float>(left / image_width),
+			static_cast<float>(bottom / image_height),
+			static_cast<float>(right / image_width),
+			static_cast<float>(top / image_height)
+		};
 
-	auto cache_font = Assets::CreateFont(cache_builder, cache_builder.CreateString(name), glyph_width, *out_dist_gradient, cache_glyphs_offset, cache_images_offset);
+		glyph.getQuadPlaneBounds(left, bottom, right, top);
+		Assets::Vec4 plane_bounds = {
+			static_cast<float>(left),
+			static_cast<float>(bottom),
+			static_cast<float>(right),
+			static_cast<float>(top)
+		};
+
+		uint32_t gindex = *it;
+		out_glyphs_vec.push_back(Assets::CreateGlyphEntry(builder, gindex, &atlas_bounds, &plane_bounds, 0));
+		cache_glyphs_vec.push_back(Assets::CreateGlyphEntry(cache_builder, gindex, &atlas_bounds, &plane_bounds, 0));
+
+		++it;
+	}
+	// Save image.
+	std::vector<uint8_t> image_data;
+	//if (msdfgen::savePng(bitmap, (name + ".png").c_str()) == false)
+	//	throw std::runtime_error("Failed to save png");
+	if (msdfgen::savePng(bitmap, image_data) == false)
+		throw std::runtime_error("Failed to save font png");
+
+	out_images_vec.push_back(Assets::CreateFontImageDirect(builder, image_width, &image_data));
+	cache_images_vec.push_back(Assets::CreateFontImageDirect(cache_builder, image_width, &image_data));
+	
+
+	// Set resource file outputs.
+	*out_glyphs = builder.CreateVector(out_glyphs_vec);
+	*out_images = builder.CreateVector(out_images_vec);
+
+	// Generate cache file.
+	auto cache_glyphs_offset = cache_builder.CreateVector(cache_glyphs_vec);
+	auto cache_images_offset = cache_builder.CreateVector(cache_images_vec);
+
+	auto cache_font = Assets::CreateFont(cache_builder, cache_builder.CreateString(name), glyph_scale, *out_em_size, cache_glyphs_offset, cache_images_offset);
 	cache_builder.Finish(cache_font, "FONT");
 
-	// Write cache file.
+	// Write cache file to disk.
 	fs::create_directories(cache_path.parent_path());
 	std::ofstream cache_file(cache_path, std::ios::out | std::ios::trunc | std::ios::binary);
-	if (!cache_file.is_open() || !cache_file.good()) {
+	if (!cache_file.is_open() || !cache_file.good())
 		throw "Failed to write cache file!";
-	}
 
 	cache_file.write((const char*)cache_builder.GetBufferPointer(), cache_builder.GetSize());
 	cache_file.close();

@@ -12,13 +12,15 @@ namespace Li
 {
 	struct FontProps
 	{
-		uint16_t GlyphWidth;
+		float GlyphScale;
+		float EmSize;
 		float DistanceGradient;
 	};
 
 	struct GlyphProps
 	{
-		glm::vec2 texture_offset;
+		glm::vec4 atlas_bounds;
+		glm::vec4 plane_bounds;
 		int texture_index;
 	};
 
@@ -33,7 +35,7 @@ namespace Li
 		virtual ~Font();
 
 		inline const FontProps& GetProps() const { return m_Props; }
-		const GlyphProps& GetGlyphProps(int16_t character) const;
+		const GlyphProps& GetGlyphProps(uint32_t gindex) const;
 		inline const std::array<Ref<Texture2D>, MaxTextures>& GetTextures() const { return m_Textures; }
 		inline int GetTextureCount() const { return m_TextureCount; }
 

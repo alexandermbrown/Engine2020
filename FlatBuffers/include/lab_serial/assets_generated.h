@@ -817,23 +817,28 @@ inline flatbuffers::Offset<TextureAtlas> CreateTextureAtlasDirect(
 struct GlyphEntry FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef GlyphEntryBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_CODEPOINT = 4,
-    VT_TEXTURE_OFFSET = 6,
-    VT_TEXTURE_INDEX = 8
+    VT_GINDEX = 4,
+    VT_ATLAS_BOUNDS = 6,
+    VT_PLANE_BOUNDS = 8,
+    VT_TEXTURE_INDEX = 10
   };
-  uint32_t codepoint() const {
-    return GetField<uint32_t>(VT_CODEPOINT, 0);
+  uint32_t gindex() const {
+    return GetField<uint32_t>(VT_GINDEX, 0);
   }
-  const Assets::Vec2 *texture_offset() const {
-    return GetStruct<const Assets::Vec2 *>(VT_TEXTURE_OFFSET);
+  const Assets::Vec4 *atlas_bounds() const {
+    return GetStruct<const Assets::Vec4 *>(VT_ATLAS_BOUNDS);
+  }
+  const Assets::Vec4 *plane_bounds() const {
+    return GetStruct<const Assets::Vec4 *>(VT_PLANE_BOUNDS);
   }
   uint8_t texture_index() const {
     return GetField<uint8_t>(VT_TEXTURE_INDEX, 0);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint32_t>(verifier, VT_CODEPOINT) &&
-           VerifyField<Assets::Vec2>(verifier, VT_TEXTURE_OFFSET) &&
+           VerifyField<uint32_t>(verifier, VT_GINDEX) &&
+           VerifyField<Assets::Vec4>(verifier, VT_ATLAS_BOUNDS) &&
+           VerifyField<Assets::Vec4>(verifier, VT_PLANE_BOUNDS) &&
            VerifyField<uint8_t>(verifier, VT_TEXTURE_INDEX) &&
            verifier.EndTable();
   }
@@ -843,11 +848,14 @@ struct GlyphEntryBuilder {
   typedef GlyphEntry Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_codepoint(uint32_t codepoint) {
-    fbb_.AddElement<uint32_t>(GlyphEntry::VT_CODEPOINT, codepoint, 0);
+  void add_gindex(uint32_t gindex) {
+    fbb_.AddElement<uint32_t>(GlyphEntry::VT_GINDEX, gindex, 0);
   }
-  void add_texture_offset(const Assets::Vec2 *texture_offset) {
-    fbb_.AddStruct(GlyphEntry::VT_TEXTURE_OFFSET, texture_offset);
+  void add_atlas_bounds(const Assets::Vec4 *atlas_bounds) {
+    fbb_.AddStruct(GlyphEntry::VT_ATLAS_BOUNDS, atlas_bounds);
+  }
+  void add_plane_bounds(const Assets::Vec4 *plane_bounds) {
+    fbb_.AddStruct(GlyphEntry::VT_PLANE_BOUNDS, plane_bounds);
   }
   void add_texture_index(uint8_t texture_index) {
     fbb_.AddElement<uint8_t>(GlyphEntry::VT_TEXTURE_INDEX, texture_index, 0);
@@ -866,12 +874,14 @@ struct GlyphEntryBuilder {
 
 inline flatbuffers::Offset<GlyphEntry> CreateGlyphEntry(
     flatbuffers::FlatBufferBuilder &_fbb,
-    uint32_t codepoint = 0,
-    const Assets::Vec2 *texture_offset = 0,
+    uint32_t gindex = 0,
+    const Assets::Vec4 *atlas_bounds = 0,
+    const Assets::Vec4 *plane_bounds = 0,
     uint8_t texture_index = 0) {
   GlyphEntryBuilder builder_(_fbb);
-  builder_.add_texture_offset(texture_offset);
-  builder_.add_codepoint(codepoint);
+  builder_.add_plane_bounds(plane_bounds);
+  builder_.add_atlas_bounds(atlas_bounds);
+  builder_.add_gindex(gindex);
   builder_.add_texture_index(texture_index);
   return builder_.Finish();
 }
@@ -944,8 +954,8 @@ struct Font FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef FontBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_NAME = 4,
-    VT_GLYPH_WIDTH = 6,
-    VT_DISTANCE_GRADIENT = 8,
+    VT_GLYPH_SCALE = 6,
+    VT_EM_SIZE = 8,
     VT_GLYPHS = 10,
     VT_IMAGES = 12,
     VT_TTF = 14
@@ -953,11 +963,11 @@ struct Font FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::String *name() const {
     return GetPointer<const flatbuffers::String *>(VT_NAME);
   }
-  int16_t glyph_width() const {
-    return GetField<int16_t>(VT_GLYPH_WIDTH, 0);
+  int16_t glyph_scale() const {
+    return GetField<int16_t>(VT_GLYPH_SCALE, 0);
   }
-  float distance_gradient() const {
-    return GetField<float>(VT_DISTANCE_GRADIENT, 0.0f);
+  float em_size() const {
+    return GetField<float>(VT_EM_SIZE, 0.0f);
   }
   const flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>> *glyphs() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>> *>(VT_GLYPHS);
@@ -972,8 +982,8 @@ struct Font FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_NAME) &&
            verifier.VerifyString(name()) &&
-           VerifyField<int16_t>(verifier, VT_GLYPH_WIDTH) &&
-           VerifyField<float>(verifier, VT_DISTANCE_GRADIENT) &&
+           VerifyField<int16_t>(verifier, VT_GLYPH_SCALE) &&
+           VerifyField<float>(verifier, VT_EM_SIZE) &&
            VerifyOffset(verifier, VT_GLYPHS) &&
            verifier.VerifyVector(glyphs()) &&
            verifier.VerifyVectorOfTables(glyphs()) &&
@@ -993,11 +1003,11 @@ struct FontBuilder {
   void add_name(flatbuffers::Offset<flatbuffers::String> name) {
     fbb_.AddOffset(Font::VT_NAME, name);
   }
-  void add_glyph_width(int16_t glyph_width) {
-    fbb_.AddElement<int16_t>(Font::VT_GLYPH_WIDTH, glyph_width, 0);
+  void add_glyph_scale(int16_t glyph_scale) {
+    fbb_.AddElement<int16_t>(Font::VT_GLYPH_SCALE, glyph_scale, 0);
   }
-  void add_distance_gradient(float distance_gradient) {
-    fbb_.AddElement<float>(Font::VT_DISTANCE_GRADIENT, distance_gradient, 0.0f);
+  void add_em_size(float em_size) {
+    fbb_.AddElement<float>(Font::VT_EM_SIZE, em_size, 0.0f);
   }
   void add_glyphs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>>> glyphs) {
     fbb_.AddOffset(Font::VT_GLYPHS, glyphs);
@@ -1023,8 +1033,8 @@ struct FontBuilder {
 inline flatbuffers::Offset<Font> CreateFont(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> name = 0,
-    int16_t glyph_width = 0,
-    float distance_gradient = 0.0f,
+    int16_t glyph_scale = 0,
+    float em_size = 0.0f,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::GlyphEntry>>> glyphs = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Assets::FontImage>>> images = 0,
     flatbuffers::Offset<flatbuffers::Vector<uint8_t>> ttf = 0) {
@@ -1032,17 +1042,17 @@ inline flatbuffers::Offset<Font> CreateFont(
   builder_.add_ttf(ttf);
   builder_.add_images(images);
   builder_.add_glyphs(glyphs);
-  builder_.add_distance_gradient(distance_gradient);
+  builder_.add_em_size(em_size);
   builder_.add_name(name);
-  builder_.add_glyph_width(glyph_width);
+  builder_.add_glyph_scale(glyph_scale);
   return builder_.Finish();
 }
 
 inline flatbuffers::Offset<Font> CreateFontDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *name = nullptr,
-    int16_t glyph_width = 0,
-    float distance_gradient = 0.0f,
+    int16_t glyph_scale = 0,
+    float em_size = 0.0f,
     const std::vector<flatbuffers::Offset<Assets::GlyphEntry>> *glyphs = nullptr,
     const std::vector<flatbuffers::Offset<Assets::FontImage>> *images = nullptr,
     const std::vector<uint8_t> *ttf = nullptr) {
@@ -1053,8 +1063,8 @@ inline flatbuffers::Offset<Font> CreateFontDirect(
   return Assets::CreateFont(
       _fbb,
       name__,
-      glyph_width,
-      distance_gradient,
+      glyph_scale,
+      em_size,
       glyphs__,
       images__,
       ttf__);

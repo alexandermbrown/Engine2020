@@ -1087,7 +1087,8 @@ struct cff1
       if (num_glyphs != sc.get_num_glyphs ())
       { fini (); return; }
 
-      privateDicts.resize (fdCount);
+      if (unlikely (!privateDicts.resize (fdCount)))
+      { fini (); return; }
       for (unsigned int i = 0; i < fdCount; i++)
 	privateDicts[i].init ();
 
@@ -1389,7 +1390,7 @@ struct cff1
 
   public:
   FixedVersion<HBUINT8> version;	  /* Version of CFF table. set to 0x0100u */
-  OffsetTo<CFF1NameIndex, HBUINT8> nameIndex; /* headerSize = Offset to Name INDEX. */
+  NNOffsetTo<CFF1NameIndex, HBUINT8> nameIndex; /* headerSize = Offset to Name INDEX. */
   HBUINT8	       offSize;	  /* offset size (unused?) */
 
   public:

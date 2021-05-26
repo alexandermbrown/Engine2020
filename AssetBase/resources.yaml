@@ -87,32 +87,32 @@ texture_terrain_test:
 Lato-Regular:
   type: font
   path: './res/fonts/Lato/Lato-Regular.ttf'
-  glyph_width: 64
+  glyph_scale: 24
 
 Lora-Regular:
   type: font
   path: './res/fonts/Lora/Lora-Regular.ttf'
-  glyph_width: 64
+  glyph_scale: 32
 
 Tomorrow-Regular:
   type: font
   path: './res/fonts/Tomorrow/Tomorrow-Regular.ttf'
-  glyph_width: 64
+  glyph_scale: 32
 
 SourceCodePro-Regular:
   type: font
   path: './res/fonts/SourceCodePro/SourceCodePro-Regular.ttf'
-  glyph_width: 64
+  glyph_scale: 32
 
 SourceCodePro-Light:
   type: font
   path: './res/fonts/SourceCodePro/SourceCodePro-Light.ttf'
-  glyph_width: 64
+  glyph_scale: 32
 
 SourceCodePro-Bold:
   type: font
   path: './res/fonts/SourceCodePro/SourceCodePro-Bold.ttf'
-  glyph_width: 64
+  glyph_scale: 32
 
 ### Texture Atlases ###
 atlas_default:

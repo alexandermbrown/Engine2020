@@ -34,4 +34,3 @@ filter "configurations:Dist"
 	runtime "Release"
 	optimize "on"
 	defines { "NDEBUG" }
-	
