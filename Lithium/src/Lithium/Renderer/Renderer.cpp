@@ -282,9 +282,8 @@ namespace Li
 
 		const auto& font = label->GetFont();
 		const auto& textures = font->GetTextures();
-		for (int i = 0; i < font->GetTextureCount(); i++) {
+		for (int i = 0; i < font->GetTextureCount(); i++)
 			textures[i]->Bind(i);
-		}
 		
 		vertex_array->Bind();
 		Application::Get().GetWindow().GetContext()->SetDrawMode(DrawMode::Triangles);

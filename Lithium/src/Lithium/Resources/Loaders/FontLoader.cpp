@@ -8,7 +8,6 @@ namespace Li::Loaders
 		FontProps props;
 		props.GlyphScale = (float)font->glyph_scale();
 		props.EmSize = font->em_size();
-		props.DistanceGradient = 0.9f / props.EmSize;
 
 		const auto* saved_glyphs = font->glyphs();
 		Font::GlyphPropsMap glyph_props(saved_glyphs->size());

@@ -14,7 +14,6 @@ namespace Li
 	{
 		float GlyphScale;
 		float EmSize;
-		float DistanceGradient;
 	};
 
 	struct GlyphProps
