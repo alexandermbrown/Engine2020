@@ -4,7 +4,6 @@
 #include "Article/Gameplay/Sync/Sync.h"
 #include "Article/Gameplay/Sync/SyncTransform.h"
 
-#include "Lithium.h"
 #include "readerwriterqueue/readerwriterqueue.h"
 #include "entt/entt.hpp"
 

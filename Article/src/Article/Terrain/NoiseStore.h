@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "Lithium.h"
+#include "Lithium/Renderer/Texture.h"
+#include "Lithium/Core/Memory.h"
 
 class NoiseStore
 {

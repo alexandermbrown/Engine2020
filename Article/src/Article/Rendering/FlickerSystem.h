@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lithium.h"
+#include "Lithium/Utility/Time.h"
 #include "entt/entt.hpp"
 
 namespace Systems::Flicker

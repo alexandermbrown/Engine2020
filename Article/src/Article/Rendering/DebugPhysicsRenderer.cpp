@@ -2,6 +2,8 @@
 #include "DebugPhysicsRenderer.h"
 #ifdef HZ_PHYSICS_DEBUG_DRAW
 
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Renderer/Renderer.h"
 #include <math.h>
 
 void DebugPhysicsRenderer::SubmitLines(DebugDrawCommandQueue* queue)

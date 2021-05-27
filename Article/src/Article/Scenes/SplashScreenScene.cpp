@@ -9,6 +9,8 @@
 #include "Article/Core/AppState.h"
 #include "Article/Scripting/TerrainData.h"
 
+#include "Lithium/Resources/ResourceManager.h"
+
 void SplashScreenScene::OnShow()
 {
 	ArticleApp& app = Li::Application::Get<ArticleApp>();

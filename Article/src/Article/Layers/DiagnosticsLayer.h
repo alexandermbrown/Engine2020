@@ -1,6 +1,7 @@
 #pragma once
 #ifndef LI_DIST
-#include "Lithium.h"
+#include "Lithium/Core/Layer.h"
+#include "Lithium/Utility/Timer.h"
 
 class DiagnosticsLayer : public Li::Layer
 {

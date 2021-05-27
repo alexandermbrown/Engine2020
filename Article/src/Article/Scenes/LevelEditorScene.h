@@ -2,7 +2,7 @@
 #ifndef LI_DIST
 #include "Article/Layers/LevelEditorLayer.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Scene.h"
 
 class LevelEditorScene : public Li::Scene
 {

@@ -4,6 +4,8 @@
 #include "RenderingComponents.h"
 #include "Article/Gameplay/TransformComponent.h"
 
+#include "Lithium/Renderer/Renderer.h"
+
 void RenderingSystem::Render(entt::registry& registry)
 {
 	registry.sort<cp::transform>([](const cp::transform& lhs, const cp::transform& rhs) {

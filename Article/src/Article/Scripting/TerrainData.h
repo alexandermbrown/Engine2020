@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lithium.h"
+#include "Lithium/Renderer/Texture.h"
 #include "entt/entt.hpp"
 
 #include <stdint.h>

@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "ConfigConvert.h"
 
-#include "Lithium.h"
-
 std::string BoolToString(bool value)
 {
 	if (value)

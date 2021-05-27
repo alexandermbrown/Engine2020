@@ -5,7 +5,8 @@
 #include "Article/Gameplay/Player/PlayerComponents.h"
 #include "Article/Gameplay/TransformComponent.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Application.h"
+#include "Lithium/Core/Assert.h"
 
 void CameraControllerSystem::Init(entt::registry& registry)
 {

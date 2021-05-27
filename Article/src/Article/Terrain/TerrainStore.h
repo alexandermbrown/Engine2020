@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Lithium.h"
+#include "Lithium/Renderer/Buffer.h"
+#include "Lithium/Renderer/VertexArray.h"
 #include "glm/glm.hpp"
 #include <string>
 

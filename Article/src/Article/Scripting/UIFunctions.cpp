@@ -6,6 +6,8 @@
 #include "Article/UI/UIComponents.h"
 #include "Article/Rendering/RenderingComponents.h"
 
+#include "Lithium/Resources/ResourceManager.h"
+
 #include "layout/layout.h"
 #include "entt/entt.hpp"
 

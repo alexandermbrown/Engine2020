@@ -1,6 +1,7 @@
 #pragma once
 #ifndef LI_DIST
-#include "Lithium.h"
+#include "Lithium/Utility/Time.h"
+
 #include "SDL.h"
 #include "entt/entt.hpp"
 #include "glm/glm.hpp"
@@ -14,5 +15,4 @@ namespace EditorCameraSystem
 	void Resize(entt::registry& registry, int width, int height);
 	glm::vec2 GetCameraFocusPoint(entt::registry& registry);
 }
-
 #endif

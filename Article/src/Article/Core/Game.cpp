@@ -12,6 +12,9 @@
 #include "Article/Gameplay/Physics/DebugDrawSystem.h"
 #endif
 
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Log.h"
+
 #include <chrono>
 
 Game* Game::s_Instance = nullptr;

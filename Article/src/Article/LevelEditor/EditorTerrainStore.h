@@ -3,6 +3,8 @@
 #include "Article/Terrain/TerrainStore.h"
 #include "EditorSettings.h"
 
+#include "Lithium/Utility/Time.h"
+
 #include "glm/glm.hpp"
 #include <fstream>
 

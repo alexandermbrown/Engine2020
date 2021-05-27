@@ -2,7 +2,7 @@
 #ifndef LI_DIST
 #include "NewTerrainModal.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Log.h"
 
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"

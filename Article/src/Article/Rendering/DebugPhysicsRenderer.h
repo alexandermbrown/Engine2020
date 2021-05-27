@@ -2,7 +2,6 @@
 
 #ifdef HZ_PHYSICS_DEBUG_DRAW
 #include "DebugPhysicsDrawShared.h"
-#include "Lithium.h"
 
 #include <queue>
 

@@ -10,6 +10,10 @@
 #include "Article/Layers/ConsoleLayer.h"
 #endif
 
+#include "Lithium/Localization/Localization.h"
+#include "Lithium/Renderer/Renderer.h"
+#include "Lithium/Resources/ResourceManager.h"
+
 #ifdef HZ_PLATFORM_WINDOWS
 #include <shlobj.h>
 #endif

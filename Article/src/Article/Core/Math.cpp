@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Math.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Application.h"
 #include <cmath>
 
 bool Math::TransformContainsPoint(const glm::mat4& transform, int x, int y)

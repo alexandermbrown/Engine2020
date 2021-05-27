@@ -3,10 +3,11 @@
 #include "VideoPlayerScene.h"
 
 #include "ArticleApp.h"
+#include "Article/Scripting/ScriptScene.h"
+#include "Lithium/Renderer/Renderer.h"
+
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
-#include "Article/Scripting/ScriptScene.h"
 
 //////////////////////
 // VideoPlayerLayer //

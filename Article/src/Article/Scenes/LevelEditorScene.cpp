@@ -2,6 +2,8 @@
 #ifndef LI_DIST
 #include "LevelEditorScene.h"
 
+#include "Lithium/Core/Application.h"
+
 LevelEditorScene::LevelEditorScene()
 {
 }

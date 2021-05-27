@@ -1,8 +1,11 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include "Lithium/Core/Memory.h"
+#include "Lithium/Renderer/OrthographicCamera.h"
+#include "Lithium/Renderer/Text/Label.h"
+#include "Lithium/Utility/Timer.h"
 
-#include "Lithium.h"
+#include "glm/glm.hpp"
 
 namespace cp
 {

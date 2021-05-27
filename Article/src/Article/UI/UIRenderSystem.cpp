@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "UIRenderSystem.h"
 
-#include "Lithium.h"
-#include "Article/Rendering/RenderingComponents.h"
 #include "UIComponents.h"
+#include "Article/Rendering/RenderingComponents.h"
+#include "Lithium/Renderer/Renderer.h"
 
 void RenderQuads(entt::registry& registry);
 void RenderLabels(entt::registry& registry);

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Lithium.h"
+#include "Lithium/Core/Layer.h"
+#include "Lithium/Renderer/Texture.h"
+
+#include "glm/glm.hpp"
 
 class SplashScreenLayer : public Li::Layer
 {

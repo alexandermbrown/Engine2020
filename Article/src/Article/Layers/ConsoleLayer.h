@@ -3,7 +3,7 @@
 #ifndef LI_DIST
 #include "Article/Console/Command.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Layer.h"
 #include "imgui.h"
 
 class ConsoleLayer : public Li::Layer

@@ -2,7 +2,9 @@
 #ifndef LI_DIST
 #include "Command.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Memory.h"
+#include "glm/glm.hpp"
 
 class Console
 {

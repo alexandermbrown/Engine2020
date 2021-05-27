@@ -11,6 +11,9 @@
 
 #include "Article/Gameplay/Player/PlayerComponents.h"
 
+#include "Lithium/Renderer/Renderer.h"
+#include "Lithium/Resources/ResourceManager.h"
+
 #include "glm/gtc/type_ptr.hpp"
 
 GameLayer::GameLayer()

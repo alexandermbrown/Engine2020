@@ -4,6 +4,8 @@
 #include "Article/Core/Game.h"
 #include "Article/Core/UserEvents.h"
 
+#include "Lithium/Core/Assert.h"
+
 bool ConfigReceiveSystem::OnEvent(SDL_Event* event)
 {
 	ConfigStore& store = Game::Get()->GetConfig();

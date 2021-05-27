@@ -5,6 +5,9 @@
 #include "Article/Core/Math.h"
 #include "Article/Terrain/TerrainRenderer.h"
 
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Application.h"
+
 #include "glm/gtc/matrix_transform.hpp"
 #include <cmath>
 

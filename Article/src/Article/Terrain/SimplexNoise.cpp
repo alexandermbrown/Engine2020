@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "SimplexNoise.h"
 
+#include "Lithium/Core/Assert.h"
+
 #include "glm/glm.hpp"
+#include "SDL.h"
 
 // Sources:
 // https://adrianb.io/2014/08/09/perlinnoise.html

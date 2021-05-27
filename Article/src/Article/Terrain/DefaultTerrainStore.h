@@ -2,7 +2,6 @@
 
 #include "TerrainStore.h"
 
-#include "Lithium.h"
 #include "glm/glm.hpp"
 
 #include <array>

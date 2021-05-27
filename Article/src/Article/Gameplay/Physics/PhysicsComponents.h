@@ -4,7 +4,7 @@
 #include "DebugDrawSystem.h"
 #endif
 
-#include "Lithium.h"
+#include "Lithium/Core/Memory.h"
 #include "box2d/box2d.h"
 
 namespace cp

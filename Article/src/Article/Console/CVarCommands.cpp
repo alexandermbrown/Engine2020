@@ -1,12 +1,14 @@
 #include "pch.h"
 
 #include "ArticleApp.h"
-#include "Lithium.h"
 
 #ifdef HZ_CONSOLE_ENABLED
 #include "Article/Config/ConfigConvert.h"
 #include "Article/Core/UserEvents.h"
 #include "Article/Core/AppState.h"
+
+#include "Lithium/Core/Application.h"
+#include "Lithium/Core/Log.h"
 
 #include "CVarCommands.h"
 

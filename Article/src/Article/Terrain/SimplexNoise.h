@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lithium.h"
+#include "Lithium/Renderer/Texture.h"
 
 class SimplexNoise
 {

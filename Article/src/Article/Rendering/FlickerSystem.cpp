@@ -3,6 +3,8 @@
 
 #include "RenderingComponents.h"
 
+#include "Lithium/Utility/Random.h"
+
 void Systems::Flicker::OnUpdate(entt::registry& registry, Li::Duration::us dt)
 {
 	Li::Random& rand = registry.ctx<Li::Random>();

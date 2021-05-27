@@ -2,7 +2,7 @@
 
 #include "Article/Gameplay/Sync/Sync.h"
 
-#include "Lithium.h"
+#include "Lithium/Utility/Time.h"
 #include "entt/entt.hpp"
 #include "SDL.h"
 

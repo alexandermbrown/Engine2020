@@ -7,9 +7,12 @@
 #include "Article/Core/Math.h"
 #include "EditorComponents.h"
 
-#include "Lithium.h"
+#include "Lithium/Renderer/Renderer.h"
 #include "glm/gtc/matrix_transform.hpp"
-#include <cmath>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "SDL.h"
+#include <math.h>
 
 void TerrainVerticeSystem::SubmitVerticesShow(entt::registry& registry, glm::ivec2 chunk_center, int render_width)
 {

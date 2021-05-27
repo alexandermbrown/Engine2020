@@ -8,7 +8,7 @@
 #	include "Article/Rendering/DebugPhysicsDrawShared.h"
 #endif
 
-#include "Lithium.h"
+#include "Lithium/Utility/Time.h"
 #include "SDL.h"
 #include "entt/entt.hpp"
 #include "readerwriterqueue/readerwriterqueue.h"

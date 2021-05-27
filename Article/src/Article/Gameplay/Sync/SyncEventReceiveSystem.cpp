@@ -6,7 +6,8 @@
 #include "Article/Rendering/RenderingComponents.h"
 #include "Article/Gameplay/Sync/SyncTransform.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Log.h"
 
 template<typename Component>
 void AddComponent(entt::registry& registry, SyncEvent& event)

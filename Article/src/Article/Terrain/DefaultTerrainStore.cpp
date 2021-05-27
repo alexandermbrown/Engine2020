@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "DefaultTerrainStore.h"
 
-#include "Lithium.h"
 #include "Article/Core/Math.h"
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Log.h"
 
 DefaultTerrainStore::DefaultTerrainStore(int store_width)
 	: m_StoreWidth(store_width), m_WorldWidth(0), m_WorldHeight(0), m_Center(0, 0), m_Open(false)

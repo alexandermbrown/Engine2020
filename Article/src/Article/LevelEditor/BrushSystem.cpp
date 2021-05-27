@@ -5,7 +5,7 @@
 #include "EditorComponents.h"
 #include "Article/Rendering/RenderingComponents.h"
 
-#include "Lithium.h"
+#include "Lithium/Renderer/Renderer.h"
 
 void BrushSystem::SubmitBrush(entt::registry& registry, glm::ivec2 mouse_pos, glm::ivec2 view_size)
 {

@@ -11,7 +11,7 @@
 #include "Article/Console/Console.h"
 #endif
 
-#include "Lithium.h"
+#include "Lithium/Core/Application.h"
 
 class ArticleApp : public Li::Application
 {

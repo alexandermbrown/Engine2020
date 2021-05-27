@@ -5,7 +5,7 @@
 #include "Article/LevelEditor/TerrainEditingPanel.h"
 #include "Article/LevelEditor/NewTerrainModal.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Layer.h"
 #include "entt/entt.hpp"
 #include "glm/glm.hpp"
 #include "SDL.h"

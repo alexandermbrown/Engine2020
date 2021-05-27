@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Lithium.h"
+#include "Lithium/Renderer/Framebuffer.h"
+#include "Lithium/Renderer/OrthographicCamera.h"
+#include "Lithium/Renderer/Shader.h"
+#include "Lithium/Renderer/UniformBuffer.h"
 #include "glm/glm.hpp"
 
 #include "TerrainStore.h"

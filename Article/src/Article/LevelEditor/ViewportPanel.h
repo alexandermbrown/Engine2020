@@ -1,6 +1,7 @@
 #pragma once
 #ifndef LI_DIST
-#include "Lithium.h"
+#include "Lithium/Renderer/Framebuffer.h"
+#include "Lithium/Utility/Time.h"
 #include "SDL.h"
 #include "glm/glm.hpp"
 #include "entt/entt.hpp"

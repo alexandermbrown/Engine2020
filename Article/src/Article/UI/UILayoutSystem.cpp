@@ -3,7 +3,9 @@
 
 #include "Article/Gameplay/TransformComponent.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Application.h"
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Log.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace Systems::UILayout

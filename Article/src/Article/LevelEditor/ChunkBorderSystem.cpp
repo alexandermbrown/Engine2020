@@ -5,7 +5,7 @@
 #include "Article/Rendering/RenderingComponents.h"
 #include "Article/Terrain/TerrainRenderer.h"
 
-#include "Lithium.h"
+#include "Lithium/Renderer/Renderer.h"
 
 void ChunkBorderSystem::SubmitBorders(entt::registry& registry, glm::vec2 camera_focus, glm::ivec2 world_size)
 {

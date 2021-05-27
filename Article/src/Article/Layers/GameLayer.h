@@ -10,7 +10,9 @@
 #include "Article/Terrain/TerrainRenderer.h"
 #include "Article/Terrain/DefaultTerrainStore.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Layer.h"
+#include "Lithium/Audio/AudioSource.h"
+#include "Lithium/Renderer/ParticleEmitter.h"
 #include "glm/glm.hpp"
 #include "readerwriterqueue/readerwriterqueue.h"
 #include "entt/entt.hpp"

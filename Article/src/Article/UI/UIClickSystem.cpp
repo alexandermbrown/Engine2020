@@ -4,7 +4,7 @@
 #include "UIComponents.h"
 #include "Article/Core/Math.h"
 
-#include "Lithium.h"
+#include "Lithium/Core/Log.h"
 #include <limits>
 
 bool OnMouseDown(entt::registry& registry, int x, int y, int button);

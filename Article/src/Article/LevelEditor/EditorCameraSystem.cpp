@@ -5,6 +5,8 @@
 #include "Article/Rendering/RenderingComponents.h"
 #include "EditorComponents.h"
 
+#include "Lithium/Core/Assert.h"
+
 void EditorCameraSystem::Init(entt::registry& registry)
 {
 	cp::camera& camera = registry.set<cp::camera>();

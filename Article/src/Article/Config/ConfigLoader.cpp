@@ -2,7 +2,8 @@
 #include "ConfigLoader.h"
 
 #include "ConfigConvert.h"
-#include "Lithium.h"
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Log.h"
 
 bool StringToBool(const std::string& value, bool default)
 {

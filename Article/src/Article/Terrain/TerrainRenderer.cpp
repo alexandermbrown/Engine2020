@@ -6,6 +6,11 @@
 #include "Article/Rendering/ShaderInterop/AtlasBoundsCB.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "Lithium/Renderer/Renderer.h"
+#include "Lithium/Renderer/ShaderInterop/ViewProjCB.h"
+#include "Lithium/Renderer/ShaderInterop/TransformCB.h"
+#include "Lithium/Resources/ResourceManager.h"
+
 TerrainRenderer::TerrainRenderer(TerrainStore* store, int render_width)
 	: m_Store(store), RenderWidth(render_width)
 {

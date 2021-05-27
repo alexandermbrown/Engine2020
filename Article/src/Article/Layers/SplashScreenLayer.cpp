@@ -6,6 +6,10 @@
 #include "ArticleApp.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "Lithium/Localization/Localization.h"
+#include "Lithium/Renderer/Renderer.h"
+#include "Lithium/Resources/ResourceManager.h"
+
 SplashScreenLayer::SplashScreenLayer()
 	: Layer("SplashScreen")
 {

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Lithium.h"
 #include "sol.hpp"
 
 class ScriptContext

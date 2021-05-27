@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Article/ECS/ECS.h"
-#include "Lithium.h"
+#include "Lithium/Core/Layer.h"
 #include "sol.hpp"
 
 class ScriptLayer : public Li::Layer

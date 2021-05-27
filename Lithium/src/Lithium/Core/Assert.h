@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Lithium/Core/Log.h"
+
 #ifdef LI_DEBUG
 #define LI_ENABLE_ASSERTS
 #endif

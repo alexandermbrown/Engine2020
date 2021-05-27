@@ -9,6 +9,10 @@
 #include "TerrainVerticeSystem.h"
 #include "ChunkBorderSystem.h"
 
+#include "Lithium/Core/Application.h"
+#include "Lithium/Core/Assert.h"
+#include "Lithium/Renderer/Renderer.h"
+
 #include "imgui.h"
 
 ViewportPanel::ViewportPanel(EditorSettings* settings)
