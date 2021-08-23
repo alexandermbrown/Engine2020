@@ -29,6 +29,7 @@ namespace Li
 		virtual void SwapBuffers() override;
 		virtual void UnbindResources(uint32_t slot, uint32_t count) override;
 		virtual void UnbindUAVs(uint32_t slot, uint32_t count) override;
+		virtual void UnbindVertexArray() override;
 
 		inline const Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() { return m_Device; }
 		inline const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() { return m_DeviceContext; }

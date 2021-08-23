@@ -43,11 +43,6 @@ namespace Li
 		if (m_IndexBuffer) m_IndexBuffer->Bind();
 	}
 
-	void OpenGLVertexArray::Unbind() const
-	{
-		glBindVertexArray(0);
-	}
-
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffer)
 	{
 		LI_CORE_ASSERT(vertex_buffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");

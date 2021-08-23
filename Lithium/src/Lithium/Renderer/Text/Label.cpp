@@ -1,6 +1,7 @@
 #include "lipch.h"
 #include "Label.h"
 
+#include "Lithium/Core/Application.h"
 #include "Lithium/Renderer/Renderer.h"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -169,7 +170,7 @@ namespace Li
 		});
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 		m_VertexArray->Finalize(Renderer::GetFontShader());
-		m_VertexArray->Unbind();
+		Application::Get().GetWindow().GetContext()->UnbindVertexArray();
 	}
 
 	void Label::UpdateRenderingBuffers()

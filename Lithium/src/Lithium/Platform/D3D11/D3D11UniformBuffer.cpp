@@ -47,13 +47,13 @@ namespace Li
 
 	void D3D11UniformBuffer::SetData(const void* data)
 	{
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+		D3D11_MAPPED_SUBRESOURCE mapped_resource;
+		ZeroMemory(&mapped_resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 		// Disable GPU access to the vertex buffer data.
-		D3D11Call(m_ContextHandle->Map(m_Buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+		D3D11Call(m_ContextHandle->Map(m_Buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource));
 		// Set the vertex data.
-		memcpy(mappedResource.pData, data, m_Size);
+		memcpy(mapped_resource.pData, data, m_Size);
 		// Reenable GPU access to the data.
 		m_ContextHandle->Unmap(m_Buffer.Get(), 0);
 	}

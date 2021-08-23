@@ -54,9 +54,10 @@ namespace Li
 			m_ViewProjUB->Bind(ShaderType::Vertex);
 
 			m_VertexArray->Bind();
-			Application::Get().GetWindow().GetContext()->SetDrawMode(Li::DrawMode::Lines);
-			Application::Get().GetWindow().GetContext()->DrawArrays(m_VertexCount);
-			m_VertexArray->Unbind();
+			GraphicsContext* context = Application::Get().GetWindow().GetContext();
+			context->SetDrawMode(Li::DrawMode::Lines);
+			context->DrawArrays(m_VertexCount);
+			context->UnbindVertexArray();
 
 			m_VertexCount = 0;
 		}

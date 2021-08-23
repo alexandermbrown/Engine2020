@@ -1,4 +1,4 @@
-#include "ParticleEmitterSI.h"
+#include "ParticleEmitterSI_WI.h"
 
 RWByteAddressBuffer counter_buffer : register(u4);
 RWByteAddressBuffer indirect_buffers : register(u5);

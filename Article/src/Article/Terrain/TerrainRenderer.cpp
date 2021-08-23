@@ -168,11 +168,11 @@ void TerrainRenderer::RenderFramebuffer()
 
 		Li::ViewProjCB view_proj_cb;
 		view_proj_cb.u_ViewProj = m_TerrainCamera->GetViewProjectionMatrix();
-		Li::Renderer::GetViewProjUniformBuffer()->SetData(&view_proj_cb);
+		Li::Renderer::GetViewProjBuffer()->SetData(&view_proj_cb);
 
 		Li::TransformCB transform_cb;
 		transform_cb.u_Transform = chunk.Transform;
-		Li::Renderer::GetTransformUniformBuffer()->SetData(&transform_cb);
+		Li::Renderer::GetTransformBuffer()->SetData(&transform_cb);
 
 		// Bind textures.
 		atlas->Bind(0);
@@ -185,13 +185,14 @@ void TerrainRenderer::RenderFramebuffer()
 		m_TerrainShader->SetTexture("u_Noise2", 2);
 		m_TerrainShader->SetTexture("u_Noise3", 3);
 
-		Li::Renderer::GetViewProjUniformBuffer()->Bind(Li::ShaderType::Vertex);
-		Li::Renderer::GetTransformUniformBuffer()->Bind(Li::ShaderType::Vertex);
+		Li::Renderer::GetViewProjBuffer()->Bind(Li::ShaderType::Vertex);
+		Li::Renderer::GetTransformBuffer()->Bind(Li::ShaderType::Vertex);
 		m_AtlasBoundsUB->Bind(Li::ShaderType::Fragment);
 		chunk.VertexArray->Bind();
-		Li::Application::Get().GetWindow().GetContext()->SetDrawMode(Li::DrawMode::Triangles);
-		Li::Application::Get().GetWindow().GetContext()->DrawIndexed(chunk.VertexArray->GetIndexBuffer()->GetCount());
-		chunk.VertexArray->Unbind();
+		Li::GraphicsContext* context = Li::Application::Get().GetWindow().GetContext();
+		context->SetDrawMode(Li::DrawMode::Triangles);
+		context->DrawIndexed(chunk.VertexArray->GetIndexBuffer()->GetCount());
+		context->UnbindVertexArray();
 	}
 
 	Li::Application::Get().GetWindow().GetContext()->BindDefaultRenderTarget();

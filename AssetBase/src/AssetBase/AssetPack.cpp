@@ -21,6 +21,8 @@ AssetPack::AssetPack(const std::filesystem::path& path, bool debug_mode)
 	if (!resources || !resources.IsMap())
 		throw "Invalid YAML file.";
 
+	std::filesystem::remove_all("./.lab-cache/shaders/");
+
 	std::vector<flatbuffers::Offset<Assets::Texture2D>> textures;
 	std::vector<flatbuffers::Offset<Assets::Shader>> shaders;
 	std::vector<flatbuffers::Offset<Assets::TextureAtlas>> atlases;

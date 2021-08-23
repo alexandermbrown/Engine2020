@@ -178,7 +178,7 @@ namespace Li
 			GraphicsContext* context = Application::Get().GetWindow().GetContext();
 			context->SetDrawMode(Li::DrawMode::Triangles);
 			context->DrawIndexed(m_QuadCount * 6);
-			m_VertexArray->Unbind();
+			context->UnbindVertexArray();
 		}
 		m_QuadCount = 0;
 		m_BatchAtlasCount = 0;

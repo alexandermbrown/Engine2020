@@ -60,9 +60,10 @@ namespace Li
 
 		static void Resize(int width, int height);
 
-		inline static const Ref<UniformBuffer>& GetViewProjUniformBuffer() { return s_Data->ViewProjUB; }
-		inline static const Ref<UniformBuffer>& GetTransformUniformBuffer() { return s_Data->TransformMatrixUB; }
-		inline static const Ref<UniformBuffer>& GetEmitterUB() { return s_Data->EmitterUB; }
+		inline static const Ref<UniformBuffer>& GetFrameUniformBuffer() { return s_Data->FrameUB; }
+		inline static const Ref<UniformBuffer>& GetViewProjBuffer() { return s_Data->ViewProjUB; }
+		inline static const Ref<UniformBuffer>& GetTransformBuffer() { return s_Data->TransformMatrixUB; }
+		inline static const Ref<UniformBuffer>& GetEmitterBuffer() { return s_Data->EmitterUB; }
 		inline static const Ref<Shader>& GetFontShader() { return s_Data->FontShader; }
 
 	private:

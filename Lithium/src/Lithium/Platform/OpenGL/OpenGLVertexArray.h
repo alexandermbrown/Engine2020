@@ -13,11 +13,9 @@ namespace Li
 		virtual ~OpenGLVertexArray();
 
 		virtual void Bind() const override;
-		virtual void Unbind() const override;
 
 		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffer) override;
 		virtual void SetIndexBuffer(const Ref<IndexBuffer>& index_buffer) override;
-
 		virtual void Finalize(const std::shared_ptr<Shader>& shader) override {};
 
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
@@ -27,5 +25,4 @@ namespace Li
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
 		Ref<IndexBuffer> m_IndexBuffer;
 	};
-
 }

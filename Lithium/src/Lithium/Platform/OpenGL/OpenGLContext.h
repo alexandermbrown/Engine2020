@@ -25,6 +25,7 @@ namespace Li
 		virtual void SwapBuffers() override;
 		virtual void UnbindResources(uint32_t slot, uint32_t count) override {};
 		virtual void UnbindUAVs(uint32_t slot, uint32_t count) override {};
+		virtual void UnbindVertexArray() override;
 
 		inline SDL_GLContext* GetGLContext() { return &m_Context; }
 

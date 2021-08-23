@@ -19,11 +19,9 @@ namespace Li
 		virtual ~D3D11VertexArray() = default;
 
 		virtual void Bind() const override;
-		virtual void Unbind() const override {};
 
 		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) override { m_VertexBuffers.push_back(vertexBuffer); };
 		virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) override { m_IndexBuffer = indexBuffer; };
-
 		virtual void Finalize(const Ref<Shader>& shader) override;
 
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }

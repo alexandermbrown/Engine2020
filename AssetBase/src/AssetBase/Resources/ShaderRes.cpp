@@ -12,6 +12,8 @@
 #include <filesystem>
 #include <sstream>
 
+#include <comdef.h>
+
 #undef max
 
 namespace fs = std::filesystem;
@@ -249,6 +251,20 @@ static void CompileHLSL(fb::FlatBufferBuilder& builder, ShaderStore& store, cons
 		const SC::Compiler::ResultDesc& glsl_result = results[GlslIndex];
 		*glsl_offset = builder.CreateString((const char*)glsl_result.target.Data(), glsl_result.target.Size());
 
+		fs::path cache_path = "./.lab-cache/shaders/" + filename + ".glsl";
+		fs::create_directories("./.lab-cache/shaders/");
+		std::ofstream glsl_cache(cache_path);
+		if (glsl_cache.is_open())
+		{
+			glsl_cache.write((const char*)glsl_result.target.Data(), glsl_result.target.Size());
+			glsl_cache.close();
+		}
+		else
+		{
+			std::cout << "Failed to write glsl cache for " + filename + "\n";
+		}
+		
+
 		//if (stage_char == 'c')
 		//	std::cout.write((const char*)glsl_result.target.Data(), glsl_result.target.Size());
 
@@ -287,7 +303,16 @@ fb::Offset<fb::Vector<uint8_t>> CompileD3D11(fb::FlatBufferBuilder& builder, con
 	HRESULT result = D3DCompileFromFile(entry_path.c_str(), NULL, &include_handler, entrypoint.c_str(), target.c_str(), flags, 0, &dxil_shader, &error_message);
 
 	if (FAILED(result))
-		throw std::runtime_error(std::string{ (const char*)error_message->GetBufferPointer(), error_message->GetBufferSize() });
+	{
+		if (error_message)
+			throw std::runtime_error(std::string{ (const char*)error_message->GetBufferPointer(), error_message->GetBufferSize() });
+		else
+		{
+			std::stringstream ss;
+			ss << "Failed to compile from file. Error code HRESULT 0x" << std::hex << result;
+			throw std::runtime_error(ss.str());
+		}
+	}
 
 	uint8_t* dxil_vector_data = nullptr;
 	fb::Offset<fb::Vector<uint8_t>> dxil_offset = builder.CreateUninitializedVector(dxil_shader->GetBufferSize(), &dxil_vector_data);

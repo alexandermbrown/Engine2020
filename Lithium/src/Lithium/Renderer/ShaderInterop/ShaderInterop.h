@@ -21,11 +21,11 @@ typedef glm::vec3 float3;
 typedef glm::vec4 float4;
 typedef glm::mat4 float4x4;
 
-typedef LI_ALIGN_16 uint  aligned_uint;
-typedef LI_ALIGN_16 float     aligned_float;
-typedef LI_ALIGN_16 float2 aligned_float2;
-typedef LI_ALIGN_16 float3 aligned_float3;
-typedef LI_ALIGN_16 float4 aligned_float4;
+typedef             uint     aligned_uint;
+typedef             float    aligned_float;
+typedef LI_ALIGN_16 float2   aligned_float2;
+typedef LI_ALIGN_16 float3   aligned_float3;
+typedef LI_ALIGN_16 float4   aligned_float4;
 typedef LI_ALIGN_16 float4x4 aligned_float4x4;
 
 #define LI_CB_GETBINDSLOT(name) __CBUFFERBINDSLOT__##name##__

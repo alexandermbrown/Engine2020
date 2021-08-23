@@ -90,6 +90,11 @@ namespace Li
 		m_DeviceContext->CSSetUnorderedAccessViews(slot, count, (ID3D11UnorderedAccessView**)s_NullBlob, nullptr);
 	}
 
+	void D3D11Context::UnbindVertexArray()
+	{
+		m_DeviceContext->IASetInputLayout(nullptr);
+	}
+
 	void D3D11Context::ResizeView(int width, int height)
 	{
 		m_DeviceContext->OMSetRenderTargets(0, 0, 0);

@@ -21,8 +21,9 @@ namespace Li
 	{
 		s_Data = MakeUnique<Renderer::RendererData>();
 
-		Application::Get().GetWindow().GetContext()->SetDepthTest(false);
-		Application::Get().GetWindow().GetContext()->SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+		Window& window = Application::Get().GetWindow();
+		window.GetContext()->SetDepthTest(false);
+		window.GetContext()->SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 
 		s_Data->FrameUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
 		s_Data->FrameUB->BindBase();
@@ -41,9 +42,8 @@ namespace Li
 
 		s_Data->Camera = nullptr;
 
-		s_Data->TextureShader = Li::ResourceManager::GetShader("shader_splash");
+		s_Data->TextureShader = ResourceManager::GetShader("shader_splash");
 
-		Window& window = Application::Get().GetWindow();
 		s_Data->UICamera = MakeUnique<OrthographicCamera>(0.0f, (float)window.GetWidth(), 0.0f, (float)window.GetHeight());
 		
 		//////////////////////////////////
@@ -258,8 +258,10 @@ namespace Li
 		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
 		texture->Bind();
 		s_Data->QuadVA->Bind();
-		Application::Get().GetWindow().GetContext()->SetDrawMode(DrawMode::Triangles);
-		Application::Get().GetWindow().GetContext()->DrawIndexed(s_Data->QuadVA->GetIndexBuffer()->GetCount());
+		GraphicsContext* context = Application::Get().GetWindow().GetContext();
+		context->SetDrawMode(DrawMode::Triangles);
+		context->DrawIndexed(s_Data->QuadVA->GetIndexBuffer()->GetCount());
+		context->UnbindVertexArray();
 	}
 
 	void Renderer::RenderLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
@@ -286,8 +288,9 @@ namespace Li
 			textures[i]->Bind(i);
 		
 		vertex_array->Bind();
-		Application::Get().GetWindow().GetContext()->SetDrawMode(DrawMode::Triangles);
-		Application::Get().GetWindow().GetContext()->DrawIndexed(vertex_array->GetIndexBuffer()->GetCount());
-		vertex_array->Unbind();
+		GraphicsContext* context = Application::Get().GetWindow().GetContext();
+		context->SetDrawMode(DrawMode::Triangles);
+		context->DrawIndexed(vertex_array->GetIndexBuffer()->GetCount());
+		context->UnbindVertexArray();
 	}
 }

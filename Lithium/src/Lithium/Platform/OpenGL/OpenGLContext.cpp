@@ -156,4 +156,9 @@ namespace Li
 	{
 		SDL_GL_SwapWindow(m_WindowHandle);
 	}
+
+	void OpenGLContext::UnbindVertexArray()
+	{
+		glBindVertexArray(0);
+	}
 }

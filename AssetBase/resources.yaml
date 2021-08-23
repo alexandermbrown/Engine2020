@@ -40,31 +40,50 @@ shader_terrain:
     3: ["u_Noise3", "u_Noise3Sampler"]
 
 # Particle emitter.
+
 shader_emitter_update_begin:
   type: shader
   sources:
     - "./res/shaders/emitter/emitter_update_begin_cs.hlsl"
-
-shader_emitter_emit:
-  type: shader
-  sources:
-    - "./res/shaders/emitter/emitter_emit_cs.hlsl"
 
 shader_emitter_simulate:
   type: shader
   sources:
     - "./res/shaders/emitter/emitter_simulate_cs.hlsl"
 
-shader_emitter_update_end:
+shader_emitter_draw:
   type: shader
   sources:
-    - "./res/shaders/emitter/emitter_update_end_cs.hlsl"
+    - "./res/shaders/emitter/emitter_draw_vs.hlsl"
+    - "./res/shaders/emitter/emitter_draw_ps.hlsl"
 
-shader_emitter_render:
+# Particle emitter WI.
+shader_emitter_wi_update_begin:
   type: shader
   sources:
-    - "./res/shaders/emitter/emitter_render_vs.hlsl"
-    - "./res/shaders/emitter/emitter_render_ps.hlsl"
+    - "./res/shaders/emitter_wi/emitter_update_begin_cs.hlsl"
+
+shader_emitter_wi_emit:
+  type: shader
+  sources:
+    - "./res/shaders/emitter_wi/emitter_emit_cs.hlsl"
+
+shader_emitter_wi_simulate:
+  type: shader
+  sources:
+    - "./res/shaders/emitter_wi/emitter_simulate_cs.hlsl"
+
+shader_emitter_wi_update_end:
+  type: shader
+  sources:
+    - "./res/shaders/emitter_wi/emitter_update_end_cs.hlsl"
+
+shader_emitter_wi_draw:
+  type: shader
+  sources:
+    - "./res/shaders/emitter_wi/emitter_draw_vs.hlsl"
+    - "./res/shaders/emitter_wi/emitter_draw_ps.hlsl"
+  
 
 ### Textures ###
 texture_default:

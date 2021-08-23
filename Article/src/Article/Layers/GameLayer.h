@@ -13,6 +13,7 @@
 #include "Lithium/Core/Layer.h"
 #include "Lithium/Audio/AudioSource.h"
 #include "Lithium/Renderer/ParticleEmitter.h"
+//#include "Lithium/Renderer/ParticleEmitterWI.h"
 #include "glm/glm.hpp"
 #include "readerwriterqueue/readerwriterqueue.h"
 #include "entt/entt.hpp"
@@ -40,6 +41,7 @@ private:
 	DebugPhysicsRenderer m_DebugPhysicsRenderer;
 #endif
 
+	//Li::Ref<Li::ParticleEmitterWI> m_Emitter;
 	Li::Ref<Li::ParticleEmitter> m_Emitter;
 
 	//DefaultTerrainStore m_TerrainStore;

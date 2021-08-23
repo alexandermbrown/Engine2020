@@ -20,6 +20,7 @@ namespace Li
 		{
 		case ShaderBufferType::Structured:
 			desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+			LI_CORE_ASSERT(stride == sizeof(uint32_t) || stride % 16 == 0);
 			break;
 		case ShaderBufferType::Raw:
 			desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
