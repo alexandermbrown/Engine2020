@@ -7,7 +7,7 @@ namespace Li
 	class OpenGLIndirectBuffer : public IndirectBuffer
 	{
 	public:
-		OpenGLIndirectBuffer(uint32_t size, uint32_t stride, IndirectTarget target);
+		OpenGLIndirectBuffer(uint32_t size, IndirectTarget target);
 		virtual ~OpenGLIndirectBuffer();
 
 		virtual void Bind(uint32_t slot) const override;
@@ -18,6 +18,5 @@ namespace Li
 		uint32_t m_RendererID;
 		uint32_t m_Target;
 		uint32_t m_Size;
-		uint32_t m_Stride;
 	};
 }

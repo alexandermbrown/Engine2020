@@ -7,8 +7,8 @@
 
 namespace Li
 {
-	OpenGLIndirectBuffer::OpenGLIndirectBuffer(uint32_t size, uint32_t stride, IndirectTarget target)
-		: m_Size(size), m_Stride(stride)
+	OpenGLIndirectBuffer::OpenGLIndirectBuffer(uint32_t size, IndirectTarget target)
+		: m_Size(size)
 	{
 		switch (target)
 		{
@@ -36,6 +36,7 @@ namespace Li
 
 	void OpenGLIndirectBuffer::Bind(uint32_t slot) const
 	{
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, slot, m_RendererID);
 		glBindBuffer(m_Target, m_RendererID);
 	}
 
@@ -48,6 +49,6 @@ namespace Li
 	{
 		uint64_t offset = args_offset;
 		static_assert(sizeof(offset) == sizeof(const void*));
-		glMultiDrawArraysIndirect(ConvertOpenGL::DrawMode(mode), reinterpret_cast<const void*>(offset), m_Size / m_Stride, m_Stride);
+		glDrawArraysIndirect(ConvertOpenGL::DrawMode(mode), reinterpret_cast<const void*>(offset));
 	}
 }

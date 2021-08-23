@@ -10,7 +10,9 @@ namespace Li
 {
 	ParticleEmitter::ParticleEmitter(const EmitterProps& props)
 		: m_MaxCount(props.Count), m_EmitCount(0.0f), m_EmitRate(props.EmitRate), m_LifeSpan(props.LifeSpan),
+		m_ShaderUpdateBegin(ResourceManager::GetShader("shader_emitter_update_begin")),
 		m_ShaderSimulate(ResourceManager::GetShader("shader_emitter_simulate")),
+		m_ShaderUpdateEnd(ResourceManager::GetShader("shader_emitter_update_end")),
 		m_ShaderDraw(ResourceManager::GetShader("shader_emitter_draw"))
 	{
 		m_MaxCount = THREADCOUNT_SIMULATION;
@@ -22,7 +24,7 @@ namespace Li
 			
 			particle.position = { 0.0f, 0.0f, 0.0f };
 			float speed = rand.UniformFloat(3.0f, 5.0f);
-			float angle = rand.UniformFloat(0.0f, 2.0f * M_PI);
+			float angle = rand.UniformFloat(0.0f, 2.0f * (float)M_PI);
 			particle.velocity = {
 				speed * std::cos(angle),
 				speed * std::sin(angle), 0.0f
@@ -40,6 +42,9 @@ namespace Li
 		}
 
 		m_ParticleBuffer = ShaderBuffer::Create(particles.data(), m_MaxCount * sizeof(Particle), sizeof(Particle), ShaderBufferType::Structured);
+
+		m_ComputeIAB = IndirectBuffer::Create(sizeof(IndirectDispatchArgs), IndirectTarget::Compute);
+		m_DrawIAB = IndirectBuffer::Create(sizeof(IndirectDrawInstancedArgs), IndirectTarget::Draw);
 	}
 
 	void ParticleEmitter::Update(Li::Duration::us dt, const glm::mat4& transform)
@@ -59,8 +64,17 @@ namespace Li
 		m_ParticleBuffer->BindUAV(0);
 
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
+
+		m_ComputeIAB->Bind(5);
+		m_ShaderUpdateBegin->Bind();
+		context->DispatchCompute(1, 1, 1);
+
 		m_ShaderSimulate->Bind();
-		context->DispatchCompute(THREADCOUNT_SIMULATION, 1, 1);
+		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHSIMULATION);
+		
+		m_ShaderUpdateEnd->Bind();
+		m_DrawIAB->Bind(6);
+		context->DispatchCompute(1, 1, 1);
 
 		context->UnbindUAVs(0, 1);
 	}
@@ -74,8 +88,9 @@ namespace Li
 
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		context->UnbindVertexArray();
+
 		context->SetDrawMode(DrawMode::Triangles);
-		context->DrawArrays(6 * THREADCOUNT_SIMULATION);
+		m_DrawIAB->DrawInstancedIndirect(DrawMode::Triangles, DRAW_IAB_OFFSET_DRAWPARTICLES);
 
 		context->UnbindResources(1, 1);
 	}

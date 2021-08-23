@@ -10,7 +10,7 @@ namespace Li
 	class D3D11IndirectBuffer : public IndirectBuffer
 	{
 	public:
-		D3D11IndirectBuffer(uint32_t size, uint32_t stride);
+		D3D11IndirectBuffer(uint32_t size, IndirectTarget target);
 
 		virtual void Bind(uint32_t slot) const override;
 		virtual void DispatchComputeIndirect(uint32_t args_offset) const override;

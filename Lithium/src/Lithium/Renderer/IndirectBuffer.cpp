@@ -14,15 +14,15 @@
 
 namespace Li
 {
-	Ref<IndirectBuffer> IndirectBuffer::Create(uint32_t size, uint32_t stride, IndirectTarget target)
+	Ref<IndirectBuffer> IndirectBuffer::Create(uint32_t size, IndirectTarget target)
 	{
 		switch (Application::Get().GetAPI())
 		{
 #ifdef LI_INCLUDE_OPENGL
-		case RendererAPI::OpenGL:  return MakeRef<OpenGLIndirectBuffer>(size, stride, target);
+		case RendererAPI::OpenGL:  return MakeRef<OpenGLIndirectBuffer>(size, target);
 #endif
 #ifdef LI_INCLUDE_D3D11
-		case RendererAPI::D3D11:  return MakeRef<D3D11IndirectBuffer>(size, stride);
+		case RendererAPI::D3D11:  return MakeRef<D3D11IndirectBuffer>(size, target);
 #endif
 		}
 

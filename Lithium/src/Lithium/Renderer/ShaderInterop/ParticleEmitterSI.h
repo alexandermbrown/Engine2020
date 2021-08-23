@@ -27,8 +27,7 @@ namespace Li {
 
 	static const uint THREADCOUNT_SIMULATION = 256;
 
-	// TODO: make IAB do draw/compute calls.
-	static const uint COMPUTE_IAB_OFFSET_DISPATCHEMIT = 0;
+	static const uint COMPUTE_IAB_OFFSET_DISPATCHSIMULATION = 0;
 	static const uint DRAW_IAB_OFFSET_DRAWPARTICLES = 0;
 
 

@@ -7,11 +7,11 @@
 
 namespace Li
 {
-	D3D11IndirectBuffer::D3D11IndirectBuffer(uint32_t size, uint32_t stride)
+	D3D11IndirectBuffer::D3D11IndirectBuffer(uint32_t size, IndirectTarget target)
 		: m_Size(size)
 	{
 		D3D11_BUFFER_DESC desc;
-		desc.StructureByteStride = stride;
+		desc.StructureByteStride = 0;
 		desc.ByteWidth = m_Size;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.CPUAccessFlags = 0;
@@ -30,7 +30,7 @@ namespace Li
 		uav_desc.Format = DXGI_FORMAT_R32_TYPELESS;
 		uav_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 		uav_desc.Buffer.FirstElement = 0;
-		uav_desc.Buffer.NumElements = size / stride;
+		uav_desc.Buffer.NumElements = target == IndirectTarget::Compute ? 3 : 4;
 		uav_desc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_RAW;
 		D3D11Call(device->CreateUnorderedAccessView(m_Buffer.Get(), &uav_desc, m_UAV.GetAddressOf()));
 	}

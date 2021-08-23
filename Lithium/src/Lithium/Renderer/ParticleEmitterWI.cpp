@@ -35,8 +35,8 @@ namespace Li
 
 		m_CounterBuffer = ShaderBuffer::Create(&counters, sizeof(counters), sizeof(counters), ShaderBufferType::Raw);
 
-		m_ComputeIAB = IndirectBuffer::Create(sizeof(IndirectDispatchArgs) * 2, sizeof(IndirectDispatchArgs) * 2, IndirectTarget::Compute);
-		m_DrawIAB = IndirectBuffer::Create(sizeof(IndirectDrawArgsInstanced), sizeof(IndirectDrawArgsInstanced), IndirectTarget::Draw);
+		m_ComputeIAB = IndirectBuffer::Create(sizeof(IndirectDispatchArgs) * 2, IndirectTarget::Compute);
+		m_DrawIAB = IndirectBuffer::Create(sizeof(IndirectDrawInstancedArgs), IndirectTarget::Draw);
 	}
 
 	void ParticleEmitterWI::Update(Li::Duration::us dt, const glm::mat4& transform)

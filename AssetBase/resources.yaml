@@ -51,6 +51,11 @@ shader_emitter_simulate:
   sources:
     - "./res/shaders/emitter/emitter_simulate_cs.hlsl"
 
+shader_emitter_update_end:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_update_end_cs.hlsl"
+
 shader_emitter_draw:
   type: shader
   sources:

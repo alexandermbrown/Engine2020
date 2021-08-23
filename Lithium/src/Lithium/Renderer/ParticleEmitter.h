@@ -2,6 +2,7 @@
 
 #include "Shader.h"
 #include "ShaderBuffer.h"
+#include "IndirectBuffer.h"
 #include "Lithium/Utility/Time.h"
 #include "glm/glm.hpp"
 
@@ -30,7 +31,12 @@ namespace Li
 
 		Ref<ShaderBuffer> m_ParticleBuffer;
 
+		Ref<Shader> m_ShaderUpdateBegin;
 		Ref<Shader> m_ShaderSimulate;
+		Ref<Shader> m_ShaderUpdateEnd;
 		Ref<Shader> m_ShaderDraw;
+
+		Ref<IndirectBuffer> m_ComputeIAB;
+		Ref<IndirectBuffer> m_DrawIAB;
 	};
 }

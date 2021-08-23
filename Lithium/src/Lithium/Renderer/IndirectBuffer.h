@@ -21,10 +21,10 @@ namespace Li
 		virtual void DispatchComputeIndirect(uint32_t args_offset) const = 0;
 		virtual void DrawInstancedIndirect(DrawMode mode, uint32_t args_offset) const = 0;
 
-		static Ref<IndirectBuffer> Create(uint32_t size, uint32_t stride, IndirectTarget target);
+		static Ref<IndirectBuffer> Create(uint32_t size, IndirectTarget target);
 	};
 
-	struct IndirectDrawArgsInstanced
+	struct IndirectDrawInstancedArgs
 	{
 		uint32_t VertexCountPerInstance = 0;
 		uint32_t InstanceCount = 0;
@@ -32,7 +32,7 @@ namespace Li
 		uint32_t StartInstanceLocation = 0;
 	};
 
-	struct IndirectDrawArgsIndexedInstanced
+	struct IndirectDrawIndexedInstancedArgs
 	{
 		uint32_t IndexCountPerInstance = 0;
 		uint32_t InstanceCount = 0;
