@@ -4,12 +4,24 @@
 
 namespace Li
 {
-	class OpenGLVertexBuffer : public VertexBuffer
+	class OpenGLBuffer
+	{
+	public:
+		OpenGLBuffer();
+		virtual ~OpenGLBuffer();
+
+		inline uint32_t GetID() const { return m_BufferID; }
+
+	protected:
+		uint32_t m_BufferID;
+	};
+
+	class OpenGLVertexBuffer : public VertexBuffer, public OpenGLBuffer
 	{
 	public:
 		OpenGLVertexBuffer(uint32_t size, BufferUsage usage);
 		OpenGLVertexBuffer(float* vertices, uint32_t size, BufferUsage usage);
-		virtual ~OpenGLVertexBuffer();
+		virtual ~OpenGLVertexBuffer() = default;
 
 		virtual void Bind() const override;
 
@@ -19,16 +31,15 @@ namespace Li
 		virtual void SetSubData(float* data, uint32_t size, uint32_t offset, bool discard) override;
 
 	private:
-		uint32_t m_RendererID;
 		BufferLayout m_Layout;
 	};
 
-	class OpenGLIndexBuffer : public IndexBuffer
+	class OpenGLIndexBuffer : public IndexBuffer, public OpenGLBuffer
 	{
 	public:
 		OpenGLIndexBuffer(uint32_t size, BufferUsage usage);
 		OpenGLIndexBuffer(uint32_t* indices, uint32_t count, BufferUsage usage);
-		virtual ~OpenGLIndexBuffer();
+		virtual ~OpenGLIndexBuffer() = default;
 
 		virtual void Bind() const override;
 
@@ -37,8 +48,6 @@ namespace Li
 		virtual void SetSubData(uint32_t* data, uint32_t size, uint32_t offset, bool discard) override;
 
 	private:
-		uint32_t m_RendererID;
 		uint32_t m_Count;
 	};
-
 }

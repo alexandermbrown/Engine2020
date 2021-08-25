@@ -46,12 +46,12 @@ namespace Li
 		buffer_desc.MiscFlags = 0;
 		buffer_desc.StructureByteStride = 0;
 
-		D3D11_SUBRESOURCE_DATA bufferData;
-		bufferData.pSysMem = vertices;
-		bufferData.SysMemPitch = 0;
-		bufferData.SysMemSlicePitch = 0;
+		D3D11_SUBRESOURCE_DATA buffer_data;
+		buffer_data.pSysMem = vertices;
+		buffer_data.SysMemPitch = 0;
+		buffer_data.SysMemSlicePitch = 0;
 
-		D3D11Call( m_DeviceHandle->CreateBuffer(&buffer_desc, &bufferData, &m_Buffer) );
+		D3D11Call( m_DeviceHandle->CreateBuffer(&buffer_desc, &buffer_data, &m_Buffer) );
 	}
 
 	void D3D11VertexBuffer::SetSubData(float* data, uint32_t size, uint32_t offset, bool discard)

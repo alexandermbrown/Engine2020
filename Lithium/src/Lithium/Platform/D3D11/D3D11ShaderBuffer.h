@@ -16,6 +16,8 @@ namespace Li
 		virtual void BindSRV(ShaderType type, uint32_t slot) const override;
 		virtual void BindUAV(uint32_t slot) const override;
 
+		inline Microsoft::WRL::ComPtr<ID3D11Buffer> GetBuffer() const { return m_Buffer; }
+
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_ContextHandle;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_Buffer;

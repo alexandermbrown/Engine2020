@@ -13,6 +13,7 @@ static const float3 BILLBOARD[] = {
 };
 
 StructuredBuffer<Particle> particle_buffer : register(t1);
+StructuredBuffer<uint> alive_buffer : register(t2);
 
 struct PS_IN
 {
@@ -24,7 +25,7 @@ PS_IN vs_main(uint vertex_id : SV_VERTEXID)
 {
 	PS_IN output;
 
-	Particle particle = particle_buffer[vertex_id / 6];
+	Particle particle = particle_buffer[alive_buffer[vertex_id / 6]];
 	float3 quad_pos = BILLBOARD[INDICES[vertex_id % 6]];
 
 	output.position = float4(particle.position, 1);

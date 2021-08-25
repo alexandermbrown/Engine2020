@@ -14,10 +14,10 @@ layout(binding = 4, std430) buffer type_RWByteAddressBuffer
     uint _m0[];
 } counter_buffer;
 
-layout(binding = 5, std430) buffer indirect_buffers
+layout(binding = 5, std430) buffer compute_iab
 {
     uint _m0[];
-} indirect_buffers_1;
+} compute_iab_1;
 
 uint PARTICLECOUNTER_OFFSET_ALIVECOUNT;
 uint PARTICLECOUNTER_OFFSET_DEADCOUNT;
@@ -36,14 +36,14 @@ void src_cs_main(uvec3 thread_id)
     uint real_emit_count = min(dead_count, EmitterCB.u_EmitCount);
     uint _75 = COMPUTE_IAB_OFFSET_DISPATCHEMIT >> 2u;
     uvec3 _81 = uvec3(uint(ceil(float(real_emit_count) / 256.0)), 1u, 1u);
-    indirect_buffers_1._m0[_75] = _81.x;
-    indirect_buffers_1._m0[_75 + 1u] = _81.y;
-    indirect_buffers_1._m0[_75 + 2u] = _81.z;
+    compute_iab_1._m0[_75] = _81.x;
+    compute_iab_1._m0[_75 + 1u] = _81.y;
+    compute_iab_1._m0[_75 + 2u] = _81.z;
     uint _91 = COMPUTE_IAB_OFFSET_DISPATCHSIMULATION >> 2u;
     uvec3 _99 = uvec3(uint(ceil(float(alive_count_new + real_emit_count) / 256.0)), 1u, 1u);
-    indirect_buffers_1._m0[_91] = _99.x;
-    indirect_buffers_1._m0[_91 + 1u] = _99.y;
-    indirect_buffers_1._m0[_91 + 2u] = _99.z;
+    compute_iab_1._m0[_91] = _99.x;
+    compute_iab_1._m0[_91 + 1u] = _99.y;
+    compute_iab_1._m0[_91 + 2u] = _99.z;
     counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT >> 2u] = alive_count_new;
     counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u] = 0u;
     counter_buffer._m0[PARTICLECOUNTER_OFFSET_REALEMITCOUNT >> 2u] = real_emit_count;

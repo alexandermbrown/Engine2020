@@ -44,8 +44,10 @@ namespace Li
 		// Update CPU
 
 		// Reset emit count to 0 but keep decimal.
-		m_EmitCount = std::max(0.0f, m_EmitCount - std::floorf(m_EmitCount));
-		m_EmitCount += m_EmitRate * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
+		//m_EmitCount = std::max(0.0f, m_EmitCount - std::floorf(m_EmitCount));
+		//m_EmitCount += m_EmitRate * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
+
+		m_EmitCount = 8;
 
 		// Swap CURRENT alivelist with NEW alivelist
 		std::swap(m_AliveList[0], m_AliveList[1]);
@@ -61,6 +63,7 @@ namespace Li
 		const Ref<UniformBuffer>& emitter_ub = Renderer::GetEmitterBuffer();
 		emitter_ub->SetData(&cb);
 		emitter_ub->Bind(ShaderType::Compute);
+		Renderer::GetFrameUniformBuffer()->Bind(ShaderType::Compute);
 
 		m_ParticleBuffer->BindBase(0);
 		m_AliveList[0]  ->BindBase(1);
@@ -78,23 +81,16 @@ namespace Li
 		m_ShaderUpdateBegin->Bind();
 		m_ComputeIAB->Bind(5);
 		context->DispatchCompute(1, 1, 1);
-		
-		context->ShaderStorageBarrier();
 
 		m_ShaderEmit->Bind();
 		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHEMIT);
-
-		context->ShaderStorageBarrier();
 		
 		m_ShaderSimulate->Bind();
 		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHSIMULATION);
 
-		context->ShaderStorageBarrier();
-
 		m_ShaderUpdateEnd->Bind();
+		m_DrawIAB->Bind(6);
 		context->DispatchCompute(1, 1, 1);
-
-		context->ShaderStorageBarrier();
 
 		// Unbind UAVs.
 		context->UnbindUAVs(0, 5);
@@ -108,9 +104,13 @@ namespace Li
 		m_ParticleBuffer->BindSRV(ShaderType::Vertex, 1);
 		m_AliveList[1]->BindSRV(ShaderType::Vertex, 2);
 		m_CounterBuffer->BindSRV(ShaderType::Compute, 4);
-		m_DrawIAB->Bind(5);
+		m_DrawIAB->Bind(6);
+
+		GraphicsContext* context = Application::Get().GetWindow().GetContext();
+		context->UnbindVertexArray();
+		context->SetDrawMode(DrawMode::Triangles);
 		m_DrawIAB->DrawInstancedIndirect(DrawMode::Triangles, DRAW_IAB_OFFSET_DRAWPARTICLES);
 
-		Application::Get().GetWindow().GetContext()->UnbindResources(1, 4);
+		context->UnbindResources(1, 4);
 	}
 }

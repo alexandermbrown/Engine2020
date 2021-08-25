@@ -11,44 +11,60 @@ namespace Li
 	ParticleEmitter::ParticleEmitter(const EmitterProps& props)
 		: m_MaxCount(props.Count), m_EmitCount(0.0f), m_EmitRate(props.EmitRate), m_LifeSpan(props.LifeSpan),
 		m_ShaderUpdateBegin(ResourceManager::GetShader("shader_emitter_update_begin")),
+		m_ShaderEmit(ResourceManager::GetShader("shader_emitter_emit")),
 		m_ShaderSimulate(ResourceManager::GetShader("shader_emitter_simulate")),
 		m_ShaderUpdateEnd(ResourceManager::GetShader("shader_emitter_update_end")),
 		m_ShaderDraw(ResourceManager::GetShader("shader_emitter_draw"))
 	{
-		m_MaxCount = THREADCOUNT_SIMULATION;
-
 		std::vector<Particle> particles(m_MaxCount);
 		for (Particle& particle : particles)
 		{
 			Random& rand = Application::Get().GetRandom();
-			
 			particle.position = { 0.0f, 0.0f, 0.0f };
-			float speed = rand.UniformFloat(3.0f, 5.0f);
-			float angle = rand.UniformFloat(0.0f, 2.0f * (float)M_PI);
-			particle.velocity = {
-				speed * std::cos(angle),
-				speed * std::sin(angle), 0.0f
-			};
-
-			particle.max_life = rand.UniformFloat(props.LifeSpan.x, props.LifeSpan.y);
-			particle.life = particle.max_life;
-
-			particle.color = {
-				rand.UniformFloat(0.4f, 0.9f),
-				rand.UniformFloat(0.4f, 0.9f),
-				rand.UniformFloat(0.4f, 0.9f),
-				0.7f
-			};
+			particle.velocity = { 0.0f, 0.0f, 0.0f };
+			particle.life = 0.0f;
+			particle.color = { 1.0f, 0.0f, 0.0f, 1.0f };
 		}
 
-		m_ParticleBuffer = ShaderBuffer::Create(particles.data(), m_MaxCount * sizeof(Particle), sizeof(Particle), ShaderBufferType::Structured);
+		m_Particles = ShaderBuffer::Create(particles.data(), m_MaxCount * sizeof(Particle), sizeof(Particle), ShaderBufferType::Structured);
 
-		m_ComputeIAB = IndirectBuffer::Create(sizeof(IndirectDispatchArgs), IndirectTarget::Compute);
+		m_AliveList[0] = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+		m_AliveList[1] = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+
+		std::vector<uint32_t> dead_indices(m_MaxCount);
+		for (uint32_t i = 0; i < m_MaxCount; i++)
+			dead_indices[i] = i;
+		m_DeadList = ShaderBuffer::Create(dead_indices.data(), m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+
+		ParticleCounters counters;
+		counters.alive_count = 0;
+		counters.dead_count = m_MaxCount;
+		counters.real_emit_count = 0;
+		counters.alive_count_after_sim = 0;
+
+		m_CounterBuffer = ShaderBuffer::Create(&counters, sizeof(counters), sizeof(uint32_t), ShaderBufferType::Raw);
+		m_ReadbackBuffer = ReadbackBuffer::Create(sizeof(counters));
+
+		m_ComputeIAB = IndirectBuffer::Create(sizeof(IndirectDispatchArgs) * 2, IndirectTarget::Compute);
 		m_DrawIAB = IndirectBuffer::Create(sizeof(IndirectDrawInstancedArgs), IndirectTarget::Draw);
 	}
 
 	void ParticleEmitter::Update(Li::Duration::us dt, const glm::mat4& transform)
 	{
+		std::swap(m_AliveList[0], m_AliveList[1]);
+
+		ParticleCounters counters;
+		m_ReadbackBuffer->Readback(m_CounterBuffer, sizeof(ParticleCounters));
+		m_ReadbackBuffer->GetData(&counters, sizeof(counters));
+
+
+		m_EmitCount = std::max(0.0f, m_EmitCount - std::floorf(m_EmitCount));
+		m_EmitCount += m_EmitRate * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
+
+		Li::Log::CoreTrace("COUNTERS: alive {}, dead {}, real_emit {}, alive_after_sim {}, m_EmitCount {}",
+			counters.alive_count, counters.dead_count, counters.real_emit_count, counters.alive_count_after_sim, m_EmitCount);
+		//m_EmitCount = 10;
+
 		EmitterCB emitter;
 		emitter.u_EmitterTransform = transform;
 		emitter.u_EmitCount = static_cast<uint32_t>(m_EmitCount);
@@ -60,14 +76,26 @@ namespace Li
 		emitter_buffer->Bind(ShaderType::Compute);
 		Renderer::GetFrameUniformBuffer()->Bind(ShaderType::Compute);
 
-		m_ParticleBuffer->BindBase(0);
-		m_ParticleBuffer->BindUAV(0);
+		m_Particles->BindBase(0);
+		m_AliveList[0]->BindBase(1);
+		m_AliveList[1]->BindBase(2);
+		m_DeadList->BindBase(3);
+		m_CounterBuffer->BindBase(4);
+
+		m_Particles->BindUAV(0);
+		m_AliveList[0]->BindUAV(1);
+		m_AliveList[1]->BindUAV(2);
+		m_DeadList->BindUAV(3);
+		m_CounterBuffer->BindUAV(4);
 
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 
 		m_ComputeIAB->Bind(5);
 		m_ShaderUpdateBegin->Bind();
 		context->DispatchCompute(1, 1, 1);
+
+		m_ShaderEmit->Bind();
+		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHEMIT);
 
 		m_ShaderSimulate->Bind();
 		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHSIMULATION);
@@ -76,15 +104,17 @@ namespace Li
 		m_DrawIAB->Bind(6);
 		context->DispatchCompute(1, 1, 1);
 
-		context->UnbindUAVs(0, 1);
+		context->UnbindUAVs(0, 5);
 	}
 
 	void ParticleEmitter::Draw()
 	{
 		m_ShaderDraw->Bind();
 		Renderer::GetViewProjBuffer()->Bind(ShaderType::Vertex);
-		m_ParticleBuffer->BindBase(1);
-		m_ParticleBuffer->BindSRV(ShaderType::Vertex, 1);
+		m_Particles->BindBase(1);
+		m_Particles->BindSRV(ShaderType::Vertex, 1);
+		m_AliveList[1]->BindBase(2);
+		m_AliveList[1]->BindSRV(ShaderType::Vertex, 2);
 
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		context->UnbindVertexArray();
@@ -92,6 +122,6 @@ namespace Li
 		context->SetDrawMode(DrawMode::Triangles);
 		m_DrawIAB->DrawInstancedIndirect(DrawMode::Triangles, DRAW_IAB_OFFSET_DRAWPARTICLES);
 
-		context->UnbindResources(1, 1);
+		context->UnbindResources(1, 2);
 	}
 }

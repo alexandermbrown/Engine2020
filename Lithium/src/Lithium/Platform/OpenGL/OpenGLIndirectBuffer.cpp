@@ -23,21 +23,14 @@ namespace Li
 			LI_CORE_ASSERT(false, "Bad indirect target.");
 		}
 
-		glGenBuffers(1, &m_RendererID);
-		glBindBuffer(m_Target, m_RendererID);
-
+		glBindBuffer(m_Target, m_BufferID);
 		glBufferData(m_Target, size, nullptr, GL_DYNAMIC_DRAW);
-	}
-
-	OpenGLIndirectBuffer::~OpenGLIndirectBuffer()
-	{
-		GLCall(glDeleteBuffers(1, &m_RendererID));
 	}
 
 	void OpenGLIndirectBuffer::Bind(uint32_t slot) const
 	{
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, slot, m_RendererID);
-		glBindBuffer(m_Target, m_RendererID);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, slot, m_BufferID);
+		glBindBuffer(m_Target, m_BufferID);
 	}
 
 	void OpenGLIndirectBuffer::DispatchComputeIndirect(uint32_t args_offset) const

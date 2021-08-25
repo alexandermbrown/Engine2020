@@ -30,7 +30,7 @@ namespace Li
 		uav_desc.Format = DXGI_FORMAT_R32_TYPELESS;
 		uav_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 		uav_desc.Buffer.FirstElement = 0;
-		uav_desc.Buffer.NumElements = target == IndirectTarget::Compute ? 3 : 4;
+		uav_desc.Buffer.NumElements = size / sizeof(uint32_t);
 		uav_desc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_RAW;
 		D3D11Call(device->CreateUnorderedAccessView(m_Buffer.Get(), &uav_desc, m_UAV.GetAddressOf()));
 	}

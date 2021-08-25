@@ -14,10 +14,10 @@ layout(binding = 4, std430) readonly buffer type_ByteAddressBuffer
     uint _m0[];
 } counter_buffer;
 
-layout(binding = 5, std430) buffer type_RWByteAddressBuffer
+layout(binding = 6, std430) buffer type_RWByteAddressBuffer
 {
     uint _m0[];
-} indirect_buffers;
+} draw_iab;
 
 uint PARTICLECOUNTER_OFFSET_ALIVECOUNT;
 uint PARTICLECOUNTER_OFFSET_DEADCOUNT;
@@ -34,10 +34,10 @@ void src_cs_main(uvec3 DTid)
     uint particle_count = counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u];
     uint _64 = DRAW_IAB_OFFSET_DRAWPARTICLES >> 2u;
     uvec4 _67 = uvec4(4u, particle_count, 0u, 0u);
-    indirect_buffers._m0[_64] = _67.x;
-    indirect_buffers._m0[_64 + 1u] = _67.y;
-    indirect_buffers._m0[_64 + 2u] = _67.z;
-    indirect_buffers._m0[_64 + 3u] = _67.w;
+    draw_iab._m0[_64] = _67.x;
+    draw_iab._m0[_64 + 1u] = _67.y;
+    draw_iab._m0[_64 + 2u] = _67.z;
+    draw_iab._m0[_64 + 3u] = _67.w;
 }
 
 void main()

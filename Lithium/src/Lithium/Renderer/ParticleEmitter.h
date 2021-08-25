@@ -1,8 +1,9 @@
 #pragma once
 
+#include "IndirectBuffer.h"
+#include "ReadbackBuffer.h"
 #include "Shader.h"
 #include "ShaderBuffer.h"
-#include "IndirectBuffer.h"
 #include "Lithium/Utility/Time.h"
 #include "glm/glm.hpp"
 
@@ -29,9 +30,14 @@ namespace Li
 		float m_EmitRate;
 		glm::vec2 m_LifeSpan;
 
-		Ref<ShaderBuffer> m_ParticleBuffer;
+		Ref<ShaderBuffer> m_Particles;
+		Ref<ShaderBuffer> m_AliveList[2];
+		Ref<ShaderBuffer> m_DeadList;
+		Ref<ShaderBuffer> m_CounterBuffer;
+		Ref<ReadbackBuffer> m_ReadbackBuffer;
 
 		Ref<Shader> m_ShaderUpdateBegin;
+		Ref<Shader> m_ShaderEmit;
 		Ref<Shader> m_ShaderSimulate;
 		Ref<Shader> m_ShaderUpdateEnd;
 		Ref<Shader> m_ShaderDraw;

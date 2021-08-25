@@ -32,7 +32,7 @@ namespace Li
 		D3D11Context* context = (D3D11Context*)Application::Get().GetWindow().GetContext();
 		const auto& device = context->GetDevice();
 		m_ContextHandle = context->GetDeviceContext();
-
+		 
 		if (data)
 		{
 			D3D11_SUBRESOURCE_DATA buffer_data;
@@ -73,8 +73,10 @@ namespace Li
 		uav_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 		uav_desc.Buffer.FirstElement = 0;
 		uav_desc.Buffer.NumElements = size / stride;
+		
 		if (type == ShaderBufferType::Raw)
 		{
+			LI_CORE_ASSERT(stride == sizeof(uint32_t));
 			uav_desc.Format = DXGI_FORMAT_R32_TYPELESS;
 			uav_desc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_RAW;
 		}
