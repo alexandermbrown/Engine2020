@@ -99,6 +99,11 @@ namespace Li
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
+	void OpenGLContext::CommandBarrier()
+	{
+		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
+	}
+
 	void OpenGLContext::DrawArrays(uint32_t vertexCount)
 	{
 		glDrawArrays(ConvertOpenGL::DrawMode(m_DrawMode), 0, (GLsizei)vertexCount);
@@ -155,6 +160,11 @@ namespace Li
 	void OpenGLContext::SwapBuffers()
 	{
 		SDL_GL_SwapWindow(m_WindowHandle);
+	}
+
+	void OpenGLContext::UniformBufferBarrier()
+	{
+		glMemoryBarrier(GL_UNIFORM_BARRIER_BIT);
 	}
 
 	void OpenGLContext::UnbindVertexArray()

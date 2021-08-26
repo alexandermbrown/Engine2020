@@ -19,9 +19,10 @@ layout(binding = 0, std140) uniform type_FrameCB
 layout(binding = 4, std140) uniform type_EmitterCB
 {
     layout(row_major) mat4 u_EmitterTransform;
-    vec2 u_ParticleLifeSpan;
+    vec2 u_LifeSpan;
     uint u_EmitCount;
     float u_EmitterRandomness;
+    vec2 u_SpeedRange;
 } EmitterCB;
 
 layout(binding = 0, std430) buffer type_RWStructuredBuffer_Particle
@@ -96,29 +97,29 @@ void src_cs_main(uvec3 thread_id)
         Particle particle;
         particle.position = vec3(0.0);
         vec2 param_var_uv = uv;
-        float _141 = rand(seed, param_var_uv);
-        float speed = _141 + 3.0;
+        float _140 = rand(seed, param_var_uv);
+        float speed = (_140 * (EmitterCB.u_SpeedRange.y - EmitterCB.u_SpeedRange.x)) + EmitterCB.u_SpeedRange.x;
         vec2 param_var_uv_1 = uv;
-        float _145 = rand(seed, param_var_uv_1);
-        float angle = (_145 * 2.0) * 3.1415927410125732421875;
+        float _156 = rand(seed, param_var_uv_1);
+        float angle = (_156 * 2.0) * 3.1415927410125732421875;
         particle.velocity = vec3(speed * cos(angle), speed * sin(angle), 0.0);
         vec2 param_var_uv_2 = uv;
-        float _159 = rand(seed, param_var_uv_2);
-        particle.life = _159 + 1.0;
+        float _170 = rand(seed, param_var_uv_2);
+        particle.life = (_170 * (EmitterCB.u_LifeSpan.y - EmitterCB.u_LifeSpan.x)) + EmitterCB.u_LifeSpan.x;
         vec2 param_var_uv_3 = uv;
-        float _163 = rand(seed, param_var_uv_3);
+        float _185 = rand(seed, param_var_uv_3);
         vec2 param_var_uv_4 = uv;
-        float _167 = rand(seed, param_var_uv_4);
+        float _189 = rand(seed, param_var_uv_4);
         vec2 param_var_uv_5 = uv;
-        float _171 = rand(seed, param_var_uv_5);
-        particle.color = vec4((_163 * 0.5) + 0.4000000059604644775390625, (_167 * 0.5) + 0.4000000059604644775390625, (_171 * 0.5) + 0.4000000059604644775390625, 0.699999988079071044921875);
+        float _193 = rand(seed, param_var_uv_5);
+        particle.color = vec4((_185 * 0.5) + 0.4000000059604644775390625, (_189 * 0.5) + 0.4000000059604644775390625, (_193 * 0.5) + 0.4000000059604644775390625, 0.699999988079071044921875);
         particle._pad = 0.0;
-        uint _181 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 4294967295u);
-        uint dead_count = _181;
+        uint _203 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 4294967295u);
+        uint dead_count = _203;
         uint new_particle_index = dead_buffer_1._m0[dead_count - 1u];
         particles._m0[new_particle_index] = Particle(particle.color, particle.position, particle.life, particle.velocity, particle._pad);
-        uint _199 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT >> 2u], 1u);
-        uint alive_count = _199;
+        uint _221 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT >> 2u], 1u);
+        uint alive_count = _221;
         alive_buffer_current._m0[alive_count] = new_particle_index;
     }
 }

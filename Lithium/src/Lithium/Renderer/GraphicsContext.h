@@ -12,6 +12,7 @@ namespace Li
 
 		virtual void BindDefaultRenderTarget() = 0;
 		virtual void Clear() = 0;
+		virtual void CommandBarrier() = 0;
 		virtual void DrawArrays(uint32_t vertex_count) = 0;
 		virtual void DrawIndexed(uint32_t index_count) = 0;
 		virtual void DrawIndexedInstanced(uint32_t index_count, uint32_t instance_count) = 0;
@@ -22,6 +23,7 @@ namespace Li
 		virtual void SetDrawMode(DrawMode mode) = 0;
 		virtual void ShaderStorageBarrier() = 0;
 		virtual void SwapBuffers() = 0;
+		virtual void UniformBufferBarrier() = 0;
 		virtual void UnbindResources(uint32_t slot, uint32_t count) = 0;
 		virtual void UnbindUAVs(uint32_t slot, uint32_t count) = 0;
 		virtual void UnbindVertexArray() = 0;

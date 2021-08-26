@@ -11,9 +11,10 @@ namespace Li
 {
 	struct EmitterProps
 	{
-		uint32_t Count;
+		uint32_t MaxCount;
 		float EmitRate;
 		glm::vec2 LifeSpan;
+		glm::vec2 SpeedRange;
 	};
 
 	class ParticleEmitter
@@ -27,11 +28,8 @@ namespace Li
 		void PrintDebug(const char* label);
 
 	private:
-
-		uint32_t m_MaxCount;
+		EmitterProps m_Props;
 		float m_EmitCount;
-		float m_EmitRate;
-		glm::vec2 m_LifeSpan;
 
 		Ref<ShaderBuffer> m_Particles;
 		Ref<ShaderBuffer> m_AliveList[2];

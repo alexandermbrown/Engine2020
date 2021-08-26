@@ -28,15 +28,11 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 		Particle particle;
         particle.position = float3(0, 0, 0);
 
-		float speed = rand(seed, uv) + 3.0;
+		float speed = rand(seed, uv) * (u_SpeedRange.y - u_SpeedRange.x) + u_SpeedRange.x;
 		float angle = rand(seed, uv) * 2.0 * PI;
+		particle.velocity = float3(speed * cos(angle), speed * sin(angle), 0.0);
 
-		particle.velocity = float3(
-			speed * cos(angle),
-			speed * sin(angle), 0.0
-		);
-
-        particle.life = rand(seed, uv) + 1.0f;
+        particle.life = rand(seed, uv) * (u_LifeSpan.y - u_LifeSpan.x) + u_LifeSpan.x;
 		particle.color = float4(rand(seed, uv) * 0.5 + 0.4, rand(seed, uv) * 0.5 + 0.4, rand(seed, uv) * 0.5 + 0.4, 0.7);
 		particle._pad = 0.0f;
 

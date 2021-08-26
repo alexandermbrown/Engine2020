@@ -32,9 +32,10 @@ GameLayer::GameLayer()
 	m_AudioSource->Play();
 
 	Li::EmitterProps emitter;
-	emitter.Count = 1024;
-	emitter.EmitRate = 300.0f;
-	emitter.LifeSpan = glm::vec2{ 2.0f, 3.0f };
+	emitter.MaxCount = 512;
+	emitter.LifeSpan = glm::vec2{ 3.0f, 4.0f };
+	emitter.SpeedRange = glm::vec2{ 2.0f, 3.0f };
+	emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
 	m_Emitter = Li::MakeRef<Li::ParticleEmitter>(emitter);
 }
 
@@ -72,6 +73,7 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 	
 	Li::Renderer::BeginScene(camera.camera);
 
+	//m_Emitter->PrintDebug("Emitter");
 	m_Emitter->Update(dt, glm::translate(glm::mat4(1.0f), { 1.0f, 3.0f, 0.0f }));
 	m_Emitter->Draw();
 

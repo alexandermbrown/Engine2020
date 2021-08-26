@@ -17,6 +17,7 @@ namespace Li
 
 		virtual void BindDefaultRenderTarget() override;
 		virtual void Clear() override;
+		virtual void CommandBarrier() override {};
 		virtual void DrawArrays(uint32_t vertex_count) override;
 		virtual void DrawIndexed(uint32_t index_count) override;
 		virtual void DrawIndexedInstanced(uint32_t index_count, uint32_t instance_count) override;
@@ -27,6 +28,7 @@ namespace Li
 		virtual void SetDepthTest(bool enabled) override;
 		virtual void SetDrawMode(DrawMode mode) override;
 		virtual void SwapBuffers() override;
+		virtual void UniformBufferBarrier() override {};
 		virtual void UnbindResources(uint32_t slot, uint32_t count) override;
 		virtual void UnbindUAVs(uint32_t slot, uint32_t count) override;
 		virtual void UnbindVertexArray() override;

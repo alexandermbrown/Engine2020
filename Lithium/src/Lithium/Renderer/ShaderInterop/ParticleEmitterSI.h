@@ -26,12 +26,14 @@ namespace Li {
 		uint alive_count_after_sim;
 	};
 
+	// Note: Order matters.
 	LI_CBUFFER(EmitterCB, 4)
 	{
 		aligned_float4x4 u_EmitterTransform;
-		aligned_float2 u_ParticleLifeSpan;
-		aligned_uint u_EmitCount;
-		aligned_float u_EmitterRandomness;
+		aligned_float2 u_LifeSpan;
+		uint u_EmitCount;
+		float u_EmitterRandomness;
+		aligned_float2 u_SpeedRange;
 	};
 
 	static const uint THREADCOUNT_EMIT = 256;

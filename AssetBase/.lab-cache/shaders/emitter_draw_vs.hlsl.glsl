@@ -28,9 +28,10 @@ layout(binding = 1, std140) uniform type_ViewProjCB
 layout(binding = 4, std140) uniform type_EmitterCB
 {
     layout(row_major) mat4 u_EmitterTransform;
-    vec2 u_ParticleLifeSpan;
+    vec2 u_LifeSpan;
     uint u_EmitCount;
     float u_EmitterRandomness;
+    vec2 u_SpeedRange;
 } EmitterCB;
 
 layout(binding = 1, std430) readonly buffer type_StructuredBuffer_Particle

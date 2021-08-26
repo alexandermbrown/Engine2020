@@ -4,9 +4,10 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout(binding = 4, std140) uniform type_EmitterCB
 {
     layout(row_major) mat4 u_EmitterTransform;
-    vec2 u_ParticleLifeSpan;
+    vec2 u_LifeSpan;
     uint u_EmitCount;
     float u_EmitterRandomness;
+    vec2 u_SpeedRange;
 } EmitterCB;
 
 layout(binding = 4, std430) buffer type_RWByteAddressBuffer
