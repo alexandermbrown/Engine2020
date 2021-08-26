@@ -2,7 +2,7 @@
 
 #include "Lithium/Core/Memory.h"
 #include "Lithium/Renderer/TextureAtlas.h"
-#include "Lithium/Renderer/OrthographicCamera.h"
+#include "Lithium/Renderer/Camera.h"
 #include "Lithium/Renderer/VertexArray.h"
 #include "Lithium/Renderer/Buffer.h"
 #include "Lithium/Renderer/Shader.h"

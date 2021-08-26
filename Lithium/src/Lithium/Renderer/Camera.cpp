@@ -1,18 +1,17 @@
 #include "lipch.h"
-#include "OrthographicCamera.h"
+#include "Camera.h"
 
 #include "Lithium/Core/Application.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace Li
 {
-	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
+	Camera::Camera()
 		: m_ViewMatrix(1.0f), m_Position{ 0.0f, 0.0f, 0.0f }
 	{
-		SetProjection(left, right, bottom, top);
 	}
 
-	void OrthographicCamera::SetProjection(float left, float right, float bottom, float top)
+	void Camera::SetOrtho(float left, float right, float bottom, float top)
 	{
 		switch (Application::Get().GetAPI())
 		{
@@ -26,21 +25,35 @@ namespace Li
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	void OrthographicCamera::SetPosition(const glm::vec3& position)
+	void Camera::SetPerspective(float fov, float aspect, float z_near, float z_far)
+	{
+		switch (Application::Get().GetAPI())
+		{
+		case RendererAPI::OpenGL:
+			m_ProjectionMatrix = glm::perspectiveRH_NO(fov, aspect, z_near, z_far);
+			break;
+		case RendererAPI::D3D11:
+			m_ProjectionMatrix = glm::perspectiveRH_ZO(fov, aspect, z_near, z_far);
+			break;
+		}
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
+	void Camera::SetPosition(const glm::vec3& position)
 	{
 		m_Position = position;
 		RecalculateViewMatrix();
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	void OrthographicCamera::SetLookAt(const glm::vec3& camera_pos, const glm::vec3& target_pos, const glm::vec3& up)
+	void Camera::SetLookAt(const glm::vec3& camera_pos, const glm::vec3& target_pos, const glm::vec3& up)
 	{
 		m_Position = camera_pos;
 		m_ViewMatrix = glm::lookAt(camera_pos, target_pos, up);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	void OrthographicCamera::RecalculateViewMatrix()
+	void Camera::RecalculateViewMatrix()
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position);
 		m_ViewMatrix = glm::inverse(transform);

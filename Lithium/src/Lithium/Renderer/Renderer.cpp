@@ -44,7 +44,8 @@ namespace Li
 
 		s_Data->TextureShader = ResourceManager::GetShader("shader_splash");
 
-		s_Data->UICamera = MakeUnique<OrthographicCamera>(0.0f, (float)window.GetWidth(), 0.0f, (float)window.GetHeight());
+		s_Data->UICamera = MakeUnique<Camera>();
+		s_Data->UICamera->SetOrtho(0.0f, (float)window.GetWidth(), 0.0f, (float)window.GetHeight());
 		
 		//////////////////////////////////
 		// Create Textured Quad Buffers //
@@ -120,7 +121,7 @@ namespace Li
 		s_Data->FrameUB->SetData(&frame_cb);
 	}
 
-	void Renderer::BeginScene(OrthographicCamera* camera)
+	void Renderer::BeginScene(Camera* camera)
 	{
 		s_Data->Camera = camera;
 
@@ -239,7 +240,7 @@ namespace Li
 
 	void Renderer::Resize(int width, int height)
 	{
-		s_Data->UICamera->SetProjection(0, (float)width, 0, (float)height);
+		s_Data->UICamera->SetOrtho(0, (float)width, 0, (float)height);
 	}
 
 	void Renderer::RenderQuad(const Ref<Texture>& texture, const glm::mat4& transform, const glm::mat4& view_projection)

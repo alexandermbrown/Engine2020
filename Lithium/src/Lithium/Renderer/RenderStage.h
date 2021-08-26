@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "OrthographicCamera.h"
+#include "Camera.h"
 
 namespace Li
 {
@@ -13,7 +13,7 @@ namespace Li
 			: m_Enabled(enabled) {}
 		virtual ~RenderStage() = default;
 
-		virtual void BeginScene(OrthographicCamera* camera) = 0;
+		virtual void BeginScene(Camera* camera) = 0;
 		virtual void BindFramebuffer() const = 0;
 		virtual void UnbindFramebuffer() const = 0;
 		virtual void EndScene() const = 0;

@@ -16,8 +16,8 @@ void EditorCameraSystem::Init(entt::registry& registry)
 	camera.aspect_ratio = 2.0f;
 
 	const float half_zoom = camera.current_zoom * 0.5f;
-	camera.camera = new Li::OrthographicCamera(-camera.aspect_ratio * half_zoom,
-		camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
+	camera.camera = new Li::Camera;
+	camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
 	camera.camera->SetLookAt({ 0.0f, -3.0f, std::sqrt(3.0f) }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
 	camera.min_zoom = 0.01f;
 	camera.max_zoom = 100.0f;
@@ -45,7 +45,7 @@ void EditorCameraSystem::Update(entt::registry& registry, Li::Duration::us dt)
 			camera.current_zoom = camera.target_zoom;
 
 		const float half_zoom = camera.current_zoom * 0.5f;
-		camera.camera->SetProjection(-camera.aspect_ratio * half_zoom,
+		camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom,
 			camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
 
 		if (std::abs(delta) < 1e-5f)
@@ -116,7 +116,7 @@ void EditorCameraSystem::Resize(entt::registry& registry, int width, int height)
 
 	camera.aspect_ratio = (float)width / (float)height;
 	const float half_zoom = camera.current_zoom * 0.5f;
-	camera.camera->SetProjection(-camera.aspect_ratio * half_zoom,
+	camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom,
 		camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
 }
 

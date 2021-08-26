@@ -53,17 +53,8 @@ namespace Li
 	{
 		std::swap(m_AliveList[0], m_AliveList[1]);
 
-		ParticleCounters counters;
-		m_ReadbackBuffer->Readback(m_CounterBuffer, sizeof(ParticleCounters));
-		m_ReadbackBuffer->GetData(&counters, sizeof(counters));
-
-
 		m_EmitCount = std::max(0.0f, m_EmitCount - std::floorf(m_EmitCount));
 		m_EmitCount += m_EmitRate * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
-
-		Li::Log::CoreTrace("COUNTERS: alive {}, dead {}, real_emit {}, alive_after_sim {}, m_EmitCount {}",
-			counters.alive_count, counters.dead_count, counters.real_emit_count, counters.alive_count_after_sim, m_EmitCount);
-		//m_EmitCount = 10;
 
 		EmitterCB emitter;
 		emitter.u_EmitterTransform = transform;
@@ -94,15 +85,23 @@ namespace Li
 		m_ShaderUpdateBegin->Bind();
 		context->DispatchCompute(1, 1, 1);
 
+		context->ShaderStorageBarrier();
+
 		m_ShaderEmit->Bind();
 		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHEMIT);
+
+		context->ShaderStorageBarrier();
 
 		m_ShaderSimulate->Bind();
 		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHSIMULATION);
 		
+		context->ShaderStorageBarrier();
+
 		m_ShaderUpdateEnd->Bind();
 		m_DrawIAB->Bind(6);
 		context->DispatchCompute(1, 1, 1);
+
+		context->ShaderStorageBarrier();
 
 		context->UnbindUAVs(0, 5);
 	}
@@ -123,5 +122,14 @@ namespace Li
 		m_DrawIAB->DrawInstancedIndirect(DrawMode::Triangles, DRAW_IAB_OFFSET_DRAWPARTICLES);
 
 		context->UnbindResources(1, 2);
+	}
+
+	void ParticleEmitter::PrintDebug(const char* label)
+	{
+		ParticleCounters counters;
+		m_ReadbackBuffer->Readback(m_CounterBuffer, sizeof(ParticleCounters));
+		m_ReadbackBuffer->GetData(&counters, sizeof(counters));
+		Li::Log::CoreTrace("{}: alive {}, dead {}, real_emit {}, alive_after_sim {}",
+			label, counters.alive_count, counters.dead_count, counters.real_emit_count, counters.alive_count_after_sim);
 	}
 }

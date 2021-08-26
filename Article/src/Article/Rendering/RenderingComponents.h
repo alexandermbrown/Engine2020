@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lithium/Core/Memory.h"
-#include "Lithium/Renderer/OrthographicCamera.h"
+#include "Lithium/Renderer/Camera.h"
 #include "Lithium/Renderer/Text/Label.h"
 #include "Lithium/Utility/Timer.h"
 
@@ -26,8 +26,8 @@ namespace cp
 
 	struct camera
 	{
-		Li::OrthographicCamera* camera;
-
+		Li::Camera* camera;
+		
 		float aspect_ratio = 1.0f;
 
 		float current_zoom = 10.0f;

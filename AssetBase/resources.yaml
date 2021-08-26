@@ -67,34 +67,6 @@ shader_emitter_draw:
     - "./res/shaders/emitter/emitter_draw_vs.hlsl"
     - "./res/shaders/emitter/emitter_draw_ps.hlsl"
 
-# Particle emitter WI.
-shader_emitter_wi_update_begin:
-  type: shader
-  sources:
-    - "./res/shaders/emitter_wi/emitter_update_begin_cs.hlsl"
-
-shader_emitter_wi_emit:
-  type: shader
-  sources:
-    - "./res/shaders/emitter_wi/emitter_emit_cs.hlsl"
-
-shader_emitter_wi_simulate:
-  type: shader
-  sources:
-    - "./res/shaders/emitter_wi/emitter_simulate_cs.hlsl"
-
-shader_emitter_wi_update_end:
-  type: shader
-  sources:
-    - "./res/shaders/emitter_wi/emitter_update_end_cs.hlsl"
-
-shader_emitter_wi_draw:
-  type: shader
-  sources:
-    - "./res/shaders/emitter_wi/emitter_draw_vs.hlsl"
-    - "./res/shaders/emitter_wi/emitter_draw_ps.hlsl"
-  
-
 ### Textures ###
 texture_default:
   type: texture2d

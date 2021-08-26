@@ -84,10 +84,12 @@ TerrainRenderer::TerrainRenderer(TerrainStore* store, int render_width)
 	switch (Li::Application::Get().GetAPI())
 	{
 	case Li::RendererAPI::OpenGL:
-		m_TerrainCamera = Li::MakeUnique<Li::OrthographicCamera>((float)-HalfRenderWidth, (float)HalfRenderWidth + 1.0f, (float)-HalfRenderWidth, (float)HalfRenderWidth + 1.0f);
+		m_TerrainCamera = Li::MakeUnique<Li::Camera>();
+		m_TerrainCamera->SetOrtho((float)-HalfRenderWidth, (float)HalfRenderWidth + 1.0f, (float)-HalfRenderWidth, (float)HalfRenderWidth + 1.0f);
 		break;
 	case Li::RendererAPI::D3D11:
-		m_TerrainCamera = Li::MakeUnique<Li::OrthographicCamera>((float)-HalfRenderWidth, (float)HalfRenderWidth + 1.0f, (float)HalfRenderWidth + 1.0f, (float)-HalfRenderWidth);
+		m_TerrainCamera = Li::MakeUnique<Li::Camera>();
+		m_TerrainCamera->SetOrtho((float)-HalfRenderWidth, (float)HalfRenderWidth + 1.0f, (float)HalfRenderWidth + 1.0f, (float)-HalfRenderWidth);
 		break;
 	}
 }

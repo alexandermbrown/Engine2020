@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lithium/Renderer/Framebuffer.h"
-#include "Lithium/Renderer/OrthographicCamera.h"
+#include "Lithium/Renderer/Camera.h"
 #include "Lithium/Renderer/Shader.h"
 #include "Lithium/Renderer/UniformBuffer.h"
 #include "glm/glm.hpp"
@@ -54,7 +54,7 @@ private:
 	Li::Ref<Li::Framebuffer> m_Framebuffer;
 
 	glm::mat4 m_QuadTransform;
-	Li::Unique<Li::OrthographicCamera> m_TerrainCamera;
+	Li::Unique<Li::Camera> m_TerrainCamera;
 
 	TerrainStore* m_Store;
 };

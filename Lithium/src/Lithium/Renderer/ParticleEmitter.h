@@ -23,8 +23,11 @@ namespace Li
 
 		void Update(Li::Duration::us dt, const glm::mat4& transform);
 		void Draw();
+		// Warning: May impact performance.
+		void PrintDebug(const char* label);
 
 	private:
+
 		uint32_t m_MaxCount;
 		float m_EmitCount;
 		float m_EmitRate;

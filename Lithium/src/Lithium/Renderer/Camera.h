@@ -4,12 +4,13 @@
 
 namespace Li 
 {
-	class OrthographicCamera
+	class Camera
 	{
 	public:
-		OrthographicCamera(float left, float right, float bottom, float top);
+		Camera();
 
-		void SetProjection(float left, float right, float bottom, float top);
+		void SetOrtho(float left, float right, float bottom, float top);
+		void SetPerspective(float fov, float aspect, float z_near, float z_far);
 		void SetPosition(const glm::vec3& position);
 		void SetLookAt(const glm::vec3& camera_pos, const glm::vec3& target_pos, const glm::vec3& up);
 

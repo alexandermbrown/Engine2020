@@ -18,9 +18,10 @@ void CameraControllerSystem::Init(entt::registry& registry)
 		/ (float)Li::Application::Get().GetWindow().GetHeight();
 
 	const float half_zoom = camera.current_zoom * 0.5f;
-	camera.camera = new Li::OrthographicCamera(-camera.aspect_ratio * half_zoom,
-		camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
-	camera.camera->SetLookAt({ 0.0f, -3.0f, std::sqrt(3.0f) }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
+	camera.camera = new Li::Camera;
+	camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
+	camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
+	//camera.camera->SetLookAt({ 0.0f, -3.0f, std::sqrt(3.0f) }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
 }
 
 void CameraControllerSystem::Shutdown(entt::registry& registry)
@@ -57,8 +58,8 @@ void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us d
 			camera.current_zoom = camera.target_zoom;
 
 		const float half_zoom = camera.current_zoom * 0.5f;
-		camera.camera->SetProjection(-camera.aspect_ratio * half_zoom,
-			camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
+		//camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
+		camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
 
 		if (camera.current_zoom == camera.target_zoom)
 			camera.finished_zoom = true;
@@ -90,8 +91,8 @@ void CameraControllerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 			camera.aspect_ratio = (float)Li::Application::Get().GetWindow().GetWidth()
 				/ (float)Li::Application::Get().GetWindow().GetHeight();
 			const float half_zoom = camera.current_zoom * 0.5f;
-			camera.camera->SetProjection(-camera.aspect_ratio * half_zoom,
-				camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
+			//camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
+			camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
 		}
 	}
 }

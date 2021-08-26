@@ -35,7 +35,6 @@ GameLayer::GameLayer()
 	emitter.Count = 1024;
 	emitter.EmitRate = 300.0f;
 	emitter.LifeSpan = glm::vec2{ 2.0f, 3.0f };
-	//m_Emitter = Li::MakeRef<Li::ParticleEmitterWI>(emitter);
 	m_Emitter = Li::MakeRef<Li::ParticleEmitter>(emitter);
 }
 

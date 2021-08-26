@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lithium/Core/Memory.h"
-#include "Lithium/Renderer/OrthographicCamera.h"
+#include "Lithium/Renderer/Camera.h"
 #include "Lithium/Renderer/Texture.h"
 #include "Lithium/Renderer/VertexArray.h"
 #include "Lithium/Renderer/Shader.h"
@@ -28,7 +28,7 @@ namespace Li
 
 		static void BeginFrame(Duration::us run_time, Duration::us delta_time);
 
-		static void BeginScene(OrthographicCamera* camera);
+		static void BeginScene(Camera* camera);
 		static void EndScene();
 
 		static void BeginUI();
@@ -87,8 +87,8 @@ namespace Li
 			Ref<UniformBuffer> FontUB;
 			Ref<UniformBuffer> EmitterUB;
 
-			OrthographicCamera* Camera;
-			Unique<OrthographicCamera> UICamera;
+			Camera* Camera;
+			Unique<Li::Camera> UICamera;
 
 			bool ResourcesLoaded{ false };
 			uint64_t FrameNumber{ 0 };

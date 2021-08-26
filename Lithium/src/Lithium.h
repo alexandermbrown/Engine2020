@@ -14,7 +14,7 @@
 
 #include "Lithium/Renderer/Buffer.h"
 #include "Lithium/Renderer/Framebuffer.h"
-#include "Lithium/Renderer/OrthographicCamera.h"
+#include "Lithium/Renderer/Camera.h"
 #include "Lithium/Renderer/ParticleEmitter.h"
 #include "Lithium/Renderer/Renderer.h"
 #include "Lithium/Renderer/RendererAPI.h"
