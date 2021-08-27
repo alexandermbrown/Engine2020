@@ -7,6 +7,24 @@ RWStructuredBuffer<uint> alive_buffer_new     : register(u2);
 RWStructuredBuffer<uint> dead_buffer          : register(u3);
 RWByteAddressBuffer counter_buffer            : register(u4);
 
+float graph_lerp(float4 val_vs_life[LI_GRAPH_NODE_COUNT_MAX], float life)
+{
+	// each elem of val_vs_life is (life_fraction, value, nothing, nothing).
+	// val_vs_life[0].x is assumed to always be 0.
+	for (int i = 1; i < LI_GRAPH_NODE_COUNT_MAX; i++)
+	{
+		if (life <= val_vs_life[i].x)
+		{
+			return lerp(
+				val_vs_life[i - 1].y,
+				val_vs_life[i].y,
+				(life - val_vs_life[i - 1].x) / (val_vs_life[i].x - val_vs_life[i - 1].x)
+			);
+		}
+	}
+	return val_vs_life[LI_GRAPH_NODE_COUNT_MAX - 1].y;
+}
+
 [numthreads(THREADCOUNT_SIMULATION, 1, 1)]
 void cs_main(uint3 thread_id : SV_DispatchThreadID)
 {
@@ -17,11 +35,16 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 		uint particle_index = alive_buffer_current[thread_id.x];
 		Particle particle = particles[particle_index];
 
-		if (particle.life > 0)
+		if (particle.life_left > 0)
 		{
 			// particle.velocity += particle.force * u_DeltaTime;
 			particle.position += particle.velocity * u_DeltaTime;
-			particle.life -= u_DeltaTime;
+			particle.rotation += u_DeltaTime / 2.0;
+			particle.life_left -= u_DeltaTime;
+
+			float life_fraction = clamp(1.0 - (particle.life_left / particle.start_life), 0.0, 1.0);
+			particle.scale = u_Scale * graph_lerp(u_ScaleGraph, life_fraction);
+			particle.color.a = graph_lerp(u_AlphaGraph, life_fraction);
 
 			particles[particle_index] = particle;
 

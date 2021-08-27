@@ -27,14 +27,21 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 
 		Particle particle;
         particle.position = float3(0, 0, 0);
+		particle.rotation = 0.0;
+		particle.scale = u_Scale * u_ScaleGraph[0].y;
 
 		float speed = rand(seed, uv) * (u_SpeedRange.y - u_SpeedRange.x) + u_SpeedRange.x;
 		float angle = rand(seed, uv) * 2.0 * PI;
 		particle.velocity = float3(speed * cos(angle), speed * sin(angle), 0.0);
 
-        particle.life = rand(seed, uv) * (u_LifeSpan.y - u_LifeSpan.x) + u_LifeSpan.x;
-		particle.color = float4(rand(seed, uv) * 0.5 + 0.4, rand(seed, uv) * 0.5 + 0.4, rand(seed, uv) * 0.5 + 0.4, 0.7);
-		particle._pad = 0.0f;
+        particle.start_life = rand(seed, uv) * (u_LifeSpan.y - u_LifeSpan.x) + u_LifeSpan.x;
+        particle.life_left = particle.start_life;
+		particle.color = float4(
+			rand(seed, uv) * 0.5 + 0.4,
+			rand(seed, uv) * 0.5 + 0.4,
+			rand(seed, uv) * 0.5 + 0.4,
+			u_AlphaGraph[0].y
+		);
 
         // New particle index retrieved from dead list (pop):
 		uint dead_count;

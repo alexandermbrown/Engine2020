@@ -2,43 +2,53 @@
 #include "ParticleEmitter.h"
 
 #include "Renderer.h"
-#include "ShaderInterop/ParticleEmitterSI.h"
 #include "Lithium/Core/Application.h"
 #include "Lithium/Resources/ResourceManager.h"
 
 namespace Li
 {
 	ParticleEmitter::ParticleEmitter(const EmitterProps& props)
-		: m_Props(props), m_EmitCount(0.0f),
+		: m_MaxCount(props.MaxCount), m_EmitRate(props.EmitRate), m_EmitCount(0.0f),
 		m_ShaderUpdateBegin(ResourceManager::GetShader("shader_emitter_update_begin")),
 		m_ShaderEmit(ResourceManager::GetShader("shader_emitter_emit")),
 		m_ShaderSimulate(ResourceManager::GetShader("shader_emitter_simulate")),
 		m_ShaderUpdateEnd(ResourceManager::GetShader("shader_emitter_update_end")),
 		m_ShaderDraw(ResourceManager::GetShader("shader_emitter_draw"))
 	{
-		std::vector<Particle> particles(m_Props.MaxCount);
+		m_EmitterUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(EmitterCB), sizeof(EmitterCB));
+
+		m_Uniforms.u_LifeSpan = props.LifeSpan;
+		m_Uniforms.u_SpeedRange = props.SpeedRange;
+		m_Uniforms.u_Scale = props.ParticleScale;
+		for (int i = 0; i < LI_GRAPH_NODE_COUNT_MAX; i++)
+		{
+			m_Uniforms.u_ScaleGraph[i] = glm::vec4(props.ScaleGraph[i], 0.0f, 0.0f);
+			m_Uniforms.u_AlphaGraph[i] = glm::vec4(props.AlphaGraph[i], 0.0f, 0.0f);
+		}
+
+		std::vector<Particle> particles(m_MaxCount);
 		for (Particle& particle : particles)
 		{
 			Random& rand = Application::Get().GetRandom();
 			particle.position = { 0.0f, 0.0f, 0.0f };
 			particle.velocity = { 0.0f, 0.0f, 0.0f };
-			particle.life = 0.0f;
+			particle.life_left = 0.0f;
 			particle.color = { 1.0f, 0.0f, 0.0f, 1.0f };
 		}
 
-		m_Particles = ShaderBuffer::Create(particles.data(), m_Props.MaxCount * sizeof(Particle), sizeof(Particle), ShaderBufferType::Structured);
+		m_Particles = ShaderBuffer::Create(particles.data(), m_MaxCount * sizeof(Particle), sizeof(Particle), ShaderBufferType::Structured);
 
-		m_AliveList[0] = ShaderBuffer::Create(nullptr, m_Props.MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
-		m_AliveList[1] = ShaderBuffer::Create(nullptr, m_Props.MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+		m_AliveList[0] = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+		m_AliveList[1] = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
 
-		std::vector<uint32_t> dead_indices(m_Props.MaxCount);
-		for (uint32_t i = 0; i < m_Props.MaxCount; i++)
+		std::vector<uint32_t> dead_indices(m_MaxCount);
+		for (uint32_t i = 0; i < m_MaxCount; i++)
 			dead_indices[i] = i;
-		m_DeadList = ShaderBuffer::Create(dead_indices.data(), m_Props.MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+		m_DeadList = ShaderBuffer::Create(dead_indices.data(), m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
 
 		ParticleCounters counters;
 		counters.alive_count = 0;
-		counters.dead_count = m_Props.MaxCount;
+		counters.dead_count = m_MaxCount;
 		counters.real_emit_count = 0;
 		counters.alive_count_after_sim = 0;
 
@@ -58,18 +68,15 @@ namespace Li
 		float delta = std::min(Li::Duration::Cast<Li::Duration::fsec>(dt).count(), 0.2f);
 
 		m_EmitCount = std::max(0.0f, m_EmitCount - std::floorf(m_EmitCount));
-		m_EmitCount += m_Props.EmitRate * delta;
+		m_EmitCount += m_EmitRate * delta;
 
-		EmitterCB emitter;
-		emitter.u_EmitterTransform = transform;
-		emitter.u_EmitCount = static_cast<uint32_t>(m_EmitCount);
-		emitter.u_EmitterRandomness = Application::Get().GetRandom().UniformFloat(0.0f, 1.0f);
-		emitter.u_LifeSpan = m_Props.LifeSpan;
-		emitter.u_SpeedRange = m_Props.SpeedRange;
+		m_Uniforms.u_EmitterTransform = transform;
+		m_Uniforms.u_EmitCount = static_cast<uint32_t>(m_EmitCount);
+		m_Uniforms.u_EmitterRandomness = Application::Get().GetRandom().UniformFloat(0.0f, 1.0f);
 
-		Ref<UniformBuffer> emitter_buffer = Renderer::GetEmitterBuffer();
-		emitter_buffer->SetData(&emitter);
-		emitter_buffer->Bind(ShaderType::Compute);
+		m_EmitterUB->SetData(&m_Uniforms);
+		m_EmitterUB->BindBase();
+		m_EmitterUB->Bind(ShaderType::Compute);
 		Renderer::GetFrameUniformBuffer()->Bind(ShaderType::Compute);
 
 		m_Particles->BindBase(0);

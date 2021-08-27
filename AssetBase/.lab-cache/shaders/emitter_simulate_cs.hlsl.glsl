@@ -5,9 +5,11 @@ struct Particle
 {
     vec4 color;
     vec3 position;
-    float life;
+    float rotation;
+    vec3 scale;
+    float life_left;
     vec3 velocity;
-    float _pad;
+    float start_life;
 };
 
 layout(binding = 0, std140) uniform type_FrameCB
@@ -23,6 +25,10 @@ layout(binding = 4, std140) uniform type_EmitterCB
     uint u_EmitCount;
     float u_EmitterRandomness;
     vec2 u_SpeedRange;
+    vec3 u_Scale;
+    float u_EmitterPad;
+    vec4 u_ScaleGraph[8];
+    vec4 u_AlphaGraph[8];
 } EmitterCB;
 
 layout(binding = 0, std430) buffer type_RWStructuredBuffer_Particle
@@ -80,26 +86,46 @@ uint COMPUTE_IAB_OFFSET_DISPATCHEMIT;
 uint COMPUTE_IAB_OFFSET_DISPATCHSIMULATION;
 uint DRAW_IAB_OFFSET_DRAWPARTICLES;
 
+float graph_lerp(vec4 val_vs_life[8], float life)
+{
+    for (int i = 1; i < 8; i++)
+    {
+        if (life <= val_vs_life[i].x)
+        {
+            return mix(val_vs_life[i - 1].y, val_vs_life[i].y, (life - val_vs_life[i - 1].x) / (val_vs_life[i].x - val_vs_life[i - 1].x));
+        }
+    }
+    return val_vs_life[8 - 1].y;
+}
+
 void src_cs_main(uvec3 thread_id)
 {
     uint alive_count = counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT >> 2u];
     if (thread_id.x < alive_count)
     {
         uint particle_index = alive_buffer_current._m0[thread_id.x];
-        Particle particle = Particle(particles._m0[particle_index].color, particles._m0[particle_index].position, particles._m0[particle_index].life, particles._m0[particle_index].velocity, particles._m0[particle_index]._pad);
-        if (particle.life > 0.0)
+        Particle particle = Particle(particles._m0[particle_index].color, particles._m0[particle_index].position, particles._m0[particle_index].rotation, particles._m0[particle_index].scale, particles._m0[particle_index].life_left, particles._m0[particle_index].velocity, particles._m0[particle_index].start_life);
+        if (particle.life_left > 0.0)
         {
             particle.position += (particle.velocity * FrameCB.u_DeltaTime);
-            particle.life -= FrameCB.u_DeltaTime;
-            particles._m0[particle_index] = Particle(particle.color, particle.position, particle.life, particle.velocity, particle._pad);
-            uint _146 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
-            uint new_alive_index = _146;
+            particle.rotation += (FrameCB.u_DeltaTime / 2.0);
+            particle.life_left -= FrameCB.u_DeltaTime;
+            float life_fraction = clamp(1.0 - (particle.life_left / particle.start_life), 0.0, 1.0);
+            vec4 param_var_val_vs_life[8] = vec4[](EmitterCB.u_ScaleGraph[0], EmitterCB.u_ScaleGraph[1], EmitterCB.u_ScaleGraph[2], EmitterCB.u_ScaleGraph[3], EmitterCB.u_ScaleGraph[4], EmitterCB.u_ScaleGraph[5], EmitterCB.u_ScaleGraph[6], EmitterCB.u_ScaleGraph[7]);
+            float param_var_life = life_fraction;
+            particle.scale = EmitterCB.u_Scale * graph_lerp(param_var_val_vs_life, param_var_life);
+            vec4 param_var_val_vs_life_1[8] = vec4[](EmitterCB.u_AlphaGraph[0], EmitterCB.u_AlphaGraph[1], EmitterCB.u_AlphaGraph[2], EmitterCB.u_AlphaGraph[3], EmitterCB.u_AlphaGraph[4], EmitterCB.u_AlphaGraph[5], EmitterCB.u_AlphaGraph[6], EmitterCB.u_AlphaGraph[7]);
+            float param_var_life_1 = life_fraction;
+            particle.color.w = graph_lerp(param_var_val_vs_life_1, param_var_life_1);
+            particles._m0[particle_index] = Particle(particle.color, particle.position, particle.rotation, particle.scale, particle.life_left, particle.velocity, particle.start_life);
+            uint _219 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
+            uint new_alive_index = _219;
             alive_buffer_new_1._m0[new_alive_index] = particle_index;
         }
         else
         {
-            uint _153 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
-            uint dead_index = _153;
+            uint _226 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
+            uint dead_index = _226;
             dead_buffer_1._m0[dead_index] = particle_index;
         }
     }

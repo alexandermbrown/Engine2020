@@ -4,6 +4,8 @@
 
 #include "ShaderInterop.h"
 
+#define LI_GRAPH_NODE_COUNT_MAX 8
+
 #ifdef __cplusplus
 namespace Li {
 #endif
@@ -12,9 +14,11 @@ namespace Li {
 	{
 		float4 color;
 		float3 position;
-		float life;
+		float rotation;
+		float3 scale;
+		float life_left;
 		float3 velocity;
-		float _pad;
+		float start_life;
 	};
 
 	// Note: Order matters.
@@ -34,6 +38,14 @@ namespace Li {
 		uint u_EmitCount;
 		float u_EmitterRandomness;
 		aligned_float2 u_SpeedRange;
+		aligned_float3 u_Scale;
+		float u_EmitterPad;
+		//float pad;
+		// Note: We only use the first 2 elements of each float4.
+		// The remaining floats are padding required by D3D11.
+		// https://geidav.wordpress.com/2013/03/05/hidden-hlsl-performance-hit-accessing-unpadded-arrays-in-constant-buffers/
+		float4 u_ScaleGraph[LI_GRAPH_NODE_COUNT_MAX];
+		float4 u_AlphaGraph[LI_GRAPH_NODE_COUNT_MAX];
 	};
 
 	static const uint THREADCOUNT_EMIT = 256;

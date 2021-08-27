@@ -8,6 +8,10 @@ layout(binding = 4, std140) uniform type_EmitterCB
     uint u_EmitCount;
     float u_EmitterRandomness;
     vec2 u_SpeedRange;
+    vec3 u_Scale;
+    float u_EmitterPad;
+    vec4 u_ScaleGraph[8];
+    vec4 u_AlphaGraph[8];
 } EmitterCB;
 
 layout(binding = 4, std430) buffer type_RWByteAddressBuffer
@@ -35,16 +39,16 @@ void src_cs_main(uvec3 thread_id)
     uint dead_count = counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u];
     uint alive_count_new = counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u];
     uint real_emit_count = min(dead_count, EmitterCB.u_EmitCount);
-    uint _75 = COMPUTE_IAB_OFFSET_DISPATCHEMIT >> 2u;
-    uvec3 _81 = uvec3(uint(ceil(float(real_emit_count) / 256.0)), 1u, 1u);
-    compute_iab_1._m0[_75] = _81.x;
-    compute_iab_1._m0[_75 + 1u] = _81.y;
-    compute_iab_1._m0[_75 + 2u] = _81.z;
-    uint _91 = COMPUTE_IAB_OFFSET_DISPATCHSIMULATION >> 2u;
-    uvec3 _99 = uvec3(uint(ceil(float(alive_count_new + real_emit_count) / 256.0)), 1u, 1u);
-    compute_iab_1._m0[_91] = _99.x;
-    compute_iab_1._m0[_91 + 1u] = _99.y;
-    compute_iab_1._m0[_91 + 2u] = _99.z;
+    uint _78 = COMPUTE_IAB_OFFSET_DISPATCHEMIT >> 2u;
+    uvec3 _84 = uvec3(uint(ceil(float(real_emit_count) / 256.0)), 1u, 1u);
+    compute_iab_1._m0[_78] = _84.x;
+    compute_iab_1._m0[_78 + 1u] = _84.y;
+    compute_iab_1._m0[_78 + 2u] = _84.z;
+    uint _94 = COMPUTE_IAB_OFFSET_DISPATCHSIMULATION >> 2u;
+    uvec3 _102 = uvec3(uint(ceil(float(alive_count_new + real_emit_count) / 256.0)), 1u, 1u);
+    compute_iab_1._m0[_94] = _102.x;
+    compute_iab_1._m0[_94 + 1u] = _102.y;
+    compute_iab_1._m0[_94 + 2u] = _102.z;
     counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT >> 2u] = alive_count_new;
     counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u] = 0u;
     counter_buffer._m0[PARTICLECOUNTER_OFFSET_REALEMITCOUNT >> 2u] = real_emit_count;

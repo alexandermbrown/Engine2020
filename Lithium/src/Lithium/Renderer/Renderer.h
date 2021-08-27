@@ -63,7 +63,6 @@ namespace Li
 		inline static const Ref<UniformBuffer>& GetFrameUniformBuffer() { return s_Data->FrameUB; }
 		inline static const Ref<UniformBuffer>& GetViewProjBuffer() { return s_Data->ViewProjUB; }
 		inline static const Ref<UniformBuffer>& GetTransformBuffer() { return s_Data->TransformMatrixUB; }
-		inline static const Ref<UniformBuffer>& GetEmitterBuffer() { return s_Data->EmitterUB; }
 		inline static const Ref<Shader>& GetFontShader() { return s_Data->FontShader; }
 
 	private:
@@ -85,7 +84,6 @@ namespace Li
 			Ref<UniformBuffer> ViewProjUB;
 			Ref<UniformBuffer> TransformMatrixUB;
 			Ref<UniformBuffer> FontUB;
-			Ref<UniformBuffer> EmitterUB;
 
 			Camera* Camera;
 			Unique<Li::Camera> UICamera;

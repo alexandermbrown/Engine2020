@@ -36,9 +36,6 @@ namespace Li
 
 		s_Data->FontUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FontCB), sizeof(FontCB));
 		s_Data->FontUB->BindBase();
-		
-		s_Data->EmitterUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(EmitterCB), sizeof(EmitterCB));
-		s_Data->EmitterUB->BindBase();
 
 		s_Data->Camera = nullptr;
 
