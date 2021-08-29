@@ -31,10 +31,17 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 		float seed = 0.38224;
 
 		Particle particle;
+		float3 half_volume = u_EmitVolume / 2.0;
+		float3 emit_offset = float3(
+			rand_in_range(seed, uv, -half_volume.x, half_volume.x),
+			rand_in_range(seed, uv, -half_volume.y, half_volume.y),
+			rand_in_range(seed, uv, -half_volume.z, half_volume.z)
+		);
+
 		if (u_RelativeToWorld) {
-			particle.position = mul(u_EmitterTransform, float4(0, 0, 0, 1.0)).xyz;
+			particle.position = mul(u_EmitterTransform, float4(emit_offset, 1.0)).xyz;
 		} else {
-			particle.position = float3(0, 0, 0);
+			particle.position = emit_offset;
 		}
 
 		particle.angle = rand_in_range(seed, uv, u_Rotation.x, u_Rotation.y);

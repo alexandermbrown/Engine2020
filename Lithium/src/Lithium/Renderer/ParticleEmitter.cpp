@@ -22,6 +22,7 @@ namespace Li
 		m_Uniforms.u_Scale = props.ParticleScale;
 		m_Uniforms.u_Rotation = { props.InitialAngle, props.AngularVelocity };
 		m_Uniforms.u_RelativeToWorld = props.RelativeToWorld;
+		m_Uniforms.u_EmitVolume = props.EmitVolume;
 		for (int i = 0; i < LI_GRAPH_NODE_COUNT_MAX; i++)
 		{
 			m_Uniforms.u_ScaleGraph[i] = glm::vec4(props.ScaleGraph[i], 0.0f, 0.0f);

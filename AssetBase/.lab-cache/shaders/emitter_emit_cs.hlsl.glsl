@@ -32,7 +32,7 @@ layout(binding = 4, std140) uniform type_EmitterCB
     vec3 u_Scale;
     uint u_RelativeToWorld;
     vec4 u_Rotation;
-    vec3 u_SpawnVolume;
+    vec3 u_EmitVolume;
     float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
     vec4 u_AlphaGraph[8];
@@ -103,8 +103,8 @@ float rand(inout float seed, vec2 uv)
 float rand_in_range(inout float seed, vec2 uv, float minimum, float maximum)
 {
     vec2 param_var_uv = uv;
-    float _297 = rand(seed, param_var_uv);
-    return (_297 * (maximum - minimum)) + minimum;
+    float _338 = rand(seed, param_var_uv);
+    return (_338 * (maximum - minimum)) + minimum;
 }
 
 void src_cs_main(uvec3 thread_id)
@@ -114,57 +114,71 @@ void src_cs_main(uvec3 thread_id)
     {
         vec2 uv = vec2(FrameCB.u_RunTime + EmitterCB.u_EmitterRandomness, float(thread_id.x) / 256.0);
         float seed = 0.382239997386932373046875;
+        vec3 half_volume = EmitterCB.u_EmitVolume / vec3(2.0);
+        vec2 param_var_uv = uv;
+        float param_var_minimum = -half_volume.x;
+        float param_var_maximum = half_volume.x;
+        float _177 = rand_in_range(seed, param_var_uv, param_var_minimum, param_var_maximum);
+        vec2 param_var_uv_1 = uv;
+        float param_var_minimum_1 = -half_volume.y;
+        float param_var_maximum_1 = half_volume.y;
+        float _185 = rand_in_range(seed, param_var_uv_1, param_var_minimum_1, param_var_maximum_1);
+        vec2 param_var_uv_2 = uv;
+        float param_var_minimum_2 = -half_volume.z;
+        float param_var_maximum_2 = half_volume.z;
+        float _192 = rand_in_range(seed, param_var_uv_2, param_var_minimum_2, param_var_maximum_2);
+        vec3 emit_offset = vec3(_177, _185, _192);
         Particle particle;
         if (EmitterCB.u_RelativeToWorld != 0u)
         {
-            particle.position = (vec4(0.0, 0.0, 0.0, 1.0) * EmitterCB.u_EmitterTransform).xyz;
+            particle.position = (vec4(emit_offset, 1.0) * EmitterCB.u_EmitterTransform).xyz;
         }
         else
         {
-            particle.position = vec3(0.0);
+            particle.position = emit_offset;
         }
-        vec2 param_var_uv = uv;
-        float param_var_minimum = EmitterCB.u_Rotation.x;
-        float param_var_maximum = EmitterCB.u_Rotation.y;
-        float _178 = rand_in_range(seed, param_var_uv, param_var_minimum, param_var_maximum);
-        particle.angle = _178;
-        particle.scale = EmitterCB.u_Scale * EmitterCB.u_ScaleGraph[0].y;
-        vec2 param_var_uv_1 = uv;
-        float param_var_minimum_1 = EmitterCB.u_SpeedRange.x;
-        float param_var_maximum_1 = EmitterCB.u_SpeedRange.y;
-        float _199 = rand_in_range(seed, param_var_uv_1, param_var_minimum_1, param_var_maximum_1);
-        float speed = _199;
-        vec2 param_var_uv_2 = uv;
-        float _201 = rand(seed, param_var_uv_2);
-        float angle = (_201 * 2.0) * 3.1415927410125732421875;
-        particle.velocity = vec3(speed * cos(angle), speed * sin(angle), 0.0);
         vec2 param_var_uv_3 = uv;
-        float param_var_minimum_2 = EmitterCB.u_Rotation.z;
-        float param_var_maximum_2 = EmitterCB.u_Rotation.w;
-        float _222 = rand_in_range(seed, param_var_uv_3, param_var_minimum_2, param_var_maximum_2);
-        particle.angular_velocity = _222;
+        float param_var_minimum_3 = EmitterCB.u_Rotation.x;
+        float param_var_maximum_3 = EmitterCB.u_Rotation.y;
+        float _221 = rand_in_range(seed, param_var_uv_3, param_var_minimum_3, param_var_maximum_3);
+        particle.angle = _221;
+        particle.scale = EmitterCB.u_Scale * EmitterCB.u_ScaleGraph[0].y;
         vec2 param_var_uv_4 = uv;
-        float param_var_minimum_3 = EmitterCB.u_LifeSpan.x;
-        float param_var_maximum_3 = EmitterCB.u_LifeSpan.y;
-        float _231 = rand_in_range(seed, param_var_uv_4, param_var_minimum_3, param_var_maximum_3);
-        particle.start_life = _231;
-        particle.life_left = particle.start_life;
+        float param_var_minimum_4 = EmitterCB.u_SpeedRange.x;
+        float param_var_maximum_4 = EmitterCB.u_SpeedRange.y;
+        float _240 = rand_in_range(seed, param_var_uv_4, param_var_minimum_4, param_var_maximum_4);
+        float speed = _240;
         vec2 param_var_uv_5 = uv;
-        float _237 = rand(seed, param_var_uv_5);
+        float _242 = rand(seed, param_var_uv_5);
+        float angle = (_242 * 2.0) * 3.1415927410125732421875;
+        particle.velocity = vec3(speed * cos(angle), speed * sin(angle), 0.0);
         vec2 param_var_uv_6 = uv;
-        float _241 = rand(seed, param_var_uv_6);
+        float param_var_minimum_5 = EmitterCB.u_Rotation.z;
+        float param_var_maximum_5 = EmitterCB.u_Rotation.w;
+        float _263 = rand_in_range(seed, param_var_uv_6, param_var_minimum_5, param_var_maximum_5);
+        particle.angular_velocity = _263;
         vec2 param_var_uv_7 = uv;
-        float _245 = rand(seed, param_var_uv_7);
-        particle.color = vec4((_237 * 0.5) + 0.4000000059604644775390625, (_241 * 0.5) + 0.4000000059604644775390625, (_245 * 0.5) + 0.4000000059604644775390625, EmitterCB.u_AlphaGraph[0].y);
+        float param_var_minimum_6 = EmitterCB.u_LifeSpan.x;
+        float param_var_maximum_6 = EmitterCB.u_LifeSpan.y;
+        float _272 = rand_in_range(seed, param_var_uv_7, param_var_minimum_6, param_var_maximum_6);
+        particle.start_life = _272;
+        particle.life_left = particle.start_life;
+        vec2 param_var_uv_8 = uv;
+        float _278 = rand(seed, param_var_uv_8);
+        vec2 param_var_uv_9 = uv;
+        float _282 = rand(seed, param_var_uv_9);
+        vec2 param_var_uv_10 = uv;
+        float _286 = rand(seed, param_var_uv_10);
+        particle.color = vec4((_278 * 0.5) + 0.4000000059604644775390625, (_282 * 0.5) + 0.4000000059604644775390625, (_286 * 0.5) + 0.4000000059604644775390625, EmitterCB.u_AlphaGraph[0].y);
         particle._pad0 = 0.0;
         particle._pad1 = 0.0;
         particle._pad2 = 0.0;
-        uint _261 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 4294967295u);
-        uint dead_count = _261;
+        uint _302 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 4294967295u);
+        uint dead_count = _302;
         uint new_particle_index = dead_buffer_1._m0[dead_count - 1u];
         particles._m0[new_particle_index] = Particle(particle.color, particle.position, particle.angle, particle.scale, particle.life_left, particle.velocity, particle.start_life, particle.angular_velocity, particle._pad0, particle._pad1, particle._pad2);
-        uint _285 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT >> 2u], 1u);
-        uint alive_count = _285;
+        uint _326 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT >> 2u], 1u);
+        uint alive_count = _326;
         alive_buffer_current._m0[alive_count] = new_particle_index;
     }
 }

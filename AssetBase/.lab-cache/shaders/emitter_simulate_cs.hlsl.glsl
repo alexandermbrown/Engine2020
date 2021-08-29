@@ -32,7 +32,7 @@ layout(binding = 4, std140) uniform type_EmitterCB
     vec3 u_Scale;
     uint u_RelativeToWorld;
     vec4 u_Rotation;
-    vec3 u_SpawnVolume;
+    vec3 u_EmitVolume;
     float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
     vec4 u_AlphaGraph[8];
