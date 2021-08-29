@@ -14,11 +14,15 @@ namespace Li {
 	{
 		float4 color;
 		float3 position;
-		float rotation;
+		float angle;
 		float3 scale;
 		float life_left;
 		float3 velocity;
 		float start_life;
+		float angular_velocity;
+		float _pad0;
+		float _pad1;
+		float _pad2;
 	};
 
 	// Note: Order matters.
@@ -39,7 +43,11 @@ namespace Li {
 		float u_EmitterRandomness;
 		aligned_float2 u_SpeedRange;
 		aligned_float3 u_Scale;
-		float u_EmitterPad;
+		uint u_RelativeToWorld;
+		// Initial angle (min, max), rotational velocity (min, max).
+		aligned_float4 u_Rotation;
+		aligned_float3 u_SpawnVolume;
+		float u__EmitterPad1;
 		//float pad;
 		// Note: We only use the first 2 elements of each float4.
 		// The remaining floats are padding required by D3D11.

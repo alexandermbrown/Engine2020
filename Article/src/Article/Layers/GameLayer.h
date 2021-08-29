@@ -42,6 +42,8 @@ private:
 
 	Li::Ref<Li::ParticleEmitter> m_Emitter;
 
+	glm::vec3 m_EmitPosition;
+
 	//DefaultTerrainStore m_TerrainStore;
 	//TerrainRenderer m_TerrainRenderer;
 };

@@ -15,6 +15,11 @@ inline float rand(inout float seed, in float2 uv)
 	return result;
 }
 
+inline float rand_in_range(inout float seed, in float2 uv, float minimum, float maximum)
+{
+	return rand(seed, uv) * (maximum - minimum) + minimum;
+}
+
 [numthreads(THREADCOUNT_EMIT, 1, 1)]
 void cs_main(uint3 thread_id : SV_DispatchThreadID)
 {
@@ -26,15 +31,21 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 		float seed = 0.38224;
 
 		Particle particle;
-        particle.position = float3(0, 0, 0);
-		particle.rotation = 0.0;
+		if (u_RelativeToWorld) {
+			particle.position = mul(u_EmitterTransform, float4(0, 0, 0, 1.0)).xyz;
+		} else {
+			particle.position = float3(0, 0, 0);
+		}
+
+		particle.angle = rand_in_range(seed, uv, u_Rotation.x, u_Rotation.y);
 		particle.scale = u_Scale * u_ScaleGraph[0].y;
 
-		float speed = rand(seed, uv) * (u_SpeedRange.y - u_SpeedRange.x) + u_SpeedRange.x;
+		float speed = rand_in_range(seed, uv, u_SpeedRange.x, u_SpeedRange.y);
 		float angle = rand(seed, uv) * 2.0 * PI;
 		particle.velocity = float3(speed * cos(angle), speed * sin(angle), 0.0);
+		particle.angular_velocity = rand_in_range(seed, uv, u_Rotation.z, u_Rotation.w);
 
-        particle.start_life = rand(seed, uv) * (u_LifeSpan.y - u_LifeSpan.x) + u_LifeSpan.x;
+        particle.start_life = rand_in_range(seed, uv, u_LifeSpan.x, u_LifeSpan.y);
         particle.life_left = particle.start_life;
 		particle.color = float4(
 			rand(seed, uv) * 0.5 + 0.4,
@@ -42,6 +53,10 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 			rand(seed, uv) * 0.5 + 0.4,
 			u_AlphaGraph[0].y
 		);
+
+		particle._pad0 = 0;
+		particle._pad1 = 0;
+		particle._pad2 = 0;
 
         // New particle index retrieved from dead list (pop):
 		uint dead_count;

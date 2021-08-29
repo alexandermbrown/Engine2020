@@ -29,8 +29,8 @@ PS_IN vs_main(uint vertex_id : SV_VERTEXID)
 	float3 quad_pos = BILLBOARD[INDICES[vertex_id % 6]];
 	quad_pos *= particle.scale;
 
-	float cos_rot = cos(particle.rotation);
-	float sin_rot = sin(particle.rotation);
+	float cos_rot = cos(particle.angle);
+	float sin_rot = sin(particle.angle);
 	quad_pos.xy = float2(
 		quad_pos.x * cos_rot - quad_pos.y * sin_rot,
 		quad_pos.x * sin_rot + quad_pos.y * cos_rot
@@ -38,6 +38,10 @@ PS_IN vs_main(uint vertex_id : SV_VERTEXID)
 
 	output.position = float4(particle.position, 1);
 	output.position.xyz += quad_pos.xyz;
+
+	if (!u_RelativeToWorld) {
+		output.position = mul(u_EmitterTransform, output.position);
+	}
 	output.position = mul(u_ViewProj, output.position);
 	output.color = particle.color;
 

@@ -5,11 +5,15 @@ struct Particle
 {
     vec4 color;
     vec3 position;
-    float rotation;
+    float angle;
     vec3 scale;
     float life_left;
     vec3 velocity;
     float start_life;
+    float angular_velocity;
+    float _pad0;
+    float _pad1;
+    float _pad2;
 };
 
 layout(binding = 0, std140) uniform type_FrameCB
@@ -26,7 +30,10 @@ layout(binding = 4, std140) uniform type_EmitterCB
     float u_EmitterRandomness;
     vec2 u_SpeedRange;
     vec3 u_Scale;
-    float u_EmitterPad;
+    uint u_RelativeToWorld;
+    vec4 u_Rotation;
+    vec3 u_SpawnVolume;
+    float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
     vec4 u_AlphaGraph[8];
 } EmitterCB;
@@ -104,11 +111,11 @@ void src_cs_main(uvec3 thread_id)
     if (thread_id.x < alive_count)
     {
         uint particle_index = alive_buffer_current._m0[thread_id.x];
-        Particle particle = Particle(particles._m0[particle_index].color, particles._m0[particle_index].position, particles._m0[particle_index].rotation, particles._m0[particle_index].scale, particles._m0[particle_index].life_left, particles._m0[particle_index].velocity, particles._m0[particle_index].start_life);
+        Particle particle = Particle(particles._m0[particle_index].color, particles._m0[particle_index].position, particles._m0[particle_index].angle, particles._m0[particle_index].scale, particles._m0[particle_index].life_left, particles._m0[particle_index].velocity, particles._m0[particle_index].start_life, particles._m0[particle_index].angular_velocity, particles._m0[particle_index]._pad0, particles._m0[particle_index]._pad1, particles._m0[particle_index]._pad2);
         if (particle.life_left > 0.0)
         {
             particle.position += (particle.velocity * FrameCB.u_DeltaTime);
-            particle.rotation += (FrameCB.u_DeltaTime / 2.0);
+            particle.angle += (particle.angular_velocity * FrameCB.u_DeltaTime);
             particle.life_left -= FrameCB.u_DeltaTime;
             float life_fraction = clamp(1.0 - (particle.life_left / particle.start_life), 0.0, 1.0);
             vec4 param_var_val_vs_life[8] = vec4[](EmitterCB.u_ScaleGraph[0], EmitterCB.u_ScaleGraph[1], EmitterCB.u_ScaleGraph[2], EmitterCB.u_ScaleGraph[3], EmitterCB.u_ScaleGraph[4], EmitterCB.u_ScaleGraph[5], EmitterCB.u_ScaleGraph[6], EmitterCB.u_ScaleGraph[7]);
@@ -117,15 +124,15 @@ void src_cs_main(uvec3 thread_id)
             vec4 param_var_val_vs_life_1[8] = vec4[](EmitterCB.u_AlphaGraph[0], EmitterCB.u_AlphaGraph[1], EmitterCB.u_AlphaGraph[2], EmitterCB.u_AlphaGraph[3], EmitterCB.u_AlphaGraph[4], EmitterCB.u_AlphaGraph[5], EmitterCB.u_AlphaGraph[6], EmitterCB.u_AlphaGraph[7]);
             float param_var_life_1 = life_fraction;
             particle.color.w = graph_lerp(param_var_val_vs_life_1, param_var_life_1);
-            particles._m0[particle_index] = Particle(particle.color, particle.position, particle.rotation, particle.scale, particle.life_left, particle.velocity, particle.start_life);
-            uint _219 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
-            uint new_alive_index = _219;
+            particles._m0[particle_index] = Particle(particle.color, particle.position, particle.angle, particle.scale, particle.life_left, particle.velocity, particle.start_life, particle.angular_velocity, particle._pad0, particle._pad1, particle._pad2);
+            uint _230 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
+            uint new_alive_index = _230;
             alive_buffer_new_1._m0[new_alive_index] = particle_index;
         }
         else
         {
-            uint _226 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
-            uint dead_index = _226;
+            uint _237 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
+            uint dead_index = _237;
             dead_buffer_1._m0[dead_index] = particle_index;
         }
     }

@@ -39,7 +39,7 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 		{
 			// particle.velocity += particle.force * u_DeltaTime;
 			particle.position += particle.velocity * u_DeltaTime;
-			particle.rotation += u_DeltaTime / 2.0;
+			particle.angle += particle.angular_velocity * u_DeltaTime;
 			particle.life_left -= u_DeltaTime;
 
 			float life_fraction = clamp(1.0 - (particle.life_left / particle.start_life), 0.0, 1.0);

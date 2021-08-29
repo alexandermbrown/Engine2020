@@ -9,7 +9,10 @@ layout(binding = 4, std140) uniform type_EmitterCB
     float u_EmitterRandomness;
     vec2 u_SpeedRange;
     vec3 u_Scale;
-    float u_EmitterPad;
+    uint u_RelativeToWorld;
+    vec4 u_Rotation;
+    vec3 u_SpawnVolume;
+    float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
     vec4 u_AlphaGraph[8];
 } EmitterCB;

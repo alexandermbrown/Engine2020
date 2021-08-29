@@ -23,6 +23,7 @@ typedef glm::mat4 float4x4;
 
 typedef             uint     aligned_uint;
 typedef             float    aligned_float;
+typedef LI_ALIGN_16 bool     aligned_bool;
 typedef LI_ALIGN_16 float2   aligned_float2;
 typedef LI_ALIGN_16 float3   aligned_float3;
 typedef LI_ALIGN_16 float4   aligned_float4;

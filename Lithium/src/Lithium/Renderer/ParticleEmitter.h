@@ -14,9 +14,13 @@ namespace Li
 	{
 		uint32_t MaxCount;
 		float EmitRate;
+		bool RelativeToWorld;
 		glm::vec2 LifeSpan;
 		glm::vec2 SpeedRange;
 		glm::vec3 ParticleScale;
+		// Inital angle and angular velocity are (min, max).
+		glm::vec2 InitialAngle;
+		glm::vec2 AngularVelocity;
 		// First 3 floats is scale xyz, last float is time fraction.
 		glm::vec2 ScaleGraph[LI_GRAPH_NODE_COUNT_MAX];
 		// First float is alpha, last float is time fraction.

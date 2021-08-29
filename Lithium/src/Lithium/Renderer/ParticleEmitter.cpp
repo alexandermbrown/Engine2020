@@ -20,6 +20,8 @@ namespace Li
 		m_Uniforms.u_LifeSpan = props.LifeSpan;
 		m_Uniforms.u_SpeedRange = props.SpeedRange;
 		m_Uniforms.u_Scale = props.ParticleScale;
+		m_Uniforms.u_Rotation = { props.InitialAngle, props.AngularVelocity };
+		m_Uniforms.u_RelativeToWorld = props.RelativeToWorld;
 		for (int i = 0; i < LI_GRAPH_NODE_COUNT_MAX; i++)
 		{
 			m_Uniforms.u_ScaleGraph[i] = glm::vec4(props.ScaleGraph[i], 0.0f, 0.0f);
@@ -127,6 +129,8 @@ namespace Li
 		m_Particles->BindSRV(ShaderType::Vertex, 1);
 		m_AliveList[1]->BindBase(2);
 		m_AliveList[1]->BindSRV(ShaderType::Vertex, 2);
+		m_EmitterUB->BindBase();
+		m_EmitterUB->Bind(ShaderType::Vertex);
 
 		context->UnbindVertexArray();
 
