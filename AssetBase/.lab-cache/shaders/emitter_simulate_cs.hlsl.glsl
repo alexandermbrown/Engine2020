@@ -33,6 +33,8 @@ layout(binding = 4, std140) uniform type_EmitterCB
     uint u_RelativeToWorld;
     vec4 u_Rotation;
     vec3 u_EmitVolume;
+    float u_EmitterPad0;
+    vec3 u_Acceleration;
     float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
     vec4 u_AlphaGraph[8];
@@ -114,6 +116,7 @@ void src_cs_main(uvec3 thread_id)
         Particle particle = Particle(particles._m0[particle_index].color, particles._m0[particle_index].position, particles._m0[particle_index].angle, particles._m0[particle_index].scale, particles._m0[particle_index].life_left, particles._m0[particle_index].velocity, particles._m0[particle_index].start_life, particles._m0[particle_index].angular_velocity, particles._m0[particle_index]._pad0, particles._m0[particle_index]._pad1, particles._m0[particle_index]._pad2);
         if (particle.life_left > 0.0)
         {
+            particle.velocity += (EmitterCB.u_Acceleration * FrameCB.u_DeltaTime);
             particle.position += (particle.velocity * FrameCB.u_DeltaTime);
             particle.angle += (particle.angular_velocity * FrameCB.u_DeltaTime);
             particle.life_left -= FrameCB.u_DeltaTime;
@@ -125,14 +128,14 @@ void src_cs_main(uvec3 thread_id)
             float param_var_life_1 = life_fraction;
             particle.color.w = graph_lerp(param_var_val_vs_life_1, param_var_life_1);
             particles._m0[particle_index] = Particle(particle.color, particle.position, particle.angle, particle.scale, particle.life_left, particle.velocity, particle.start_life, particle.angular_velocity, particle._pad0, particle._pad1, particle._pad2);
-            uint _230 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
-            uint new_alive_index = _230;
+            uint _239 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
+            uint new_alive_index = _239;
             alive_buffer_new_1._m0[new_alive_index] = particle_index;
         }
         else
         {
-            uint _237 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
-            uint dead_index = _237;
+            uint _246 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
+            uint dead_index = _246;
             dead_buffer_1._m0[dead_index] = particle_index;
         }
     }

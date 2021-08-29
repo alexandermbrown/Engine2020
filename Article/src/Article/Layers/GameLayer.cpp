@@ -34,14 +34,16 @@ GameLayer::GameLayer()
 	Li::EmitterProps emitter;
 	emitter.MaxCount = 128;
 	emitter.RelativeToWorld = true;
-	emitter.LifeSpan = { 1.0f, 1.5f };
-	emitter.SpeedRange = { 0.5f, 1.0f };
-	emitter.EmitVolume = { 0.0f, 3.0f, 0.0f };
+	emitter.LifeSpan = { 2.0f, 3.0f };
+	emitter.SpeedRange = { 0.0f, 0.5f };
+	emitter.EmitVolume = { 0.2f, 0.3f, 0.0f };
 	emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
 	emitter.ParticleScale = { 0.2f, 0.2f, 1.0f };
 
 	emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
 	emitter.AngularVelocity = { -1.0f, 1.0f };
+
+	emitter.Acceleration = { 0.0f, 3.0f, 0.0f };
 
 	emitter.ScaleGraph[0] = { 0.0f, 0.0f };
 	emitter.ScaleGraph[1] = { 0.1f, 1.0f };

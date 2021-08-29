@@ -21,6 +21,8 @@ namespace Li
 		// Inital angle and angular velocity are (min, max).
 		glm::vec2 InitialAngle;
 		glm::vec2 AngularVelocity;
+
+		glm::vec3 Acceleration;
 		// XYZ scale of spawn volume around origin.
 		// Particles will spawn randomly in this area.
 		glm::vec3 EmitVolume;

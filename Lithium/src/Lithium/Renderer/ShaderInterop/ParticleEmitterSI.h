@@ -47,6 +47,8 @@ namespace Li {
 		// Initial angle (min, max), rotational velocity (min, max).
 		aligned_float4 u_Rotation;
 		aligned_float3 u_EmitVolume;
+		float u__EmitterPad0;
+		aligned_float3 u_Acceleration;
 		float u__EmitterPad1;
 		//float pad;
 		// Note: We only use the first 2 elements of each float4.
