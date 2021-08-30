@@ -18,6 +18,7 @@ StructuredBuffer<uint> alive_buffer : register(t2);
 struct PS_IN
 {
 	float4 position : SV_POSITION;
+	float2 texcoord : TEXCOORD;
 	float4 color : COLOR;
 };
 
@@ -27,6 +28,7 @@ PS_IN vs_main(uint vertex_id : SV_VERTEXID)
 
 	Particle particle = particle_buffer[alive_buffer[vertex_id / 6]];
 	float3 quad_pos = BILLBOARD[INDICES[vertex_id % 6]];
+	float3 tex_coord = quad_pos + float3(0.5, 0.5, 0.0);
 	quad_pos *= particle.scale;
 
 	float cos_rot = cos(particle.angle);
@@ -43,6 +45,7 @@ PS_IN vs_main(uint vertex_id : SV_VERTEXID)
 		output.position = mul(u_EmitterTransform, output.position);
 	}
 	output.position = mul(u_ViewProj, output.position);
+	output.texcoord = tex_coord;
 	output.color = particle.color;
 
 	return output;

@@ -18,6 +18,7 @@ namespace Li
 	class ResourceManager
 	{
 	public:
+		static void Init();
 		static void Shutdown();
 
 		static void Load(const std::string& labFilePath);

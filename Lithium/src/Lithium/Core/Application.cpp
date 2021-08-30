@@ -54,6 +54,7 @@ namespace Li
 		m_ImGuiRenderer = ImGuiRenderer::Create();
 #endif
 		AudioManager::Init(nullptr);
+		ResourceManager::Init();
 	}
 
 	Application::~Application()

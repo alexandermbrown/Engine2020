@@ -108,7 +108,7 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 
 	//m_Emitter->PrintDebug("Emitter");
 	m_Emitter->Update(dt, glm::translate(glm::mat4(1.0f), m_EmitPosition));
-	m_Emitter->Draw();
+	m_Emitter->Draw(Li::ResourceManager::GetTexture2D("texture_default"));
 
 	//m_TerrainRenderer.SubmitQuad();
 	//RenderingSystem::Render(m_Registry);

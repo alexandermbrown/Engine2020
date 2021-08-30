@@ -131,7 +131,7 @@ namespace Li
 		context->UnbindUAVs(0, 5);
 	}
 
-	void ParticleEmitter::Draw()
+	void ParticleEmitter::Draw(const Ref<Texture2D>& texture)
 	{
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		
@@ -143,6 +143,8 @@ namespace Li
 		m_AliveList[1]->BindSRV(ShaderType::Vertex, 2);
 		m_EmitterUB->BindBase();
 		m_EmitterUB->Bind(ShaderType::Vertex);
+
+		texture->Bind(0);
 
 		context->UnbindVertexArray();
 

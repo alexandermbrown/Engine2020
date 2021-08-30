@@ -10,7 +10,35 @@
 
 namespace Li
 {
-	Unique<ResourceManager::ResourceData> ResourceManager::s_Data = MakeUnique<ResourceData>();
+	Unique<ResourceManager::ResourceData> ResourceManager::s_Data = nullptr;
+
+	void ResourceManager::Init()
+	{
+		LI_CORE_ASSERT(s_Data == nullptr);
+		s_Data = MakeUnique<ResourceData>();
+
+		// SETUP WHITE TEXTURE
+		uint32_t data = 0xffffffff;
+		Ref<Texture2D> texture_white = Texture2D::Create(1, 1, 4, &data);
+
+		// SETUP SCENE FLAT COLOR TEXTURE ALTAS
+		Ref<TextureAtlas> texture_white_atlas = MakeRef<TextureAtlas>(TextureAtlas(texture_white, {
+			{ "texture_white", glm::vec4(0.5f) }
+		}));
+
+		s_Data->Textures["texture_white"] = texture_white;
+		s_Data->TextureAtlases["texture_white_atlas"] = texture_white_atlas;
+	}
+
+	void ResourceManager::Shutdown()
+	{
+		if (s_Data->LoadData.Buffer)
+		{
+			Log::CoreWarn("Load data buffer not freed.");
+			delete[] s_Data->LoadData.Buffer;
+		}
+		s_Data.reset();
+	}
 
 	void ResourceManager::Load(const std::string& lab_file_path)
 	{
@@ -152,16 +180,6 @@ namespace Li
 		}
 
 		return true;
-	}
-
-	void ResourceManager::Shutdown()
-	{
-		if (s_Data->LoadData.Buffer)
-		{
-			Log::CoreWarn("Load data buffer not freed.");
-			delete[] s_Data->LoadData.Buffer;
-		}
-		s_Data.reset();
 	}
 
 	void ResourceManager::PrintInfo()

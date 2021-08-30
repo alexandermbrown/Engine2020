@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "ShaderBuffer.h"
 #include "ShaderInterop/ParticleEmitterSI.h"
+#include "Lithium/Renderer/Texture.h"
 #include "Lithium/Utility/Time.h"
 #include "glm/glm.hpp"
 
@@ -30,8 +31,6 @@ namespace Li
 		glm::vec2 ScaleGraph[LI_GRAPH_NODE_COUNT_MAX];
 		// First float is alpha, last float is time fraction.
 		glm::vec2 AlphaGraph[LI_GRAPH_NODE_COUNT_MAX];
-		// First 3 floats are color rgb, last float is time fraction.
-		//glm::vec4 ColorGraph[LI_GRAPH_NODE_COUNT_MAX];
 	};
 
 	class ParticleEmitter
@@ -40,7 +39,7 @@ namespace Li
 		ParticleEmitter(const EmitterProps& props);
 
 		void Update(Li::Duration::us dt, const glm::mat4& transform);
-		void Draw();
+		void Draw(const Ref<Texture2D>& texture);
 
 		inline void Burst(int count)
 		{

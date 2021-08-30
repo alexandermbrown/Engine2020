@@ -76,21 +76,13 @@ namespace Li
 	{
 		s_Data->FontShader = ResourceManager::GetShader("shader_label");
 
-		// SETUP WHITE TEXTURE
-		uint32_t data = 0xffffffff;
-		Ref<Texture2D> whiteTexture = Texture2D::Create(1, 1, 4, &data);
-
-		// SETUP SCENE FLAT COLOR TEXTURE ALTAS
-		Ref<TextureAtlas> flatColorAtlas = MakeRef<TextureAtlas>(TextureAtlas(whiteTexture, {
-			{ "texture_white", glm::vec4(0.5f) }
-		}));
-
 		s_Data->SceneRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.5f, 0.5f }, s_Data->ViewProjUB, s_Data->TransformMatrixUB);
 		s_Data->UIRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.0f, 0.0f }, s_Data->ViewProjUB, s_Data->TransformMatrixUB);
 		s_Data->SceneLineRenderer = MakeUnique<LineBatchRenderer>(s_Data->ViewProjUB);
 
-		s_Data->SceneRenderer->AddTextureAtlas(flatColorAtlas);
-		s_Data->UIRenderer->AddTextureAtlas(flatColorAtlas);
+		Ref<TextureAtlas> texture_white_atlas = ResourceManager::GetTextureAtlas("texture_white_atlas");
+		s_Data->SceneRenderer->AddTextureAtlas(texture_white_atlas);
+		s_Data->UIRenderer->AddTextureAtlas(texture_white_atlas);
 		s_Data->ResourcesLoaded = true;
 	}
 
