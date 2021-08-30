@@ -74,6 +74,8 @@ namespace Li
 
 	void Renderer::InitPostResourceLoad()
 	{
+		s_Data->Sorter = MakeRef<GPUSort>();
+
 		s_Data->FontShader = ResourceManager::GetShader("shader_label");
 
 		s_Data->SceneRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.5f, 0.5f }, s_Data->ViewProjUB, s_Data->TransformMatrixUB);

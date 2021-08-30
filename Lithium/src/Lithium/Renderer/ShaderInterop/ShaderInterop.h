@@ -16,6 +16,7 @@
 #endif
 
 typedef uint32_t  uint;
+typedef glm::ivec3 int3;
 typedef glm::vec2 float2;
 typedef glm::vec3 float3;
 typedef glm::vec4 float4;

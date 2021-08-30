@@ -11,10 +11,10 @@ namespace Li
 		: m_MaxCount(props.MaxCount), m_EmitRate(props.EmitRate), m_Continuous(props.Continuous),
 		m_EmitCount(0.0f), m_BurstCount(0.0f),
 		m_ShaderUpdateBegin(ResourceManager::GetShader("shader_emitter_update_begin")),
-		m_ShaderEmit(       ResourceManager::GetShader("shader_emitter_emit")),
-		m_ShaderSimulate(   ResourceManager::GetShader("shader_emitter_simulate")),
-		m_ShaderUpdateEnd(  ResourceManager::GetShader("shader_emitter_update_end")),
-		m_ShaderDraw(       ResourceManager::GetShader("shader_emitter_draw"))
+		m_ShaderEmit       (ResourceManager::GetShader("shader_emitter_emit")),
+		m_ShaderSimulate   (ResourceManager::GetShader("shader_emitter_simulate")),
+		m_ShaderUpdateEnd  (ResourceManager::GetShader("shader_emitter_update_end")),
+		m_ShaderDraw       (ResourceManager::GetShader("shader_emitter_draw"))
 	{
 		m_EmitterUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(EmitterCB), sizeof(EmitterCB));
 
@@ -53,6 +53,8 @@ namespace Li
 		for (uint32_t i = 0; i < m_MaxCount; i++)
 			dead_indices[i] = i;
 		m_DeadList = ShaderBuffer::Create(dead_indices.data(), m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+
+		m_DistanceBuffer = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(float), sizeof(float), ShaderBufferType::Structured);
 
 		ParticleCounters counters;
 		counters.alive_count = 0;
@@ -101,12 +103,14 @@ namespace Li
 		m_AliveList[1]->BindBase(2);
 		m_DeadList->BindBase(3);
 		m_CounterBuffer->BindBase(4);
+		m_DistanceBuffer->BindBase(6);
 
 		m_Particles->BindUAV(0);
 		m_AliveList[0]->BindUAV(1);
 		m_AliveList[1]->BindUAV(2);
 		m_DeadList->BindUAV(3);
 		m_CounterBuffer->BindUAV(4);
+		m_DistanceBuffer->BindUAV(6);
 
 		context->ShaderStorageBarrier();
 
@@ -126,6 +130,14 @@ namespace Li
 		m_ComputeIAB->DispatchComputeIndirect(COMPUTE_IAB_OFFSET_DISPATCHSIMULATION);
 		
 		context->ShaderStorageBarrier();
+
+		Renderer::GetSorter()->Sort(m_MaxCount, m_DistanceBuffer, m_CounterBuffer,
+			PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION, m_AliveList[1]);
+
+		context->ShaderStorageBarrier();
+
+		m_CounterBuffer->BindBase(4);
+		m_CounterBuffer->BindUAV(4);
 
 		m_ShaderUpdateEnd->Bind();
 		m_DrawIAB->Bind(6);

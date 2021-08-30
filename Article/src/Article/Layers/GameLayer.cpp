@@ -35,34 +35,22 @@ GameLayer::GameLayer()
 	m_AudioSource->Play();
 
 	Li::EmitterProps emitter;
-	emitter.MaxCount = 256;
+	emitter.MaxCount = 16;
 	emitter.Continuous = false;
 	emitter.RelativeToWorld = true;
 	emitter.LifeSpan = { 2.0f, 3.0f };
 	emitter.SpeedRange = { 0.0f, 0.5f };
-	emitter.EmitVolume = { 0.2f, 0.3f, 0.0f };
+	emitter.EmitVolume = { 0.2f, 0.3f, 1.0f };
 	emitter.EmitRate = 4000.0f;
 	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
-	emitter.ParticleScale = { 0.2f, 0.2f, 1.0f };
+	emitter.ParticleScale = { 0.4f, 0.4f, 1.0f };
 
 	emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
 	emitter.AngularVelocity = { -1.0f, 1.0f };
 
-	emitter.Acceleration = { 0.0f, 3.0f, 0.0f };
-
-	emitter.ScaleGraph[0] = { 0.0f, 0.0f };
-	emitter.ScaleGraph[1] = { 0.1f, 1.0f };
-	emitter.ScaleGraph[2] = { 0.6f, 1.0f };
-	emitter.ScaleGraph[3] = { 1.0f, 0.0f };
-
-	emitter.BlueGraph[0] = { 0.0f, 0.0f };
-	emitter.BlueGraph[1] = { 0.3f, 1.0f };
-	emitter.BlueGraph[2] = { 0.7f, 0.0f };
-	emitter.BlueGraph[3] = { 1.0f, 1.0f };
-	
 	emitter.AlphaGraph[0] = { 0.0f, 0.0f };
-	emitter.AlphaGraph[1] = { 0.1f, 0.8f };
-	emitter.AlphaGraph[2] = { 0.8f, 0.8f };
+	emitter.AlphaGraph[1] = { 0.1f, 0.6f };
+	emitter.AlphaGraph[2] = { 0.8f, 0.6f };
 	emitter.AlphaGraph[3] = { 1.0f, 0.0f };
 
 	m_Emitter = Li::MakeRef<Li::ParticleEmitter>(emitter);

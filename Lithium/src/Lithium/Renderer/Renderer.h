@@ -5,6 +5,7 @@
 #include "Lithium/Renderer/Texture.h"
 #include "Lithium/Renderer/VertexArray.h"
 #include "Lithium/Renderer/Shader.h"
+#include "Lithium/Renderer/GPUSort.h"
 #include "Lithium/Renderer/RendererAPI.h"
 #include "Lithium/Renderer/BatchRenderer.h"
 #include "Lithium/Renderer/LineBatchRenderer.h"
@@ -64,6 +65,7 @@ namespace Li
 		inline static const Ref<UniformBuffer>& GetViewProjBuffer() { return s_Data->ViewProjUB; }
 		inline static const Ref<UniformBuffer>& GetTransformBuffer() { return s_Data->TransformMatrixUB; }
 		inline static const Ref<Shader>& GetFontShader() { return s_Data->FontShader; }
+		inline static const Ref<GPUSort>& GetSorter() { return s_Data->Sorter; }
 
 	private:
 		static void RenderQuad(const Ref<Texture>& texture, const glm::mat4& transform, const glm::mat4& view_projection);
@@ -84,6 +86,8 @@ namespace Li
 			Ref<UniformBuffer> ViewProjUB;
 			Ref<UniformBuffer> TransformMatrixUB;
 			Ref<UniformBuffer> FontUB;
+
+			Ref<GPUSort> Sorter;
 
 			Camera* Camera;
 			Unique<Li::Camera> UICamera;

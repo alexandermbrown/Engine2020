@@ -14,22 +14,22 @@ namespace Li
 	struct EmitterProps
 	{
 		// Emmision.
-		uint32_t MaxCount;
-		float EmitRate;
-		bool Continuous;
-		bool RelativeToWorld;
+		uint32_t MaxCount{ 32 };
+		float EmitRate{ 16.0f };
+		bool Continuous{ true };
+		bool RelativeToWorld{ false };
 		// XYZ scale of spawn volume around origin.
 		// Particles will spawn randomly in this area.
-		glm::vec3 EmitVolume;
+		glm::vec3 EmitVolume{ 0.0f, 0.0f, 0.0f };
 
 		// Simulation.
-		glm::vec2 LifeSpan;
-		glm::vec2 SpeedRange;
-		glm::vec3 ParticleScale;
+		glm::vec2 LifeSpan{ 1.0f, 1.0f };
+		glm::vec2 SpeedRange{ 1.0f, 1.0f };
+		glm::vec3 ParticleScale{ 1.0f, 1.0f, 1.0f };
 		// Inital angle and angular velocity are (min, max).
-		glm::vec2 InitialAngle;
-		glm::vec2 AngularVelocity;
-		glm::vec3 Acceleration;
+		glm::vec2 InitialAngle{ 0.0f, 0.0f };
+		glm::vec2 AngularVelocity{ 0.0f, 0.0f };
+		glm::vec3 Acceleration{ 0.0f, 0.0f, 0.0f };
 		
 		// First 3 floats is scale xyz, last float is time fraction.
 		glm::vec2 ScaleGraph[LI_GRAPH_NODE_COUNT_MAX] {
@@ -91,6 +91,7 @@ namespace Li
 		Ref<ShaderBuffer> m_AliveList[2];
 		Ref<ShaderBuffer> m_DeadList;
 		Ref<ShaderBuffer> m_CounterBuffer;
+		Ref<ShaderBuffer> m_DistanceBuffer;
 		Ref<ReadbackBuffer> m_ReadbackBuffer;
 
 		Ref<Shader> m_ShaderUpdateBegin;

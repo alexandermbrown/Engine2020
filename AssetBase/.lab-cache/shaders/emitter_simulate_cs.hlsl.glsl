@@ -58,7 +58,7 @@ layout(binding = 1, std430) buffer type_RWStructuredBuffer_uint
     uint _m0[];
 } alive_buffer_current;
 
-layout(binding = 6, std430) buffer counter_var_alive_buffer_current
+layout(binding = 7, std430) buffer counter_var_alive_buffer_current
 {
     int counter;
 } counter_var_alive_buffer_current_1;
@@ -68,7 +68,7 @@ layout(binding = 2, std430) buffer alive_buffer_new
     uint _m0[];
 } alive_buffer_new_1;
 
-layout(binding = 7, std430) buffer counter_var_alive_buffer_new
+layout(binding = 8, std430) buffer counter_var_alive_buffer_new
 {
     int counter;
 } counter_var_alive_buffer_new_1;
@@ -78,7 +78,7 @@ layout(binding = 3, std430) buffer dead_buffer
     uint _m0[];
 } dead_buffer_1;
 
-layout(binding = 8, std430) buffer counter_var_dead_buffer
+layout(binding = 9, std430) buffer counter_var_dead_buffer
 {
     int counter;
 } counter_var_dead_buffer_1;
@@ -87,6 +87,16 @@ layout(binding = 4, std430) buffer type_RWByteAddressBuffer
 {
     uint _m0[];
 } counter_buffer;
+
+layout(binding = 6, std430) buffer type_RWStructuredBuffer_float
+{
+    float _m0[];
+} distance_buffer;
+
+layout(binding = 10, std430) buffer counter_var_distance_buffer
+{
+    int counter;
+} counter_var_distance_buffer_1;
 
 uint THREADCOUNT_EMIT;
 uint THREADCOUNT_SIMULATION;
@@ -140,14 +150,15 @@ void src_cs_main(uvec3 thread_id)
             float param_var_life_4 = life_fraction;
             particle.color.w = graph_lerp(param_var_val_vs_life_4, param_var_life_4);
             particles._m0[particle_index] = Particle(particle.color, particle.position, particle.angle, particle.scale, particle.life_left, particle.velocity, particle.start_life, particle.angular_velocity, particle._pad0, particle._pad1, particle._pad2);
-            uint _296 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
-            uint new_alive_index = _296;
+            uint _301 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
+            uint new_alive_index = _301;
             alive_buffer_new_1._m0[new_alive_index] = particle_index;
+            distance_buffer._m0[particle_index] = particle.position.z;
         }
         else
         {
-            uint _303 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
-            uint dead_index = _303;
+            uint _313 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
+            uint dead_index = _313;
             dead_buffer_1._m0[dead_index] = particle_index;
         }
     }

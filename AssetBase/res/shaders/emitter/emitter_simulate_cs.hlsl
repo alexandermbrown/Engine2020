@@ -6,6 +6,7 @@ RWStructuredBuffer<uint> alive_buffer_current : register(u1);
 RWStructuredBuffer<uint> alive_buffer_new     : register(u2);
 RWStructuredBuffer<uint> dead_buffer          : register(u3);
 RWByteAddressBuffer counter_buffer            : register(u4);
+RWStructuredBuffer<float> distance_buffer     : register(u6);
 
 float graph_lerp(float4 val_vs_life[LI_GRAPH_NODE_COUNT_MAX], float life)
 {
@@ -55,6 +56,9 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 			uint new_alive_index;
 			counter_buffer.InterlockedAdd(PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION, 1, new_alive_index);
 			alive_buffer_new[new_alive_index] = particle_index;
+
+			// TODO: Check if it is reversed or not.
+			distance_buffer[particle_index] = particle.position.z;
 		}
 		else
 		{

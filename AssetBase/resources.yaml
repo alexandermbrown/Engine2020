@@ -67,6 +67,29 @@ shader_emitter_draw:
     - "./res/shaders/emitter/emitter_draw_vs.hlsl"
     - "./res/shaders/emitter/emitter_draw_ps.hlsl"
 
+# GPU Sort.
+shader_gpusort_begin:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_begin_cs.hlsl"
+
+shader_gpusort_sort:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_sort_cs.hlsl"
+
+shader_gpusort_sort_inner:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_sort_inner_cs.hlsl"
+
+shader_gpusort_sort_step:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_sort_step_cs.hlsl"
+
+  
+
 ### Textures ###
 texture_default:
   type: texture2d
