@@ -16,10 +16,13 @@
 
 #include "glm/gtc/type_ptr.hpp"
 
+#include <chrono>
+using namespace std::chrono_literals;
+
 GameLayer::GameLayer()
 	: Layer("GameLayer"),
 	//m_TerrainStore(11), m_TerrainRenderer(&m_TerrainStore, 3),
-	m_Registry()
+	m_BurstTimer(1s, false, true)
 {
 	m_TickThread.Begin(m_Registry);
 
@@ -32,12 +35,14 @@ GameLayer::GameLayer()
 	m_AudioSource->Play();
 
 	Li::EmitterProps emitter;
-	emitter.MaxCount = 128;
+	emitter.MaxCount = 256;
+	emitter.Continuous = false;
 	emitter.RelativeToWorld = true;
 	emitter.LifeSpan = { 2.0f, 3.0f };
 	emitter.SpeedRange = { 0.0f, 0.5f };
 	emitter.EmitVolume = { 0.2f, 0.3f, 0.0f };
-	emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
+	emitter.EmitRate = 4000.0f;
+	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
 	emitter.ParticleScale = { 0.2f, 0.2f, 1.0f };
 
 	emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
@@ -57,7 +62,7 @@ GameLayer::GameLayer()
 
 	m_Emitter = Li::MakeRef<Li::ParticleEmitter>(emitter);
 
-	m_EmitPosition = { -1.0f, 1.0f, 0.0f };
+	m_EmitPosition = { 0.0f, 2.0f, 0.0f };
 }
 
 GameLayer::~GameLayer()
@@ -87,9 +92,12 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 
 	TransformUpdateSystem::Update(m_Registry);
 
-	m_EmitPosition.x += 5.0f * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
-	if (m_EmitPosition.x > 10.0f)
-		m_EmitPosition.x = -10.0f;
+	//m_EmitPosition.x += 5.0f * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
+	//if (m_EmitPosition.x > 10.0f)
+	//	m_EmitPosition.x = -10.0f;
+
+	if (m_BurstTimer.Update(dt))
+		m_Emitter->Burst(64);
 
 	cp::camera& camera = m_Registry.ctx<cp::camera>();
 

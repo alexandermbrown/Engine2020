@@ -14,6 +14,7 @@ namespace Li
 	{
 		uint32_t MaxCount;
 		float EmitRate;
+		bool Continuous;
 		bool RelativeToWorld;
 		glm::vec2 LifeSpan;
 		glm::vec2 SpeedRange;
@@ -21,12 +22,10 @@ namespace Li
 		// Inital angle and angular velocity are (min, max).
 		glm::vec2 InitialAngle;
 		glm::vec2 AngularVelocity;
-
 		glm::vec3 Acceleration;
 		// XYZ scale of spawn volume around origin.
 		// Particles will spawn randomly in this area.
 		glm::vec3 EmitVolume;
-
 		// First 3 floats is scale xyz, last float is time fraction.
 		glm::vec2 ScaleGraph[LI_GRAPH_NODE_COUNT_MAX];
 		// First float is alpha, last float is time fraction.
@@ -42,6 +41,12 @@ namespace Li
 
 		void Update(Li::Duration::us dt, const glm::mat4& transform);
 		void Draw();
+
+		inline void Burst(int count)
+		{
+			m_BurstCount += (float)count;
+		}
+
 		// Warning: May impact performance.
 		void PrintDebug(const char* label);
 
@@ -50,6 +55,9 @@ namespace Li
 		const uint32_t m_MaxCount;
 		float m_EmitCount;
 		float m_EmitRate;
+
+		bool m_Continuous;
+		float m_BurstCount;
 
 		EmitterCB m_Uniforms;
 		Ref<UniformBuffer> m_EmitterUB;

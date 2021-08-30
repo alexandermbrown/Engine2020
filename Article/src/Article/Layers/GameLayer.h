@@ -13,6 +13,7 @@
 #include "Lithium/Core/Layer.h"
 #include "Lithium/Audio/AudioSource.h"
 #include "Lithium/Renderer/ParticleEmitter.h"
+#include "Lithium/Utility/Timer.h"
 #include "glm/glm.hpp"
 #include "readerwriterqueue/readerwriterqueue.h"
 #include "entt/entt.hpp"
@@ -43,6 +44,7 @@ private:
 	Li::Ref<Li::ParticleEmitter> m_Emitter;
 
 	glm::vec3 m_EmitPosition;
+	Li::Timer m_BurstTimer;
 
 	//DefaultTerrainStore m_TerrainStore;
 	//TerrainRenderer m_TerrainRenderer;

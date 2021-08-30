@@ -8,7 +8,8 @@
 namespace Li
 {
 	ParticleEmitter::ParticleEmitter(const EmitterProps& props)
-		: m_MaxCount(props.MaxCount), m_EmitRate(props.EmitRate), m_EmitCount(0.0f),
+		: m_MaxCount(props.MaxCount), m_EmitRate(props.EmitRate), m_Continuous(props.Continuous),
+		m_EmitCount(0.0f), m_BurstCount(0.0f),
 		m_ShaderUpdateBegin(ResourceManager::GetShader("shader_emitter_update_begin")),
 		m_ShaderEmit(ResourceManager::GetShader("shader_emitter_emit")),
 		m_ShaderSimulate(ResourceManager::GetShader("shader_emitter_simulate")),
@@ -72,7 +73,16 @@ namespace Li
 		float delta = std::min(Li::Duration::Cast<Li::Duration::fsec>(dt).count(), 0.2f);
 
 		m_EmitCount = std::max(0.0f, m_EmitCount - std::floorf(m_EmitCount));
-		m_EmitCount += m_EmitRate * delta;
+		if (m_Continuous)
+		{
+			m_EmitCount += m_EmitRate * delta;
+		}
+		else
+		{
+			float emit_count = std::min(m_BurstCount, m_EmitRate * delta);
+			m_BurstCount -= emit_count;
+			m_EmitCount += emit_count;
+		}
 
 		m_Uniforms.u_EmitterTransform = transform;
 		m_Uniforms.u_EmitCount = static_cast<uint32_t>(m_EmitCount);
