@@ -54,6 +54,11 @@ GameLayer::GameLayer()
 	emitter.ScaleGraph[1] = { 0.1f, 1.0f };
 	emitter.ScaleGraph[2] = { 0.6f, 1.0f };
 	emitter.ScaleGraph[3] = { 1.0f, 0.0f };
+
+	emitter.BlueGraph[0] = { 0.0f, 0.0f };
+	emitter.BlueGraph[1] = { 0.3f, 1.0f };
+	emitter.BlueGraph[2] = { 0.7f, 0.0f };
+	emitter.BlueGraph[3] = { 1.0f, 1.0f };
 	
 	emitter.AlphaGraph[0] = { 0.0f, 0.0f };
 	emitter.AlphaGraph[1] = { 0.1f, 0.8f };

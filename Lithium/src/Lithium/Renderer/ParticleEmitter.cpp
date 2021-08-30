@@ -11,23 +11,26 @@ namespace Li
 		: m_MaxCount(props.MaxCount), m_EmitRate(props.EmitRate), m_Continuous(props.Continuous),
 		m_EmitCount(0.0f), m_BurstCount(0.0f),
 		m_ShaderUpdateBegin(ResourceManager::GetShader("shader_emitter_update_begin")),
-		m_ShaderEmit(ResourceManager::GetShader("shader_emitter_emit")),
-		m_ShaderSimulate(ResourceManager::GetShader("shader_emitter_simulate")),
-		m_ShaderUpdateEnd(ResourceManager::GetShader("shader_emitter_update_end")),
-		m_ShaderDraw(ResourceManager::GetShader("shader_emitter_draw"))
+		m_ShaderEmit(       ResourceManager::GetShader("shader_emitter_emit")),
+		m_ShaderSimulate(   ResourceManager::GetShader("shader_emitter_simulate")),
+		m_ShaderUpdateEnd(  ResourceManager::GetShader("shader_emitter_update_end")),
+		m_ShaderDraw(       ResourceManager::GetShader("shader_emitter_draw"))
 	{
 		m_EmitterUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(EmitterCB), sizeof(EmitterCB));
 
-		m_Uniforms.u_LifeSpan = props.LifeSpan;
-		m_Uniforms.u_SpeedRange = props.SpeedRange;
-		m_Uniforms.u_Scale = props.ParticleScale;
+		m_Uniforms.u_LifeSpan        = props.LifeSpan;
+		m_Uniforms.u_SpeedRange      = props.SpeedRange;
+		m_Uniforms.u_Scale           = props.ParticleScale;
 		m_Uniforms.u_Rotation = { props.InitialAngle, props.AngularVelocity };
 		m_Uniforms.u_RelativeToWorld = props.RelativeToWorld;
-		m_Uniforms.u_EmitVolume = props.EmitVolume;
-		m_Uniforms.u_Acceleration = props.Acceleration;
+		m_Uniforms.u_EmitVolume      = props.EmitVolume;
+		m_Uniforms.u_Acceleration    = props.Acceleration;
 		for (int i = 0; i < LI_GRAPH_NODE_COUNT_MAX; i++)
 		{
 			m_Uniforms.u_ScaleGraph[i] = glm::vec4(props.ScaleGraph[i], 0.0f, 0.0f);
+			m_Uniforms.u_RedGraph  [i] = glm::vec4(props.RedGraph  [i], 0.0f, 0.0f);
+			m_Uniforms.u_GreenGraph[i] = glm::vec4(props.GreenGraph[i], 0.0f, 0.0f);
+			m_Uniforms.u_BlueGraph [i] = glm::vec4(props.BlueGraph [i], 0.0f, 0.0f);
 			m_Uniforms.u_AlphaGraph[i] = glm::vec4(props.AlphaGraph[i], 0.0f, 0.0f);
 		}
 

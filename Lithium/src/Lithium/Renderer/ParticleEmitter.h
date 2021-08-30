@@ -13,10 +13,16 @@ namespace Li
 {
 	struct EmitterProps
 	{
+		// Emmision.
 		uint32_t MaxCount;
 		float EmitRate;
 		bool Continuous;
 		bool RelativeToWorld;
+		// XYZ scale of spawn volume around origin.
+		// Particles will spawn randomly in this area.
+		glm::vec3 EmitVolume;
+
+		// Simulation.
 		glm::vec2 LifeSpan;
 		glm::vec2 SpeedRange;
 		glm::vec3 ParticleScale;
@@ -24,13 +30,34 @@ namespace Li
 		glm::vec2 InitialAngle;
 		glm::vec2 AngularVelocity;
 		glm::vec3 Acceleration;
-		// XYZ scale of spawn volume around origin.
-		// Particles will spawn randomly in this area.
-		glm::vec3 EmitVolume;
+		
 		// First 3 floats is scale xyz, last float is time fraction.
-		glm::vec2 ScaleGraph[LI_GRAPH_NODE_COUNT_MAX];
+		glm::vec2 ScaleGraph[LI_GRAPH_NODE_COUNT_MAX] {
+			{ 0.0f, 1.0f },
+			{ 1.0f, 1.0f }
+		};
+
+		// Visual.
+		// // First float is alpha, last float is time fraction.
+		glm::vec2 RedGraph[LI_GRAPH_NODE_COUNT_MAX] {
+			{ 0.0f, 1.0f },
+			{ 1.0f, 1.0f }
+		};
 		// First float is alpha, last float is time fraction.
-		glm::vec2 AlphaGraph[LI_GRAPH_NODE_COUNT_MAX];
+		glm::vec2 BlueGraph[LI_GRAPH_NODE_COUNT_MAX] {
+			{ 0.0f, 1.0f },
+			{ 1.0f, 1.0f }
+		};
+		// First float is alpha, last float is time fraction.
+		glm::vec2 GreenGraph[LI_GRAPH_NODE_COUNT_MAX] {
+			{ 0.0f, 1.0f },
+			{ 1.0f, 1.0f }
+		};
+		// First float is alpha, last float is time fraction.
+		glm::vec2 AlphaGraph[LI_GRAPH_NODE_COUNT_MAX] {
+			{ 0.0f, 1.0f },
+			{ 1.0f, 1.0f }
+		};
 	};
 
 	class ParticleEmitter

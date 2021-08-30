@@ -37,6 +37,9 @@ layout(binding = 4, std140) uniform type_EmitterCB
     vec3 u_Acceleration;
     float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
+    vec4 u_RedGraph[8];
+    vec4 u_BlueGraph[8];
+    vec4 u_GreenGraph[8];
     vec4 u_AlphaGraph[8];
 } EmitterCB;
 
@@ -124,18 +127,27 @@ void src_cs_main(uvec3 thread_id)
             vec4 param_var_val_vs_life[8] = vec4[](EmitterCB.u_ScaleGraph[0], EmitterCB.u_ScaleGraph[1], EmitterCB.u_ScaleGraph[2], EmitterCB.u_ScaleGraph[3], EmitterCB.u_ScaleGraph[4], EmitterCB.u_ScaleGraph[5], EmitterCB.u_ScaleGraph[6], EmitterCB.u_ScaleGraph[7]);
             float param_var_life = life_fraction;
             particle.scale = EmitterCB.u_Scale * graph_lerp(param_var_val_vs_life, param_var_life);
-            vec4 param_var_val_vs_life_1[8] = vec4[](EmitterCB.u_AlphaGraph[0], EmitterCB.u_AlphaGraph[1], EmitterCB.u_AlphaGraph[2], EmitterCB.u_AlphaGraph[3], EmitterCB.u_AlphaGraph[4], EmitterCB.u_AlphaGraph[5], EmitterCB.u_AlphaGraph[6], EmitterCB.u_AlphaGraph[7]);
+            vec4 param_var_val_vs_life_1[8] = vec4[](EmitterCB.u_RedGraph[0], EmitterCB.u_RedGraph[1], EmitterCB.u_RedGraph[2], EmitterCB.u_RedGraph[3], EmitterCB.u_RedGraph[4], EmitterCB.u_RedGraph[5], EmitterCB.u_RedGraph[6], EmitterCB.u_RedGraph[7]);
             float param_var_life_1 = life_fraction;
-            particle.color.w = graph_lerp(param_var_val_vs_life_1, param_var_life_1);
+            particle.color.x = graph_lerp(param_var_val_vs_life_1, param_var_life_1);
+            vec4 param_var_val_vs_life_2[8] = vec4[](EmitterCB.u_GreenGraph[0], EmitterCB.u_GreenGraph[1], EmitterCB.u_GreenGraph[2], EmitterCB.u_GreenGraph[3], EmitterCB.u_GreenGraph[4], EmitterCB.u_GreenGraph[5], EmitterCB.u_GreenGraph[6], EmitterCB.u_GreenGraph[7]);
+            float param_var_life_2 = life_fraction;
+            particle.color.y = graph_lerp(param_var_val_vs_life_2, param_var_life_2);
+            vec4 param_var_val_vs_life_3[8] = vec4[](EmitterCB.u_BlueGraph[0], EmitterCB.u_BlueGraph[1], EmitterCB.u_BlueGraph[2], EmitterCB.u_BlueGraph[3], EmitterCB.u_BlueGraph[4], EmitterCB.u_BlueGraph[5], EmitterCB.u_BlueGraph[6], EmitterCB.u_BlueGraph[7]);
+            float param_var_life_3 = life_fraction;
+            particle.color.z = graph_lerp(param_var_val_vs_life_3, param_var_life_3);
+            vec4 param_var_val_vs_life_4[8] = vec4[](EmitterCB.u_AlphaGraph[0], EmitterCB.u_AlphaGraph[1], EmitterCB.u_AlphaGraph[2], EmitterCB.u_AlphaGraph[3], EmitterCB.u_AlphaGraph[4], EmitterCB.u_AlphaGraph[5], EmitterCB.u_AlphaGraph[6], EmitterCB.u_AlphaGraph[7]);
+            float param_var_life_4 = life_fraction;
+            particle.color.w = graph_lerp(param_var_val_vs_life_4, param_var_life_4);
             particles._m0[particle_index] = Particle(particle.color, particle.position, particle.angle, particle.scale, particle.life_left, particle.velocity, particle.start_life, particle.angular_velocity, particle._pad0, particle._pad1, particle._pad2);
-            uint _239 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
-            uint new_alive_index = _239;
+            uint _296 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
+            uint new_alive_index = _296;
             alive_buffer_new_1._m0[new_alive_index] = particle_index;
         }
         else
         {
-            uint _246 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
-            uint dead_index = _246;
+            uint _303 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
+            uint dead_index = _303;
             dead_buffer_1._m0[dead_index] = particle_index;
         }
     }

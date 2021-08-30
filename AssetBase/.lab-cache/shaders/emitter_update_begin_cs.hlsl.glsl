@@ -16,6 +16,9 @@ layout(binding = 4, std140) uniform type_EmitterCB
     vec3 u_Acceleration;
     float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
+    vec4 u_RedGraph[8];
+    vec4 u_BlueGraph[8];
+    vec4 u_GreenGraph[8];
     vec4 u_AlphaGraph[8];
 } EmitterCB;
 

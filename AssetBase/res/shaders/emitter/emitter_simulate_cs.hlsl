@@ -44,6 +44,9 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 
 			float life_fraction = clamp(1.0 - (particle.life_left / particle.start_life), 0.0, 1.0);
 			particle.scale = u_Scale * graph_lerp(u_ScaleGraph, life_fraction);
+			particle.color.r = graph_lerp(u_RedGraph,   life_fraction);
+			particle.color.g = graph_lerp(u_GreenGraph, life_fraction);
+			particle.color.b = graph_lerp(u_BlueGraph,  life_fraction);
 			particle.color.a = graph_lerp(u_AlphaGraph, life_fraction);
 
 			particles[particle_index] = particle;

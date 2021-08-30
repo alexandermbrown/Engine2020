@@ -55,9 +55,9 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
         particle.start_life = rand_in_range(seed, uv, u_LifeSpan.x, u_LifeSpan.y);
         particle.life_left = particle.start_life;
 		particle.color = float4(
-			rand(seed, uv) * 0.5 + 0.4,
-			rand(seed, uv) * 0.5 + 0.4,
-			rand(seed, uv) * 0.5 + 0.4,
+			u_RedGraph  [0].y,
+			u_GreenGraph[0].y,
+			u_BlueGraph [0].y, 
 			u_AlphaGraph[0].y
 		);
 
