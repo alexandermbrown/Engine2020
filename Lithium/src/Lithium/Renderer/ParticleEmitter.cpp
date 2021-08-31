@@ -10,6 +10,7 @@ namespace Li
 	ParticleEmitter::ParticleEmitter(const EmitterProps& props)
 		: m_MaxCount(props.MaxCount), m_EmitRate(props.EmitRate), m_Continuous(props.Continuous),
 		m_EmitCount(0.0f), m_BurstCount(0.0f),
+		m_BurstTimer(Duration::us(0), true),
 		m_ShaderUpdateBegin(ResourceManager::GetShader("shader_emitter_update_begin")),
 		m_ShaderEmit       (ResourceManager::GetShader("shader_emitter_emit")),
 		m_ShaderSimulate   (ResourceManager::GetShader("shader_emitter_simulate")),
@@ -71,6 +72,9 @@ namespace Li
 
 	void ParticleEmitter::Update(Li::Duration::us dt, const glm::mat4& transform)
 	{
+		if (!m_Continuous && m_BurstTimer.Update(dt))
+			return;
+
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 
 		std::swap(m_AliveList[0], m_AliveList[1]);
@@ -148,6 +152,9 @@ namespace Li
 
 	void ParticleEmitter::Draw(const Ref<Texture2D>& texture)
 	{
+		if (!m_Continuous && m_BurstTimer.IsCompleted())
+			return;
+
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		
 		m_ShaderDraw->Bind();
@@ -169,6 +176,17 @@ namespace Li
 		m_DrawIAB->DrawInstancedIndirect(DrawMode::Triangles, DRAW_IAB_OFFSET_DRAWPARTICLES);
 
 		context->UnbindResources(1, 2);
+	}
+
+	void ParticleEmitter::Burst(int count)
+	{
+		float active_time = (float)count / m_EmitRate + m_Uniforms.u_LifeSpan.y;
+		Duration::us delay = Duration::Cast<Duration::us>(Duration::fsec(active_time));
+
+		m_BurstTimer.Reset();
+		m_BurstTimer.SetDelay(delay);
+
+		m_BurstCount += (float)count;
 	}
 
 	void ParticleEmitter::PrintDebug(const char* label)

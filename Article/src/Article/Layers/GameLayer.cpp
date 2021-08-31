@@ -22,7 +22,7 @@ using namespace std::chrono_literals;
 GameLayer::GameLayer()
 	: Layer("GameLayer"),
 	//m_TerrainStore(11), m_TerrainRenderer(&m_TerrainStore, 3),
-	m_BurstTimer(1s, false, true)
+	m_BurstTimer(3s, false, true)
 {
 	m_TickThread.Begin(m_Registry);
 
@@ -35,15 +35,15 @@ GameLayer::GameLayer()
 	m_AudioSource->Play();
 
 	Li::EmitterProps emitter;
-	emitter.MaxCount = 16;
+	emitter.MaxCount = 64;
 	emitter.Continuous = false;
 	emitter.RelativeToWorld = true;
-	emitter.LifeSpan = { 2.0f, 3.0f };
-	emitter.SpeedRange = { 0.0f, 0.5f };
-	emitter.EmitVolume = { 0.2f, 0.3f, 1.0f };
-	emitter.EmitRate = 4000.0f;
+	emitter.LifeSpan = { 0.5f, 1.0f };
+	emitter.SpeedRange = { 2.0f, 2.5f };
+	emitter.EmitVolume = { 0.2f, 0.3f, 0.1f };
+	emitter.EmitRate = 200.0f;
 	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
-	emitter.ParticleScale = { 0.4f, 0.4f, 1.0f };
+	emitter.ParticleScale = { 0.3f, 0.3f, 1.0f };
 
 	emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
 	emitter.AngularVelocity = { -1.0f, 1.0f };

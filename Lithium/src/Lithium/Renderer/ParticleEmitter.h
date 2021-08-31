@@ -7,6 +7,7 @@
 #include "ShaderInterop/ParticleEmitterSI.h"
 #include "Lithium/Renderer/Texture.h"
 #include "Lithium/Utility/Time.h"
+#include "Lithium/Utility/Timer.h"
 #include "glm/glm.hpp"
 
 namespace Li
@@ -68,10 +69,7 @@ namespace Li
 		void Update(Li::Duration::us dt, const glm::mat4& transform);
 		void Draw(const Ref<Texture2D>& texture);
 
-		inline void Burst(int count)
-		{
-			m_BurstCount += (float)count;
-		}
+		void Burst(int count);
 
 		// Warning: May impact performance.
 		void PrintDebug(const char* label);
@@ -84,6 +82,7 @@ namespace Li
 
 		bool m_Continuous;
 		float m_BurstCount;
+		Timer m_BurstTimer;
 
 		EmitterCB m_Uniforms;
 		Ref<UniformBuffer> m_EmitterUB;

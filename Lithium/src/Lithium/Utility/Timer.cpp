@@ -3,11 +3,11 @@
 
 namespace Li
 {
-	Timer::Timer(Duration::us delay, bool completionValue, bool repeat) :
+	Timer::Timer(Duration::us delay, bool post_completion_value, bool repeat) :
 		m_Delay(delay),
-		m_CompletionValue(completionValue),
-		m_Repeat(repeat),
 		m_Elapsed(),
+		m_PostCompletionValue(post_completion_value),
+		m_Repeat(repeat),
 		m_RepeatCount(0U),
 		m_Completed(false)
 	{
@@ -16,7 +16,7 @@ namespace Li
 	bool Timer::Update(Duration::us dt)
 	{
 		if (m_Completed)
-			return m_CompletionValue;
+			return m_PostCompletionValue;
 
 		m_Elapsed += dt;
 
