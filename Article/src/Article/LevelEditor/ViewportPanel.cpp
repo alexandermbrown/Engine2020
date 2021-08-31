@@ -30,7 +30,6 @@ ViewportPanel::ViewportPanel(EditorSettings* settings)
 ViewportPanel::~ViewportPanel()
 {
 	m_ViewportFB->SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-	EditorCameraSystem::Shutdown(m_Registry);
 	if (m_TerrainOpen)
 	{
 		m_TerrainRenderer.UnloadTerrain();
@@ -74,7 +73,7 @@ void ViewportPanel::OnUpdate(Li::Duration::us dt)
 		m_ViewportFB->Bind();
 		m_ViewportFB->Clear();
 
-		Li::Renderer::BeginScene(m_Registry.ctx<cp::camera>().camera);
+		Li::Renderer::BeginScene(m_Registry.ctx<cp::camera>().camera.get());
 		m_TerrainRenderer.SubmitQuad();
 
 		switch (m_Settings->Display.VertexDisplayMode)

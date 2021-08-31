@@ -7,8 +7,10 @@
 namespace Li {
 #endif
 
-LI_CBUFFER(ViewProjCB, 1)
+LI_CBUFFER(CameraCB, 1)
 {
+	aligned_float4x4 u_View;
+	aligned_float4x4 u_Proj;
 	aligned_float4x4 u_ViewProj;
 };
 

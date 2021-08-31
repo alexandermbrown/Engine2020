@@ -1,4 +1,4 @@
-#include "ViewProjCB.h"
+#include "CameraCB.h"
 
 struct VERTEX_IN
 {

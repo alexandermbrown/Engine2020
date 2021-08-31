@@ -62,7 +62,7 @@ namespace Li
 		static void Resize(int width, int height);
 
 		inline static const Ref<UniformBuffer>& GetFrameUniformBuffer() { return s_Data->FrameUB; }
-		inline static const Ref<UniformBuffer>& GetViewProjBuffer() { return s_Data->ViewProjUB; }
+		inline static const Ref<UniformBuffer>& GetViewProjBuffer() { return s_Data->CameraUB; }
 		inline static const Ref<UniformBuffer>& GetTransformBuffer() { return s_Data->TransformMatrixUB; }
 		inline static const Ref<Shader>& GetFontShader() { return s_Data->FontShader; }
 		inline static const Ref<GPUSort>& GetSorter() { return s_Data->Sorter; }
@@ -83,7 +83,7 @@ namespace Li
 			Ref<VertexArray> QuadVA;
 
 			Ref<UniformBuffer> FrameUB;
-			Ref<UniformBuffer> ViewProjUB;
+			Ref<UniformBuffer> CameraUB;
 			Ref<UniformBuffer> TransformMatrixUB;
 			Ref<UniformBuffer> FontUB;
 

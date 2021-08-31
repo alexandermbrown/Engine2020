@@ -7,7 +7,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Lithium/Renderer/Renderer.h"
-#include "Lithium/Renderer/ShaderInterop/ViewProjCB.h"
+#include "Lithium/Renderer/ShaderInterop/CameraCB.h"
 #include "Lithium/Renderer/ShaderInterop/TransformCB.h"
 #include "Lithium/Resources/ResourceManager.h"
 
@@ -168,9 +168,9 @@ void TerrainRenderer::RenderFramebuffer()
 
 		m_TerrainShader->Bind();
 
-		Li::ViewProjCB view_proj_cb;
-		view_proj_cb.u_ViewProj = m_TerrainCamera->GetViewProjectionMatrix();
-		Li::Renderer::GetViewProjBuffer()->SetData(&view_proj_cb);
+		Li::CameraCB camera_cb;
+		camera_cb.u_ViewProj = m_TerrainCamera->GetViewProjectionMatrix();
+		Li::Renderer::GetViewProjBuffer()->SetData(&camera_cb);
 
 		Li::TransformCB transform_cb;
 		transform_cb.u_Transform = chunk.Transform;

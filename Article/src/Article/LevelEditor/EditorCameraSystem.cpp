@@ -16,7 +16,7 @@ void EditorCameraSystem::Init(entt::registry& registry)
 	camera.aspect_ratio = 2.0f;
 
 	const float half_zoom = camera.current_zoom * 0.5f;
-	camera.camera = new Li::Camera;
+	camera.camera = Li::MakeUnique<Li::Camera>();
 	camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
 	camera.camera->SetLookAt({ 0.0f, -3.0f, std::sqrt(3.0f) }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
 	camera.min_zoom = 0.01f;
@@ -24,13 +24,6 @@ void EditorCameraSystem::Init(entt::registry& registry)
 	camera.zoom_speed = 20.0f;
 
 	registry.set<cp::camera_pan>();
-}
-
-void EditorCameraSystem::Shutdown(entt::registry& registry)
-{
-	cp::camera& camera = registry.ctx<cp::camera>();
-	LI_ASSERT(camera.camera, "Camera should not be nullptr.");
-	delete camera.camera;
 }
 
 void EditorCameraSystem::Update(entt::registry& registry, Li::Duration::us dt)

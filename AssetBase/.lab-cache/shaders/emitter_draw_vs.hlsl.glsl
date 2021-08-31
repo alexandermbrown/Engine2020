@@ -27,10 +27,12 @@ struct PS_IN
     vec4 color;
 };
 
-layout(binding = 1, std140) uniform type_ViewProjCB
+layout(binding = 1, std140) uniform type_CameraCB
 {
+    layout(row_major) mat4 u_View;
+    layout(row_major) mat4 u_Proj;
     layout(row_major) mat4 u_ViewProj;
-} ViewProjCB;
+} CameraCB;
 
 layout(binding = 4, std140) uniform type_EmitterCB
 {
@@ -79,24 +81,22 @@ vec3 BILLBOARD[4];
 
 PS_IN src_vs_main(uint vertex_id)
 {
-    uint _106 = vertex_id / 6u;
-    Particle particle = Particle(particle_buffer._m0[alive_buffer._m0[_106]].color, particle_buffer._m0[alive_buffer._m0[_106]].position, particle_buffer._m0[alive_buffer._m0[_106]].angle, particle_buffer._m0[alive_buffer._m0[_106]].scale, particle_buffer._m0[alive_buffer._m0[_106]].life_left, particle_buffer._m0[alive_buffer._m0[_106]].velocity, particle_buffer._m0[alive_buffer._m0[_106]].start_life, particle_buffer._m0[alive_buffer._m0[_106]].angular_velocity, particle_buffer._m0[alive_buffer._m0[_106]]._pad0, particle_buffer._m0[alive_buffer._m0[_106]]._pad1, particle_buffer._m0[alive_buffer._m0[_106]]._pad2);
+    uint _110 = vertex_id / 6u;
+    Particle particle = Particle(particle_buffer._m0[alive_buffer._m0[_110]].color, particle_buffer._m0[alive_buffer._m0[_110]].position, particle_buffer._m0[alive_buffer._m0[_110]].angle, particle_buffer._m0[alive_buffer._m0[_110]].scale, particle_buffer._m0[alive_buffer._m0[_110]].life_left, particle_buffer._m0[alive_buffer._m0[_110]].velocity, particle_buffer._m0[alive_buffer._m0[_110]].start_life, particle_buffer._m0[alive_buffer._m0[_110]].angular_velocity, particle_buffer._m0[alive_buffer._m0[_110]]._pad0, particle_buffer._m0[alive_buffer._m0[_110]]._pad1, particle_buffer._m0[alive_buffer._m0[_110]]._pad2);
     vec3 quad_pos = BILLBOARD[INDICES[vertex_id % 6u]];
     vec3 tex_coord = quad_pos + vec3(0.5, 0.5, 0.0);
     quad_pos *= particle.scale;
     float cos_rot = cos(particle.angle);
     float sin_rot = sin(particle.angle);
-    vec2 _163 = vec2((quad_pos.x * cos_rot) - (quad_pos.y * sin_rot), (quad_pos.x * sin_rot) + (quad_pos.y * cos_rot));
-    quad_pos = vec3(_163.x, _163.y, quad_pos.z);
+    vec2 _167 = vec2((quad_pos.x * cos_rot) - (quad_pos.y * sin_rot), (quad_pos.x * sin_rot) + (quad_pos.y * cos_rot));
+    quad_pos = vec3(_167.x, _167.y, quad_pos.z);
     PS_IN _output;
     _output.position = vec4(particle.position, 1.0);
-    vec3 _178 = _output.position.xyz + quad_pos;
-    _output.position = vec4(_178.x, _178.y, _178.z, _output.position.w);
-    if (!(EmitterCB.u_RelativeToWorld != 0u))
-    {
-        _output.position *= EmitterCB.u_EmitterTransform;
-    }
-    _output.position *= ViewProjCB.u_ViewProj;
+    _output.position *= CameraCB.u_View;
+    vec4 camera_right = vec4(CameraCB.u_View[0u].x, CameraCB.u_View[1u].x, CameraCB.u_View[2u].x, 0.0);
+    vec4 camera_up = vec4(CameraCB.u_View[0u].z, CameraCB.u_View[1u].z, CameraCB.u_View[2u].z, 0.0);
+    _output.position += ((camera_right * quad_pos.x) + (camera_up * quad_pos.y));
+    _output.position *= CameraCB.u_Proj;
     _output.texcoord = vec2(tex_coord.xy);
     _output.color = particle.color;
     return _output;
@@ -116,9 +116,9 @@ void main()
     INDICES = int[](0, 1, 2, 0, 2, 3);
     BILLBOARD = vec3[](vec3(-0.5, -0.5, 0.0), vec3(0.5, -0.5, 0.0), vec3(0.5, 0.5, 0.0), vec3(-0.5, 0.5, 0.0));
     uint param_var_vertex_id = uint(gl_VertexID);
-    PS_IN _86 = src_vs_main(param_var_vertex_id);
-    gl_Position = _86.position;
-    out_var_TEXCOORD = _86.texcoord;
-    out_var_COLOR = _86.color;
+    PS_IN _87 = src_vs_main(param_var_vertex_id);
+    gl_Position = _87.position;
+    out_var_TEXCOORD = _87.texcoord;
+    out_var_COLOR = _87.color;
 }
 

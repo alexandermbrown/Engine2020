@@ -5,7 +5,7 @@
 #include "Lithium/Resources/ResourceManager.h"
 
 #include "ShaderInterop/FrameCB.h"
-#include "ShaderInterop/ViewProjCB.h"
+#include "ShaderInterop/CameraCB.h"
 #include "ShaderInterop/TransformCB.h"
 #include "ShaderInterop/FontCB.h"
 #include "ShaderInterop/ParticleEmitterSI.h"
@@ -28,8 +28,8 @@ namespace Li
 		s_Data->FrameUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
 		s_Data->FrameUB->BindBase();
 
-		s_Data->ViewProjUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(ViewProjCB), sizeof(ViewProjCB));
-		s_Data->ViewProjUB->BindBase();
+		s_Data->CameraUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(CameraCB), sizeof(CameraCB));
+		s_Data->CameraUB->BindBase();
 
 		s_Data->TransformMatrixUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(TransformCB), sizeof(TransformCB));
 		s_Data->TransformMatrixUB->BindBase();
@@ -50,25 +50,25 @@ namespace Li
 
 		s_Data->QuadVA = VertexArray::Create();
 
-		float quadVertices[16] = {
+		float quad_vertices[16] = {
 			0.0, 0.0, 0.0f, 0.0f,
 			1.0, 0.0, 1.0f, 0.0f,
 			1.0, 1.0, 1.0f, 1.0f,
 			0.0, 1.0, 0.0f, 1.0f
 		};
 
-		Ref<VertexBuffer> quadVB = VertexBuffer::Create(quadVertices, sizeof(quadVertices), BufferUsage::StaticDraw);
+		Ref<VertexBuffer> quad_vb = VertexBuffer::Create(quad_vertices, sizeof(quad_vertices), BufferUsage::StaticDraw);
 
 		uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
-		Ref<IndexBuffer> quadIB = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+		Ref<IndexBuffer> quad_ib = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 
-		quadVB->SetLayout({
+		quad_vb->SetLayout({
 			{ ShaderDataType::Float2, "POSITION", 0 },
 			{ ShaderDataType::Float2, "TEXCOORD", 1 }
 		});
 
-		s_Data->QuadVA->SetIndexBuffer(quadIB);
-		s_Data->QuadVA->AddVertexBuffer(quadVB);
+		s_Data->QuadVA->SetIndexBuffer(quad_ib);
+		s_Data->QuadVA->AddVertexBuffer(quad_vb);
 		s_Data->QuadVA->Finalize(s_Data->TextureShader);
 	}
 
@@ -78,9 +78,9 @@ namespace Li
 
 		s_Data->FontShader = ResourceManager::GetShader("shader_label");
 
-		s_Data->SceneRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.5f, 0.5f }, s_Data->ViewProjUB, s_Data->TransformMatrixUB);
-		s_Data->UIRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.0f, 0.0f }, s_Data->ViewProjUB, s_Data->TransformMatrixUB);
-		s_Data->SceneLineRenderer = MakeUnique<LineBatchRenderer>(s_Data->ViewProjUB);
+		s_Data->SceneRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.5f, 0.5f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
+		s_Data->UIRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.0f, 0.0f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
+		s_Data->SceneLineRenderer = MakeUnique<LineBatchRenderer>(s_Data->CameraUB);
 
 		Ref<TextureAtlas> texture_white_atlas = ResourceManager::GetTextureAtlas("texture_white_atlas");
 		s_Data->SceneRenderer->AddTextureAtlas(texture_white_atlas);
@@ -116,9 +116,11 @@ namespace Li
 	{
 		s_Data->Camera = camera;
 
-		ViewProjCB view_proj;
-		view_proj.u_ViewProj = camera->GetViewProjectionMatrix();
-		s_Data->ViewProjUB->SetData(&view_proj);
+		CameraCB camera_cb;
+		camera_cb.u_View = camera->GetViewMatrix();
+		camera_cb.u_Proj = camera->GetProjectionMatrix();
+		camera_cb.u_ViewProj = camera->GetViewProjectionMatrix();
+		s_Data->CameraUB->SetData(&camera_cb);
 
 		s_Data->SceneRenderer->BeginScene();
 		s_Data->SceneLineRenderer->BeginScene();
@@ -132,9 +134,9 @@ namespace Li
 
 	void Renderer::BeginUI()
 	{
-		ViewProjCB view_proj;
-		view_proj.u_ViewProj = s_Data->UICamera->GetViewProjectionMatrix();
-		s_Data->ViewProjUB->SetData(&view_proj);
+		CameraCB camera_cb;
+		camera_cb.u_ViewProj = s_Data->UICamera->GetViewProjectionMatrix();
+		s_Data->CameraUB->SetData(&camera_cb);
 
 		s_Data->UIRenderer->BeginScene();
 	}
@@ -242,11 +244,11 @@ namespace Li
 		transform_cb.u_Transform = transform;
 		s_Data->TransformMatrixUB->SetData(&transform_cb);
 
-		ViewProjCB view_proj;
-		view_proj.u_ViewProj = view_projection;
-		s_Data->ViewProjUB->SetData(&view_proj);
+		CameraCB camera_cb;
+		camera_cb.u_ViewProj = view_projection;
+		s_Data->CameraUB->SetData(&camera_cb);
 
-		s_Data->ViewProjUB->Bind(ShaderType::Vertex);
+		s_Data->CameraUB->Bind(ShaderType::Vertex);
 		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
 		texture->Bind();
 		s_Data->QuadVA->Bind();
@@ -270,7 +272,7 @@ namespace Li
 		font_cb.u_DistanceFactor = label->GetDistanceFactor();
 		s_Data->FontUB->SetData(&font_cb);
 
-		s_Data->ViewProjUB->Bind(ShaderType::Vertex);
+		s_Data->CameraUB->Bind(ShaderType::Vertex);
 		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
 		s_Data->FontUB->Bind(ShaderType::Fragment);
 

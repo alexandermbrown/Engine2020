@@ -19,10 +19,12 @@ struct PS_IN
     int texindex;
 };
 
-layout(binding = 1, std140) uniform type_ViewProjCB
+layout(binding = 1, std140) uniform type_CameraCB
 {
+    layout(row_major) mat4 u_View;
+    layout(row_major) mat4 u_Proj;
     layout(row_major) mat4 u_ViewProj;
-} ViewProjCB;
+} CameraCB;
 
 layout(binding = 2, std140) uniform type_TransformCB
 {
@@ -38,7 +40,7 @@ layout(location = 1) flat out int out_var_TEXINDEX;
 PS_IN src_vs_main(VS_IN _input)
 {
     PS_IN _output;
-    _output.position = (vec4(_input.position, 1.0) * TransformCB.u_Transform) * ViewProjCB.u_ViewProj;
+    _output.position = (vec4(_input.position, 1.0) * TransformCB.u_Transform) * CameraCB.u_ViewProj;
     _output.texcoord = _input.texcoord;
     _output.texindex = int(_input.texindex);
     return _output;

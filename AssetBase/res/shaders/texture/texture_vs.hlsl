@@ -1,4 +1,4 @@
-#include "ViewProjCB.h"
+#include "CameraCB.h"
 #include "TransformCB.h"
 
 struct VS_IN

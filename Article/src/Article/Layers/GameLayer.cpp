@@ -22,7 +22,7 @@ using namespace std::chrono_literals;
 GameLayer::GameLayer()
 	: Layer("GameLayer"),
 	//m_TerrainStore(11), m_TerrainRenderer(&m_TerrainStore, 3),
-	m_BurstTimer(3s, false, true)
+	m_BurstTimer(1200ms, false, true)
 {
 	m_TickThread.Begin(m_Registry);
 
@@ -38,15 +38,15 @@ GameLayer::GameLayer()
 	emitter.MaxCount = 64;
 	emitter.Continuous = false;
 	emitter.RelativeToWorld = true;
-	emitter.LifeSpan = { 0.5f, 1.0f };
-	emitter.SpeedRange = { 2.0f, 2.5f };
+	emitter.LifeSpan = { 0.6f, 1.0f };
+	emitter.SpeedRange = { 1.0f, 1.5f };
 	emitter.EmitVolume = { 0.2f, 0.3f, 0.1f };
 	emitter.EmitRate = 200.0f;
 	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
-	emitter.ParticleScale = { 0.3f, 0.3f, 1.0f };
+	emitter.ParticleScale = { 0.4f, 0.4f, 1.0f };
 
-	emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
-	emitter.AngularVelocity = { -1.0f, 1.0f };
+	//emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
+	//emitter.AngularVelocity = { -1.0f, 1.0f };
 
 	emitter.AlphaGraph[0] = { 0.0f, 0.0f };
 	emitter.AlphaGraph[1] = { 0.1f, 0.6f };
@@ -60,7 +60,6 @@ GameLayer::GameLayer()
 
 GameLayer::~GameLayer()
 {
-	CameraControllerSystem::Shutdown(m_Registry);
 	//m_TerrainRenderer.UnloadTerrain();
 	m_TickThread.Finish(m_Registry);
 }
@@ -97,7 +96,7 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 
 	//m_TerrainRenderer.RenderFramebuffer();
 	
-	Li::Renderer::BeginScene(camera.camera);
+	Li::Renderer::BeginScene(camera.camera.get());
 
 	//m_Emitter->PrintDebug("Emitter");
 	m_Emitter->Update(dt, glm::translate(glm::mat4(1.0f), m_EmitPosition));

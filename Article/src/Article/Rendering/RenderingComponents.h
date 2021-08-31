@@ -26,7 +26,7 @@ namespace cp
 
 	struct camera
 	{
-		Li::Camera* camera;
+		Li::Unique<Li::Camera> camera;
 		
 		float aspect_ratio = 1.0f;
 

@@ -57,7 +57,7 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 			counter_buffer.InterlockedAdd(PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION, 1, new_alive_index);
 			alive_buffer_new[new_alive_index] = particle_index;
 
-			// TODO: Check if it is reversed or not.
+			// TODO: Make propper distance.
 			distance_buffer[particle_index] = particle.position.z;
 		}
 		else
