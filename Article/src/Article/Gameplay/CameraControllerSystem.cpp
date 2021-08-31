@@ -19,9 +19,7 @@ void CameraControllerSystem::Init(entt::registry& registry)
 
 	const float half_zoom = camera.current_zoom * 0.5f;
 	camera.camera = Li::MakeUnique<Li::Camera>();
-	//camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
-	camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
-	//camera.camera->SetLookAt({ 0.0f, -3.0f, std::sqrt(3.0f) }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
+	camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
 }
 
 void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us dt)
@@ -32,8 +30,8 @@ void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us d
 	{
 		glm::vec3 camera_pos = {
 			transform.position.x,
-			transform.position.y - 3.0f,
-			transform.position.z + std::sqrt(3.0f),
+			transform.position.y - camera.current_zoom,
+			transform.position.z + std::sqrt(camera.current_zoom),
 		};
 		if (camera.camera->GetPosition() != camera_pos)
 		{
@@ -51,8 +49,7 @@ void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us d
 			camera.current_zoom = camera.target_zoom;
 
 		const float half_zoom = camera.current_zoom * 0.5f;
-		//camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
-		camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
+		camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
 
 		if (camera.current_zoom == camera.target_zoom)
 			camera.finished_zoom = true;
@@ -84,8 +81,7 @@ void CameraControllerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 			camera.aspect_ratio = (float)Li::Application::Get().GetWindow().GetWidth()
 				/ (float)Li::Application::Get().GetWindow().GetHeight();
 			const float half_zoom = camera.current_zoom * 0.5f;
-			//camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
-			camera.camera->SetOrtho(-camera.aspect_ratio * half_zoom, camera.aspect_ratio * half_zoom, -half_zoom, half_zoom);
+			camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
 		}
 	}
 }

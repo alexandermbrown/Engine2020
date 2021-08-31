@@ -40,7 +40,7 @@ GameLayer::GameLayer()
 	emitter.RelativeToWorld = true;
 	emitter.LifeSpan = { 0.6f, 1.0f };
 	emitter.SpeedRange = { 1.0f, 1.5f };
-	emitter.EmitVolume = { 0.2f, 0.3f, 0.1f };
+	emitter.EmitVolume = { 0.3f, 0.3f, 0.3f };
 	emitter.EmitRate = 200.0f;
 	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
 	emitter.ParticleScale = { 0.4f, 0.4f, 1.0f };

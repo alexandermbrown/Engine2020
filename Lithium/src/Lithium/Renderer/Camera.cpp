@@ -30,10 +30,10 @@ namespace Li
 		switch (Application::Get().GetAPI())
 		{
 		case RendererAPI::OpenGL:
-			m_ProjectionMatrix = glm::perspectiveRH_NO(fov, aspect, z_near, z_far);
+			m_ProjectionMatrix = glm::perspectiveRH_NO(glm::radians(fov), aspect, z_near, z_far);
 			break;
 		case RendererAPI::D3D11:
-			m_ProjectionMatrix = glm::perspectiveRH_ZO(fov, aspect, z_near, z_far);
+			m_ProjectionMatrix = glm::perspectiveRH_ZO(glm::radians(fov), aspect, z_near, z_far);
 			break;
 		}
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
