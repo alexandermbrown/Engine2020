@@ -84,9 +84,9 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 
 	TransformUpdateSystem::Update(m_Registry);
 
-	//m_EmitPosition.x += 5.0f * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
-	//if (m_EmitPosition.x > 10.0f)
-	//	m_EmitPosition.x = -10.0f;
+	m_EmitPosition.x += 5.0f * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
+	if (m_EmitPosition.x > 10.0f)
+		m_EmitPosition.x = -10.0f;
 
 	if (m_BurstTimer.Update(dt))
 		m_Emitter->Burst(64);

@@ -44,14 +44,11 @@ PS_IN vs_main(uint vertex_id : SV_VERTEXID)
 	float4 camera_right = {u_View[0][0], u_View[1][0], u_View[2][0], 0};
 	float4 camera_up = {u_View[0][2], u_View[1][2], u_View[2][2], 0};
 
-	// float3 camera_up = float3(0, 0, 1);
-	// float3 camera_right = float3(1, 0, 0);
-
 	output.position += camera_right * quad_pos.x + camera_up * quad_pos.y;
 
-	// if (!u_RelativeToWorld) {
-	// 	output.position = mul(u_EmitterTransform, output.position);
-	// }
+	if (!u_RelativeToWorld) {
+		output.position = mul(u_EmitterTransform, output.position);
+	}
 
 	output.position = mul(u_Proj, output.position);
 	output.texcoord = tex_coord;
