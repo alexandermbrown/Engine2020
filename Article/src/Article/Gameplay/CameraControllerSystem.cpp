@@ -31,7 +31,7 @@ void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us d
 		glm::vec3 camera_pos = {
 			transform.position.x,
 			transform.position.y - camera.current_zoom,
-			transform.position.z + std::sqrt(camera.current_zoom),
+			transform.position.z + camera.current_zoom,
 		};
 		if (camera.camera->GetPosition() != camera_pos)
 		{

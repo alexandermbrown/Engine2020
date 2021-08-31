@@ -39,6 +39,7 @@ void cs_main(uint3 thread_id : SV_DispatchThreadID)
 		if (particle.life_left > 0)
 		{
 			particle.velocity += u_Acceleration * u_DeltaTime;
+			particle.velocity -= particle.velocity * u_AirResistance * u_DeltaTime;
 			particle.position += particle.velocity * u_DeltaTime;
 			particle.angle += particle.angular_velocity * u_DeltaTime;
 			particle.life_left -= u_DeltaTime;

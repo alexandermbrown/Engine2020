@@ -33,7 +33,7 @@ layout(binding = 4, std140) uniform type_EmitterCB
     uint u_RelativeToWorld;
     vec4 u_Rotation;
     vec3 u_EmitVolume;
-    float u_EmitterPad0;
+    float u_AirResistance;
     vec3 u_Acceleration;
     float u_EmitterPad1;
     vec4 u_ScaleGraph[8];
@@ -130,6 +130,7 @@ void src_cs_main(uvec3 thread_id)
         if (particle.life_left > 0.0)
         {
             particle.velocity += (EmitterCB.u_Acceleration * FrameCB.u_DeltaTime);
+            particle.velocity -= ((particle.velocity * EmitterCB.u_AirResistance) * FrameCB.u_DeltaTime);
             particle.position += (particle.velocity * FrameCB.u_DeltaTime);
             particle.angle += (particle.angular_velocity * FrameCB.u_DeltaTime);
             particle.life_left -= FrameCB.u_DeltaTime;
@@ -150,15 +151,15 @@ void src_cs_main(uvec3 thread_id)
             float param_var_life_4 = life_fraction;
             particle.color.w = graph_lerp(param_var_val_vs_life_4, param_var_life_4);
             particles._m0[particle_index] = Particle(particle.color, particle.position, particle.angle, particle.scale, particle.life_left, particle.velocity, particle.start_life, particle.angular_velocity, particle._pad0, particle._pad1, particle._pad2);
-            uint _301 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
-            uint new_alive_index = _301;
+            uint _313 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_ALIVECOUNT_AFTERSIMULATION >> 2u], 1u);
+            uint new_alive_index = _313;
             alive_buffer_new_1._m0[new_alive_index] = particle_index;
             distance_buffer._m0[particle_index] = particle.position.z;
         }
         else
         {
-            uint _313 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
-            uint dead_index = _313;
+            uint _325 = atomicAdd(counter_buffer._m0[PARTICLECOUNTER_OFFSET_DEADCOUNT >> 2u], 1u);
+            uint dead_index = _325;
             dead_buffer_1._m0[dead_index] = particle_index;
         }
     }

@@ -47,7 +47,7 @@ namespace Li {
 		// Initial angle (min, max), rotational velocity (min, max).
 		aligned_float4 u_Rotation;
 		aligned_float3 u_EmitVolume;
-		float u__EmitterPad0;
+		float u_AirResistance;
 		aligned_float3 u_Acceleration;
 		float u__EmitterPad1;
 		//float pad;
@@ -55,8 +55,8 @@ namespace Li {
 		// The remaining floats are padding required by D3D11.
 		// https://geidav.wordpress.com/2013/03/05/hidden-hlsl-performance-hit-accessing-unpadded-arrays-in-constant-buffers/
 		float4 u_ScaleGraph[LI_GRAPH_NODE_COUNT_MAX];
-		float4 u_RedGraph[LI_GRAPH_NODE_COUNT_MAX];
-		float4 u_BlueGraph[LI_GRAPH_NODE_COUNT_MAX];
+		float4 u_RedGraph  [LI_GRAPH_NODE_COUNT_MAX];
+		float4 u_BlueGraph [LI_GRAPH_NODE_COUNT_MAX];
 		float4 u_GreenGraph[LI_GRAPH_NODE_COUNT_MAX];
 		float4 u_AlphaGraph[LI_GRAPH_NODE_COUNT_MAX];
 	};

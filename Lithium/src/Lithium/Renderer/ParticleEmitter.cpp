@@ -26,6 +26,7 @@ namespace Li
 		m_Uniforms.u_RelativeToWorld = props.RelativeToWorld;
 		m_Uniforms.u_EmitVolume      = props.EmitVolume;
 		m_Uniforms.u_Acceleration    = props.Acceleration;
+		m_Uniforms.u_AirResistance   = props.AirResistance;
 		for (int i = 0; i < LI_GRAPH_NODE_COUNT_MAX; i++)
 		{
 			m_Uniforms.u_ScaleGraph[i] = glm::vec4(props.ScaleGraph[i], 0.0f, 0.0f);

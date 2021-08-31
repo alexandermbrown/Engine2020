@@ -31,6 +31,7 @@ namespace Li
 		glm::vec2 InitialAngle{ 0.0f, 0.0f };
 		glm::vec2 AngularVelocity{ 0.0f, 0.0f };
 		glm::vec3 Acceleration{ 0.0f, 0.0f, 0.0f };
+		float AirResistance{ 0.0f };
 		
 		// First 3 floats is scale xyz, last float is time fraction.
 		glm::vec2 ScaleGraph[LI_GRAPH_NODE_COUNT_MAX] {

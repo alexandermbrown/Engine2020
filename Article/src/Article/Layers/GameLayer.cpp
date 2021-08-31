@@ -22,7 +22,7 @@ using namespace std::chrono_literals;
 GameLayer::GameLayer()
 	: Layer("GameLayer"),
 	//m_TerrainStore(11), m_TerrainRenderer(&m_TerrainStore, 3),
-	m_BurstTimer(1200ms, false, true)
+	m_BurstTimer(3000ms, false, true)
 {
 	m_TickThread.Begin(m_Registry);
 
@@ -35,23 +35,30 @@ GameLayer::GameLayer()
 	m_AudioSource->Play();
 
 	Li::EmitterProps emitter;
-	emitter.MaxCount = 64;
+	emitter.MaxCount = 1024;
 	emitter.Continuous = false;
 	emitter.RelativeToWorld = true;
-	emitter.LifeSpan = { 0.6f, 1.0f };
-	emitter.SpeedRange = { 1.0f, 1.5f };
+	emitter.LifeSpan = { 2.6f, 3.0f };
+	emitter.SpeedRange = { 0.0f, 200.0f };
 	emitter.EmitVolume = { 0.3f, 0.3f, 0.3f };
-	emitter.EmitRate = 200.0f;
+	emitter.EmitRate = 20000.0f;
 	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
 	emitter.ParticleScale = { 0.4f, 0.4f, 1.0f };
+
+	emitter.AirResistance = 6.0f;
 
 	//emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
 	//emitter.AngularVelocity = { -1.0f, 1.0f };
 
 	emitter.AlphaGraph[0] = { 0.0f, 0.0f };
-	emitter.AlphaGraph[1] = { 0.1f, 0.6f };
-	emitter.AlphaGraph[2] = { 0.8f, 0.6f };
+	emitter.AlphaGraph[1] = { 0.01f, 0.7f };
+	emitter.AlphaGraph[2] = { 0.8f, 0.7f };
 	emitter.AlphaGraph[3] = { 1.0f, 0.0f };
+
+	emitter.ScaleGraph[0] = { 0.0f, 0.0f };
+	emitter.ScaleGraph[1] = { 0.01f, 1.0f };
+	emitter.ScaleGraph[2] = { 0.8f, 1.0f };
+	emitter.ScaleGraph[3] = { 1.0f, 0.0f };
 
 	m_Emitter = Li::MakeRef<Li::ParticleEmitter>(emitter);
 
@@ -84,12 +91,12 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 
 	TransformUpdateSystem::Update(m_Registry);
 
-	m_EmitPosition.x += 5.0f * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
-	if (m_EmitPosition.x > 10.0f)
-		m_EmitPosition.x = -10.0f;
+	//m_EmitPosition.x += 5.0f * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
+	//if (m_EmitPosition.x > 10.0f)
+	//	m_EmitPosition.x = -10.0f;
 
 	if (m_BurstTimer.Update(dt))
-		m_Emitter->Burst(64);
+		m_Emitter->Burst(256);
 
 	cp::camera& camera = m_Registry.ctx<cp::camera>();
 
