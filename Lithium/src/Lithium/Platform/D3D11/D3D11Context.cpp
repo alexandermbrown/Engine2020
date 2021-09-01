@@ -2,6 +2,7 @@
 #include "D3D11Context.h"
 
 #include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Exceptions.h"
 #include "D3D11Core.h"
 #include "glm/gtc/type_ptr.hpp"
 
@@ -44,7 +45,7 @@ namespace Li
 		}
 
 		if (FAILED(result))
-			throw std::runtime_error("Failed to create Direct3D 11 Device.");
+			throw GraphicsInitError("Failed to create Direct3D 11 Device.");
 
 		if (feature_level >= D3D_FEATURE_LEVEL_11_1 && IsWindows7SP1OrGreater())
 			InitSwapChain1(hwnd, width, height);
@@ -52,7 +53,7 @@ namespace Li
 			InitSwapChain(hwnd, width, height);
 
 		if (!m_Device || !m_DeviceContext)
-			throw std::runtime_error("Failed to create D3D11 device.");
+			throw GraphicsInitError("Failed to create D3D11 device.");
 		
 		InitDepthStencil();
 		InitBlendState();

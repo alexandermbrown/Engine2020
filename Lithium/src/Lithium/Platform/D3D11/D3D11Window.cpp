@@ -2,6 +2,7 @@
 #include "D3D11Window.h"
 
 #include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Exceptions.h"
 
 #include "stb_image.h"
 #include "SDL_syswm.h"
@@ -22,14 +23,29 @@ namespace Li
 			flags |= SDL_WINDOW_BORDERLESS;
 
 		m_Window = SDL_CreateWindow(props.Title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_Width, m_Height, flags);
-		LI_CORE_ASSERT(m_Window, "Error creating window.");
+
+		if (m_Window == nullptr)
+			throw SDLWindowInitError("Failed to create SDL window.");
 
 		m_ID = SDL_GetWindowID(m_Window);
 
-		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
-		SDL_GetWindowWMInfo(m_Window, &wmInfo);
-		m_Context = MakeUnique<D3D11Context>(wmInfo.info.win.window, m_Width, m_Height);
+		SDL_SysWMinfo wm_info;
+		SDL_VERSION(&wm_info.version);
+		SDL_bool success = SDL_GetWindowWMInfo(m_Window, &wm_info);
+
+		if (!success)
+		{
+			SDL_DestroyWindow(m_Window);
+			throw SDLWindowInitError("Failed to get window info from SDL.");
+		}
+
+		try {
+			m_Context = MakeUnique<D3D11Context>(wm_info.info.win.window, m_Width, m_Height);
+		}
+		catch (const GraphicsInitError& e) {
+			SDL_DestroyWindow(m_Window);
+			throw e;
+		}
 	}
 
 	D3D11Window::~D3D11Window()

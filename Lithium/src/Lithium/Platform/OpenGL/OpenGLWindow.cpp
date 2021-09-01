@@ -3,6 +3,7 @@
 
 #include "Lithium/Core/Assert.h"
 #include "Lithium/Core/Application.h"
+#include "Lithium/Core/Exceptions.h"
 
 #include "stb_image.h"
 
@@ -25,7 +26,9 @@ namespace Li
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 		m_Window = SDL_CreateWindow(props.Title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_Width, m_Height, flags);
-		LI_CORE_ASSERT(m_Window, "Error creating window.");
+		
+		if (m_Window == nullptr)
+			throw SDLWindowInitError("Failed to create SDL window.");
 
 		m_ID = SDL_GetWindowID(m_Window);
 

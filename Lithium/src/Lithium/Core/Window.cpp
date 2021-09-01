@@ -11,9 +11,9 @@
 
 namespace Li 
 {
-	Li::Unique<Window> Window::Create(const WindowProps& props)
+	Li::Unique<Window> Window::Create(RendererAPI api, const WindowProps& props)
 	{
-		switch (props.API)
+		switch (api)
 		{
 #ifdef LI_INCLUDE_OPENGL
 		case RendererAPI::OpenGL:

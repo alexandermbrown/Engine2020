@@ -18,8 +18,8 @@
 #include <shlobj.h>
 #endif
 
-ArticleApp::ArticleApp(Li::RendererAPI renderer_api)
-	: Li::Application({ renderer_api, "Article", 768, 384, false, true, true})
+ArticleApp::ArticleApp()
+	: Li::Application({ "Article", 768, 384, false, true, true})
 {
 #ifdef HZ_DEBUG
 	Li::ResourceManager::Load("data/preload.lab-debug");
@@ -109,12 +109,7 @@ void ArticleApp::SaveConfig()
 Li::Unique<Li::Application> Li::CreateApplication()
 {
 	try {
-		// TODO: Add fallback to OpenGL on Windows.
-#ifdef LI_PLATFORM_WINDOWS
-		return Li::MakeUnique<ArticleApp>(Li::RendererAPI::D3D11);
-#else
-		return Li::MakeUnique<ArticleApp>(Li::RendererAPI::OpenGL);
-#endif
+		return Li::MakeUnique<ArticleApp>();
 	}
 	catch (const std::runtime_error& error)
 	{

@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "Lithium/Core/Assert.h"
+#include "Lithium/Core/Exceptions.h"
 #include "Lithium/Core/Log.h"
 #include "Lithium/Renderer/Renderer.h"
 #include "Lithium/Resources/ResourceManager.h"
@@ -17,7 +18,7 @@ namespace Li
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application(const WindowProps& props)
-		: m_Running(false), m_LayerStack(), m_EventHandled(false), m_RendererAPI(props.API),
+		: m_Running(false), m_LayerStack(), m_EventHandled(false),
 		m_CurrentScene(nullptr), m_NextScene(nullptr), m_TransitionFinished(true), m_CallOnTransition(false)
 	{
 		LI_CORE_ASSERT(s_Instance == nullptr, "Instance of Application already exists!");
@@ -47,7 +48,7 @@ namespace Li
 #endif
 		m_EventCallbackFn = LI_BIND_FN(Application::OnEvent);
 
-		m_Window = Window::Create(props);
+		m_Window = MakeWindow(props);
 		m_Window->GetContext()->ResizeView(props.Width, props.Height);
 #ifndef LI_DIST
 		m_ImGuiRenderer = ImGuiRenderer::Create();
@@ -209,5 +210,26 @@ namespace Li
 			}
 			break;
 		}
+	}
+
+	Unique<Window> Application::MakeWindow(const WindowProps& props)
+	{
+#if 1
+#ifdef LI_PLATFORM_WINDOWS
+		try {
+			m_RendererAPI = RendererAPI::D3D11;
+			return Window::Create(m_RendererAPI, props);
+		}
+		catch (const SDLWindowInitError& e) {
+			Li::Log::CoreWarn("Failed to create D3D11 SDL window. {}", e.what());
+		}
+		catch (const GraphicsInitError& e) {
+			Li::Log::CoreWarn("Failed to init Direct3D 11. {}", e.what());
+		}
+		Li::Log::CoreWarn("Trying OpenGL...");
+#endif
+#endif
+		m_RendererAPI = RendererAPI::OpenGL;
+		return Window::Create(m_RendererAPI, props);
 	}
 }

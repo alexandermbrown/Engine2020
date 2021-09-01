@@ -16,7 +16,7 @@
 class ArticleApp : public Li::Application
 {
 public:
-	ArticleApp(Li::RendererAPI renderer_api);
+	ArticleApp();
 	virtual ~ArticleApp();
 
 	inline ConfigStore& GetConfig() { return m_ConfigStore; }

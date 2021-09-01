@@ -10,7 +10,6 @@ namespace Li
 {
 	struct WindowProps
 	{
-		RendererAPI API;
 		const char* Title;
 		int Width;
 		int Height;
@@ -57,6 +56,6 @@ namespace Li
 
 		virtual void OnWindowResize(int width, int height) = 0;
 
-		static Li::Unique<Window> Create(const WindowProps& props);
+		static Li::Unique<Window> Create(RendererAPI api, const WindowProps& props);
 	};
 }

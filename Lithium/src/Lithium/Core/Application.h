@@ -74,6 +74,7 @@ namespace Li
 
 	private:
 		void OnWindowEvent(SDL_Event* event);
+		Unique<Window> MakeWindow(const WindowProps& props);
 
 		bool m_Running;
 		std::chrono::time_point<std::chrono::steady_clock> m_StartTime;
