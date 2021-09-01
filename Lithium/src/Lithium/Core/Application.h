@@ -7,8 +7,8 @@
 #include "Lithium/Core/Scene.h"
 #include "Lithium/Core/Window.h"
 
+#include "Lithium/Audio/AudioContext.h"
 #include "Lithium/Renderer/RendererAPI.h"
-
 #include "Lithium/Utility/Random.h"
 
 #ifndef LI_DIST
@@ -81,6 +81,7 @@ namespace Li
 
 		RendererAPI m_RendererAPI;
 		Unique<Window> m_Window;
+		Unique<AudioContext> m_AudioContext;
 		Input m_Input;
 		Random m_Random;
 #ifndef LI_DIST

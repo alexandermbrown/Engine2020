@@ -5,7 +5,6 @@
 #include "Lithium/Core/Log.h"
 #include "Lithium/Renderer/Renderer.h"
 #include "Lithium/Resources/ResourceManager.h"
-#include "Lithium/Audio/AudioManager.h"
 #include "Lithium/Localization/Localization.h"
 
 #include "SDL.h"
@@ -19,7 +18,7 @@ namespace Li
 
 	Application::Application(const WindowProps& props)
 		: m_Running(false), m_LayerStack(), m_EventHandled(false), m_RendererAPI(props.API),
-		m_Input(), m_CurrentScene(nullptr), m_NextScene(nullptr), m_TransitionFinished(true), m_CallOnTransition(false)
+		m_CurrentScene(nullptr), m_NextScene(nullptr), m_TransitionFinished(true), m_CallOnTransition(false)
 	{
 		LI_CORE_ASSERT(s_Instance == nullptr, "Instance of Application already exists!");
 		s_Instance = this;
@@ -53,7 +52,8 @@ namespace Li
 #ifndef LI_DIST
 		m_ImGuiRenderer = ImGuiRenderer::Create();
 #endif
-		AudioManager::Init(nullptr);
+		m_AudioContext = MakeUnique<AudioContext>(nullptr);
+
 		ResourceManager::Init();
 	}
 
@@ -65,9 +65,9 @@ namespace Li
 		m_ImGuiRenderer.reset();
 #endif
 		ResourceManager::Shutdown();
-		AudioManager::Shutdown();
 		Renderer::Shutdown();
 
+		m_AudioContext.reset();
 		m_Window.reset();
 
 		SDL_Quit();
