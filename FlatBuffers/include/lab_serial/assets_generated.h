@@ -50,6 +50,11 @@ struct LocaleEntryBuilder;
 struct Locale;
 struct LocaleBuilder;
 
+struct Submesh;
+
+struct Model;
+struct ModelBuilder;
+
 enum FilterType {
   FilterType_Error = 0,
   FilterType_Nearest = 1,
@@ -211,6 +216,38 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec4 FLATBUFFERS_FINAL_CLASS {
   }
 };
 FLATBUFFERS_STRUCT_END(Vec4, 16);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Submesh FLATBUFFERS_FINAL_CLASS {
+ private:
+  uint32_t base_vertex_;
+  uint32_t base_index_;
+  uint32_t vertex_count_;
+  uint32_t index_count_;
+
+ public:
+  Submesh() {
+    memset(static_cast<void *>(this), 0, sizeof(Submesh));
+  }
+  Submesh(uint32_t _base_vertex, uint32_t _base_index, uint32_t _vertex_count, uint32_t _index_count)
+      : base_vertex_(flatbuffers::EndianScalar(_base_vertex)),
+        base_index_(flatbuffers::EndianScalar(_base_index)),
+        vertex_count_(flatbuffers::EndianScalar(_vertex_count)),
+        index_count_(flatbuffers::EndianScalar(_index_count)) {
+  }
+  uint32_t base_vertex() const {
+    return flatbuffers::EndianScalar(base_vertex_);
+  }
+  uint32_t base_index() const {
+    return flatbuffers::EndianScalar(base_index_);
+  }
+  uint32_t vertex_count() const {
+    return flatbuffers::EndianScalar(vertex_count_);
+  }
+  uint32_t index_count() const {
+    return flatbuffers::EndianScalar(index_count_);
+  }
+};
+FLATBUFFERS_STRUCT_END(Submesh, 16);
 
 struct AssetBundle FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef AssetBundleBuilder Builder;
@@ -1269,47 +1306,98 @@ inline flatbuffers::Offset<Locale> CreateLocaleDirect(
       entries__);
 }
 
-inline const Assets::AssetBundle *GetAssetBundle(const void *buf) {
-  return flatbuffers::GetRoot<Assets::AssetBundle>(buf);
+struct Model FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef ModelBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_NAME = 4,
+    VT_VERTICES = 6,
+    VT_INDICES = 8,
+    VT_SUBMESHES = 10
+  };
+  const flatbuffers::String *name() const {
+    return GetPointer<const flatbuffers::String *>(VT_NAME);
+  }
+  const flatbuffers::Vector<float> *vertices() const {
+    return GetPointer<const flatbuffers::Vector<float> *>(VT_VERTICES);
+  }
+  const flatbuffers::Vector<uint32_t> *indices() const {
+    return GetPointer<const flatbuffers::Vector<uint32_t> *>(VT_INDICES);
+  }
+  const flatbuffers::Vector<const Assets::Submesh *> *submeshes() const {
+    return GetPointer<const flatbuffers::Vector<const Assets::Submesh *> *>(VT_SUBMESHES);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
+           VerifyOffset(verifier, VT_VERTICES) &&
+           verifier.VerifyVector(vertices()) &&
+           VerifyOffset(verifier, VT_INDICES) &&
+           verifier.VerifyVector(indices()) &&
+           VerifyOffset(verifier, VT_SUBMESHES) &&
+           verifier.VerifyVector(submeshes()) &&
+           verifier.EndTable();
+  }
+};
+
+struct ModelBuilder {
+  typedef Model Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_name(flatbuffers::Offset<flatbuffers::String> name) {
+    fbb_.AddOffset(Model::VT_NAME, name);
+  }
+  void add_vertices(flatbuffers::Offset<flatbuffers::Vector<float>> vertices) {
+    fbb_.AddOffset(Model::VT_VERTICES, vertices);
+  }
+  void add_indices(flatbuffers::Offset<flatbuffers::Vector<uint32_t>> indices) {
+    fbb_.AddOffset(Model::VT_INDICES, indices);
+  }
+  void add_submeshes(flatbuffers::Offset<flatbuffers::Vector<const Assets::Submesh *>> submeshes) {
+    fbb_.AddOffset(Model::VT_SUBMESHES, submeshes);
+  }
+  explicit ModelBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ModelBuilder &operator=(const ModelBuilder &);
+  flatbuffers::Offset<Model> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Model>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Model> CreateModel(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> name = 0,
+    flatbuffers::Offset<flatbuffers::Vector<float>> vertices = 0,
+    flatbuffers::Offset<flatbuffers::Vector<uint32_t>> indices = 0,
+    flatbuffers::Offset<flatbuffers::Vector<const Assets::Submesh *>> submeshes = 0) {
+  ModelBuilder builder_(_fbb);
+  builder_.add_submeshes(submeshes);
+  builder_.add_indices(indices);
+  builder_.add_vertices(vertices);
+  builder_.add_name(name);
+  return builder_.Finish();
 }
 
-inline const Assets::AssetBundle *GetSizePrefixedAssetBundle(const void *buf) {
-  return flatbuffers::GetSizePrefixedRoot<Assets::AssetBundle>(buf);
-}
-
-inline const char *AssetBundleIdentifier() {
-  return "LAB+";
-}
-
-inline bool AssetBundleBufferHasIdentifier(const void *buf) {
-  return flatbuffers::BufferHasIdentifier(
-      buf, AssetBundleIdentifier());
-}
-
-inline bool VerifyAssetBundleBuffer(
-    flatbuffers::Verifier &verifier) {
-  return verifier.VerifyBuffer<Assets::AssetBundle>(AssetBundleIdentifier());
-}
-
-inline bool VerifySizePrefixedAssetBundleBuffer(
-    flatbuffers::Verifier &verifier) {
-  return verifier.VerifySizePrefixedBuffer<Assets::AssetBundle>(AssetBundleIdentifier());
-}
-
-inline const char *AssetBundleExtension() {
-  return "lab";
-}
-
-inline void FinishAssetBundleBuffer(
-    flatbuffers::FlatBufferBuilder &fbb,
-    flatbuffers::Offset<Assets::AssetBundle> root) {
-  fbb.Finish(root, AssetBundleIdentifier());
-}
-
-inline void FinishSizePrefixedAssetBundleBuffer(
-    flatbuffers::FlatBufferBuilder &fbb,
-    flatbuffers::Offset<Assets::AssetBundle> root) {
-  fbb.FinishSizePrefixed(root, AssetBundleIdentifier());
+inline flatbuffers::Offset<Model> CreateModelDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *name = nullptr,
+    const std::vector<float> *vertices = nullptr,
+    const std::vector<uint32_t> *indices = nullptr,
+    const std::vector<Assets::Submesh> *submeshes = nullptr) {
+  auto name__ = name ? _fbb.CreateString(name) : 0;
+  auto vertices__ = vertices ? _fbb.CreateVector<float>(*vertices) : 0;
+  auto indices__ = indices ? _fbb.CreateVector<uint32_t>(*indices) : 0;
+  auto submeshes__ = submeshes ? _fbb.CreateVectorOfStructs<Assets::Submesh>(*submeshes) : 0;
+  return Assets::CreateModel(
+      _fbb,
+      name__,
+      vertices__,
+      indices__,
+      submeshes__);
 }
 
 }  // namespace Assets

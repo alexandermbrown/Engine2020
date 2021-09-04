@@ -31,10 +31,11 @@ IncludeDir["harfbuzz"] = "Lithium/vendor/harfbuzz/src"
 IncludeDir["utfcpp"] = "Lithium/vendor/utfcpp/include"
 IncludeDir["libav"] = "Lithium/vendor/libav/include"
 
+IncludeDir["assimp"] = "AssetBase/vendor/assimp/include"
+IncludeDir["flatbuffers"] = "AssetBase/vendor/flatbuffers/include"
 IncludeDir["freetype"] = "AssetBase/vendor/freetype/include"
 IncludeDir["msdfgen"] = "AssetBase/vendor/msdfgen"
 IncludeDir["msdfatlasgen"] = "AssetBase/vendor/msdf-atlas-gen"
-IncludeDir["flatbuffers"] = "AssetBase/vendor/flatbuffers/include"
 IncludeDir["yamlcpp"] = "AssetBase/vendor/yaml-cpp/include"
 IncludeDir["ShaderConductor"] = "AssetBase/vendor/ShaderConductor/include"
 IncludeDir["lab_serial"] = "FlatBuffers/include"
@@ -292,15 +293,16 @@ project "AssetBase"
 	includedirs {
 		"AssetBase/src",
 		"Lithium/src",
-		"%{IncludeDir.zlib}",
-		"%{IncludeDir.glm}",
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.flatbuffers}",
 		"%{IncludeDir.freetype}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.lab_serial}",
 		"%{IncludeDir.msdfgen}",
 		"%{IncludeDir.msdfatlasgen}",
-		"%{IncludeDir.flatbuffers}",
-		"%{IncludeDir.lab_serial}",
+		"%{IncludeDir.ShaderConductor}",
 		"%{IncludeDir.yamlcpp}",
-		"%{IncludeDir.ShaderConductor}"
+		"%{IncludeDir.zlib}"
 	}
 
 	links {
@@ -321,7 +323,8 @@ project "AssetBase"
 			"d3d11.lib",
 			"dxgi.lib",
 			"d3dcompiler.lib",
-			"AssetBase/vendor/freetype/win64/freetype.lib"
+			"AssetBase/vendor/freetype/win64/freetype.lib",
+			"AssetBase/vendor/assimp/win64/assimp-vc142-mt.lib",
 		}
 
 	--filter { "system:windows", "configurations:Debug" }

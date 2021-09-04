@@ -20,14 +20,14 @@
 #include "Lithium/Renderer/RendererAPI.h"
 #include "Lithium/Renderer/Shader.h"
 #include "Lithium/Renderer/Texture.h"
-#include "Lithium/Renderer/VertexArray.h"
+#include "Lithium/Renderer/Pipeline.h"
 #include "Lithium/Renderer/ShaderInterop/ShaderInterop.h"
-#include "Lithium/Renderer/ShaderInterop/ViewProjCB.h"
+#include "Lithium/Renderer/ShaderInterop/CameraCB.h"
 #include "Lithium/Renderer/ShaderInterop/TransformCB.h"
 #include "Lithium/Renderer/Text/Font.h"
 #include "Lithium/Renderer/Text/Label.h"
 
-#include "Lithium/Audio/AudioManager.h"
+#include "Lithium/Audio/AudioContext.h"
 #include "Lithium/Audio/AudioBuffer.h"
 #include "Lithium/Audio/AudioSource.h"
 

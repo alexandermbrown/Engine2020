@@ -17,11 +17,16 @@ AssetBase::AssetBase()
 	if (!config || !config.IsMap())
 		throw "YAML file 'config.yaml' does not exist or is invalid.";
 
+	YAML::Node models_path_node = config["models_path"];
+	if (!models_path_node || !models_path_node.IsScalar())
+		throw "config.yaml: models_path not specified.";
+
+	m_ModelsPath = models_path_node.Scalar();
+
 	YAML::Node packs = config["packs"];
 	if (!packs || !packs.IsSequence())
 		throw "config.yaml: cannot find sequence 'packs'.";
 
-	
 	YAML::Node includes = config["includes"];
 	if (includes)
 	{
@@ -51,7 +56,11 @@ AssetBase::AssetBase()
 		try {
 			std::filesystem::path output_path = out_path;
 			std::filesystem::create_directories(output_path.parent_path());
-			CompileAssetPack(yaml_path, out_path + "-debug", true);
+
+			std::string debug_filename = output_path.stem().string() + "-debug" + output_path.extension().string();
+			std::filesystem::path debug_output_path = output_path.parent_path() / debug_filename;
+
+			CompileAssetPack(yaml_path, debug_output_path.string(), true);
 			CompileAssetPack(yaml_path, out_path, false);
 		}
 		catch (const char* msg) {
@@ -72,7 +81,7 @@ AssetBase::AssetBase()
 void AssetBase::CompileAssetPack(const std::string& yaml_path, const std::string& out_path, bool debug_mode)
 {
 	std::cout << std::string(32, '-') << "\nLoading " << yaml_path << (debug_mode ? " in debug mode" : " in release mode") << "...\n";
-	AssetPack serial(yaml_path, debug_mode);
+	AssetPack serial(yaml_path, m_ModelsPath, debug_mode);
 
 	std::ofstream out_file(out_path, std::ios::out | std::ios::trunc | std::ios::binary);
 

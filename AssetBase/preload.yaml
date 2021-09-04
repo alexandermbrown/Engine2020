@@ -1,9 +1,4 @@
 
-shader_splash:
-  type: shader
-  dir: "./res/shaders/texture"
-  samplers: { 0: ["u_Texture", "u_Sampler"] }
-
 texture_splash:
   type: texture2d
   path: "./res/textures/ui/splash.png"
@@ -11,3 +6,96 @@ texture_splash:
   mag_filter: LINEAR
   wrap_s: CLAMP_TO_EDGE
   wrap_t: CLAMP_TO_EDGE
+
+shader_splash:
+  type: shader
+  dir: "./res/shaders/texture"
+  samplers: { 0: ["u_Texture", "u_Sampler"] }
+
+shader_batched:
+  type: shader
+  dir: "./res/shaders/batched"
+  samplers:
+    0: ["u_Texture0", "u_Sampler0"]
+    1: ["u_Texture1", "u_Sampler1"]
+    2: ["u_Texture2", "u_Sampler2"]
+    3: ["u_Texture3", "u_Sampler3"]
+    4: ["u_Texture4", "u_Sampler4"]
+    5: ["u_Texture5", "u_Sampler5"]
+    6: ["u_Texture6", "u_Sampler6"]
+    7: ["u_Texture7", "u_Sampler7"]
+
+shader_label:
+  type: shader
+  dir: "./res/shaders/label"
+  samplers:
+    0: ["u_Texture0", "u_Sampler0"]
+    1: ["u_Texture1", "u_Sampler1"]
+    2: ["u_Texture2", "u_Sampler2"]
+    3: ["u_Texture3", "u_Sampler3"]
+    4: ["u_Texture4", "u_Sampler4"]
+    5: ["u_Texture5", "u_Sampler5"]
+    6: ["u_Texture6", "u_Sampler6"]
+    7: ["u_Texture7", "u_Sampler7"]
+
+shader_line:
+  type: shader
+  dir: "./res/shaders/line"
+
+shader_terrain:
+  type: shader
+  dir: "./res/shaders/terrain"
+  samplers:
+    0: ["u_Texture", "u_TextureSampler"]
+    1: ["u_Noise1", "u_Noise1Sampler"]
+    2: ["u_Noise2", "u_Noise2Sampler"]
+    3: ["u_Noise3", "u_Noise3Sampler"]
+
+# Particle emitter.
+
+shader_emitter_update_begin:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_update_begin_cs.hlsl"
+
+shader_emitter_emit:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_emit_cs.hlsl"
+
+shader_emitter_simulate:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_simulate_cs.hlsl"
+
+shader_emitter_update_end:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_update_end_cs.hlsl"
+
+shader_emitter_draw:
+  type: shader
+  sources:
+    - "./res/shaders/emitter/emitter_draw_vs.hlsl"
+    - "./res/shaders/emitter/emitter_draw_ps.hlsl"
+
+# GPU Sort.
+shader_gpusort_begin:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_begin_cs.hlsl"
+
+shader_gpusort_sort:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_sort_cs.hlsl"
+
+shader_gpusort_sort_inner:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_sort_inner_cs.hlsl"
+
+shader_gpusort_sort_step:
+  type: shader
+  sources:
+    - "./res/shaders/gpusort/gpusort_sort_step_cs.hlsl"

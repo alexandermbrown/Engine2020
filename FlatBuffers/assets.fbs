@@ -79,7 +79,6 @@ table FontImage {
 table Font {
 	name:string;
 	glyph_scale:short;
-	//distance_gradient:float;
 	em_size:float;
 	glyphs:[GlyphEntry];
 	images:[FontImage];
@@ -101,6 +100,16 @@ table Locale {
 	entries:[LocaleEntry];
 }
 
-file_identifier "LAB+";
-file_extension "lab";
-root_type AssetBundle;
+struct Submesh {
+	base_vertex:uint;
+	base_index:uint;
+	vertex_count:uint;
+	index_count:uint;
+}
+
+table Model {
+	name:string;
+	vertices:[float];
+	indices:[uint];
+	submeshes:[Submesh];
+}

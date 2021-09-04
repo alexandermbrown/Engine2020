@@ -6,4 +6,4 @@
 
 #include <filesystem>
 
-flatbuffers::Offset<Assets::Texture2D> SerializeTexture2D(flatbuffers::FlatBufferBuilder& builder, const std::filesystem::path& base_path, const std::string& name, YAML::Node texture, bool debug_mode);
+flatbuffers::Offset<Assets::Texture2D> SerializeTexture2D(flatbuffers::FlatBufferBuilder& builder, const std::filesystem::path& base_path, const std::string& name, YAML::Node texture);

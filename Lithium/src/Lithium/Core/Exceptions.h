@@ -19,4 +19,22 @@ namespace Li
 			: std::runtime_error(message) {}
 		virtual ~GraphicsInitError() = default;
 	};
+
+	class AssetPackError : public std::runtime_error
+	{
+	public:
+		AssetPackError(const char* message)
+			: std::runtime_error(message) {}
+		AssetPackError(const std::string& message)
+			: std::runtime_error(message) {}
+		virtual ~AssetPackError() = default;
+	};
+
+	class AssetError : public std::runtime_error
+	{
+	public:
+		AssetError(const char* message)
+			: std::runtime_error(message) {}
+		virtual ~AssetError() = default;
+	};
 }

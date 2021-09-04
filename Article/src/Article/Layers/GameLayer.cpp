@@ -20,15 +20,11 @@
 using namespace std::chrono_literals;
 
 GameLayer::GameLayer()
-	: Layer("GameLayer"),
-	//m_TerrainStore(11), m_TerrainRenderer(&m_TerrainStore, 3),
-	m_BurstTimer(3000ms, false, true)
+	: Layer("GameLayer"), m_BurstTimer(3000ms, false, true)
 {
 	m_TickThread.Begin(m_Registry);
 
 	CameraControllerSystem::Init(m_Registry);
-
-	//m_TerrainRenderer.LoadTerrain("data/worlds/test.terrain", { 0, 0 });
 
 	m_AudioSource = Li::MakeRef<Li::AudioSource>();
 	m_AudioSource->SetAudio(Li::ResourceManager::GetAudioBuffer("audio_wind"));
@@ -67,7 +63,6 @@ GameLayer::GameLayer()
 
 GameLayer::~GameLayer()
 {
-	//m_TerrainRenderer.UnloadTerrain();
 	m_TickThread.Finish(m_Registry);
 }
 
@@ -75,17 +70,12 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 {
 	m_TickThread.UpdateSync(m_Registry, dt);
 
-	auto player_view = m_Registry.view<cp::sync_transform, cp::player>();
-	for (entt::entity player : player_view)
-	{
-		cp::sync_transform& player_transform = player_view.get<cp::sync_transform>(player);
-
-		//m_TerrainRenderer.UpdateCenter({
-		//	(int)std::floor(player_transform.position.x / TerrainRenderer::MetersPerChunk),
-		//	(int)std::floor(player_transform.position.y / TerrainRenderer::MetersPerChunk)
-		//});
-		break;
-	}
+	//auto player_view = m_Registry.view<cp::sync_transform, cp::player>();
+	//for (entt::entity player : player_view)
+	//{
+	//	cp::sync_transform& player_transform = player_view.get<cp::sync_transform>(player);
+	//	break;
+	//}
 
 	CameraControllerSystem::Update(m_Registry, dt);
 
@@ -100,8 +90,6 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 
 	cp::camera& camera = m_Registry.ctx<cp::camera>();
 
-
-	//m_TerrainRenderer.RenderFramebuffer();
 	
 	Li::Renderer::BeginScene(camera.camera.get());
 
@@ -109,7 +97,6 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 	m_Emitter->Update(dt, glm::translate(glm::mat4(1.0f), m_EmitPosition));
 	m_Emitter->Draw(Li::ResourceManager::GetTexture2D("texture_default"));
 
-	//m_TerrainRenderer.SubmitQuad();
 	//RenderingSystem::Render(m_Registry);
 
 #ifdef HZ_PHYSICS_DEBUG_DRAW

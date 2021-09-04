@@ -83,12 +83,12 @@ namespace Li
 		}
 	};
 
-	class BufferLayout
+	class VertexBufferLayout
 	{
 	public:
-		BufferLayout() {}
+		VertexBufferLayout() {}
 
-		BufferLayout(const std::initializer_list<BufferElement>& elements)
+		VertexBufferLayout(const std::initializer_list<BufferElement>& elements)
 			: m_Elements(elements)
 		{
 			CalculateOffsetsAndStride();
@@ -123,12 +123,12 @@ namespace Li
 		virtual ~VertexBuffer() = default;
 
 		virtual void Bind() const = 0;
-		virtual const BufferLayout& GetLayout() const = 0;
-		virtual void SetLayout(const BufferLayout& layout) = 0;
-		virtual void SetSubData(float* data, uint32_t size, uint32_t offset, bool discard) = 0;
+		virtual const VertexBufferLayout& GetLayout() const = 0;
+		virtual void SetLayout(const VertexBufferLayout& layout) = 0;
+		virtual void SetSubData(const float* data, uint32_t size, uint32_t offset, bool discard) = 0;
 
 		static Ref<VertexBuffer> Create(uint32_t size, BufferUsage usage);
-		static Ref<VertexBuffer> Create(float* vertices, uint32_t size, BufferUsage usage);
+		static Ref<VertexBuffer> Create(const float* vertices, uint32_t size, BufferUsage usage);
 	};
 
 	class IndexBuffer
@@ -138,9 +138,9 @@ namespace Li
 
 		virtual void Bind() const = 0;
 		virtual uint32_t GetCount() const = 0;
-		virtual void SetSubData(uint32_t* data, uint32_t size, uint32_t offset, bool discard) = 0;
+		virtual void SetSubData(const uint32_t* data, uint32_t size, uint32_t offset, bool discard) = 0;
 
 		static Ref<IndexBuffer> Create(uint32_t size, BufferUsage usage);
-		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count, BufferUsage usage = BufferUsage::StaticDraw);
+		static Ref<IndexBuffer> Create(const uint32_t* indices, uint32_t count, BufferUsage usage = BufferUsage::StaticDraw);
 	};
 }

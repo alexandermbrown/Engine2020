@@ -7,9 +7,6 @@
 #include "Article/Rendering/DebugPhysicsRenderer.h"
 #endif
 
-#include "Article/Terrain/TerrainRenderer.h"
-#include "Article/Terrain/DefaultTerrainStore.h"
-
 #include "Lithium/Core/Layer.h"
 #include "Lithium/Audio/AudioSource.h"
 #include "Lithium/Renderer/ParticleEmitter.h"
@@ -45,7 +42,4 @@ private:
 
 	glm::vec3 m_EmitPosition;
 	Li::Timer m_BurstTimer;
-
-	//DefaultTerrainStore m_TerrainStore;
-	//TerrainRenderer m_TerrainRenderer;
 };

@@ -31,7 +31,6 @@ void SplashScreenLayer::OnUpdate(Li::Duration::us dt)
 		// TODO: Make the renderer not dependant on the resource manager
 		// Instead, change the below function to set the shaders used for instancing, fonts, etc.
 		// In future, move the ResourceManager into Article and remove any references in Lithium.
-		Li::Renderer::InitPostResourceLoad();
 		Li::Renderer::AddTextureAtlas(Li::ResourceManager::GetTextureAtlas("atlas_default"));
 		Li::Renderer::AddTextureAtlas(Li::ResourceManager::GetTextureAtlas("atlas_terrain_earth"));
 
@@ -42,7 +41,7 @@ void SplashScreenLayer::OnUpdate(Li::Duration::us dt)
 
 		app.Transition(Li::MakeUnique<ScriptScene>("MainMenuScene"), true);
 	}
-	Li::Renderer::UISubmit(m_Texture, m_Transform);
+	Li::Renderer::UIRenderQuadImmediate(m_Texture, m_Transform);
 }
 #ifndef LI_DIST
 void SplashScreenLayer::OnImGuiRender()

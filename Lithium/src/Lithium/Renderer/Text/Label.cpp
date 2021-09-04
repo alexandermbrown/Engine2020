@@ -138,39 +138,23 @@ namespace Li
 
 	void Label::CreateRenderingBuffers(bool dynamic)
 	{
-		m_VertexArray = VertexArray::Create();
-
 		if (dynamic)
 		{
 			m_VertexBuffer = VertexBuffer::Create((uint32_t)(sizeof(GlyphVertex) * m_BufferLength * 4), BufferUsage::DynamicDraw);
 			m_VertexBuffer->SetSubData((float*)m_GlyphVertices.data(), (uint32_t)(sizeof(GlyphVertex) * m_GlyphVertices.size()), 0, true);
 
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create((uint32_t)(sizeof(uint32_t) * m_BufferLength * 6), BufferUsage::DynamicDraw);
-			indexBuffer->SetSubData(m_GlyphIndices.data(), (uint32_t)(sizeof(uint32_t) * m_GlyphIndices.size()), 0, true);
-
-			m_VertexArray->SetIndexBuffer(indexBuffer);
+			m_IndexBuffer = IndexBuffer::Create((uint32_t)(sizeof(uint32_t) * m_BufferLength * 6), BufferUsage::DynamicDraw);
+			m_IndexBuffer->SetSubData(m_GlyphIndices.data(), (uint32_t)(sizeof(uint32_t) * m_GlyphIndices.size()), 0, true);
 		}
 		else
 		{
 			m_VertexBuffer = VertexBuffer::Create((float*)m_GlyphVertices.data(),
-				(uint32_t)(sizeof(GlyphVertex) * m_GlyphVertices.size()),
-				BufferUsage::StaticDraw);
+				(uint32_t)(sizeof(GlyphVertex) * m_GlyphVertices.size()), BufferUsage::StaticDraw);
 
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(m_GlyphIndices.data(),
-				(uint32_t)m_GlyphIndices.size(),
-				BufferUsage::StaticDraw);
-
-			m_VertexArray->SetIndexBuffer(indexBuffer);
+			m_IndexBuffer = IndexBuffer::Create(m_GlyphIndices.data(),
+				(uint32_t)m_GlyphIndices.size(), BufferUsage::StaticDraw);
 		}
-
-		m_VertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "POSITION", 0 },
-			{ ShaderDataType::Float2, "TEXCOORD", 1 },
-			{ ShaderDataType::Float, "TEXINDEX", 2 }
-		});
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-		m_VertexArray->Finalize(Renderer::GetFontShader());
-		Application::Get().GetWindow().GetContext()->UnbindVertexArray();
+		m_VertexBuffer->SetLayout(Renderer::GetFontPipeline()->GetSpec().Layouts[0]);
 	}
 
 	void Label::UpdateRenderingBuffers()
@@ -179,7 +163,7 @@ namespace Li
 			(uint32_t)(sizeof(GlyphVertex) * m_GlyphVertices.size()),
 			0, true);
 
-		m_VertexArray->GetIndexBuffer()->SetSubData(m_GlyphIndices.data(),
+		m_IndexBuffer->SetSubData(m_GlyphIndices.data(),
 			(uint32_t)(sizeof(uint32_t) * m_GlyphIndices.size()), 0, true);
 	}
 }

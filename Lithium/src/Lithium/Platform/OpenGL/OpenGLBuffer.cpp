@@ -29,7 +29,7 @@ namespace Li
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, ConvertOpenGL::BufferUsage(usage));
 	}
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size, BufferUsage usage)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, uint32_t size, BufferUsage usage)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 
@@ -41,7 +41,7 @@ namespace Li
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 	}
 
-	void OpenGLVertexBuffer::SetSubData(float* data, uint32_t size, uint32_t offset, bool discard)
+	void OpenGLVertexBuffer::SetSubData(const float* data, uint32_t size, uint32_t offset, bool discard)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 
@@ -66,7 +66,7 @@ namespace Li
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, ConvertOpenGL::BufferUsage(usage));
 	}
 
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count, BufferUsage usage)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, uint32_t count, BufferUsage usage)
 		: m_Count(count)
 	{
 		glGenBuffers(1, &m_BufferID);
@@ -79,7 +79,7 @@ namespace Li
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferID);
 	}
 
-	void OpenGLIndexBuffer::SetSubData(uint32_t* data, uint32_t size, uint32_t offset, bool discard)
+	void OpenGLIndexBuffer::SetSubData(const uint32_t* data, uint32_t size, uint32_t offset, bool discard)
 	{
 		m_Count = size / sizeof(uint32_t);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferID);

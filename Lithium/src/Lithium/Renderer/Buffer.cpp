@@ -29,7 +29,7 @@ namespace Li
 		return nullptr;
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size, BufferUsage usage)
+	Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size, BufferUsage usage)
 	{
 		switch (Application::Get().GetAPI())
 		{
@@ -61,7 +61,7 @@ namespace Li
 		return nullptr;
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count, BufferUsage usage)
+	Ref<IndexBuffer> IndexBuffer::Create(const uint32_t* indices, uint32_t count, BufferUsage usage)
 	{
 		switch (Application::Get().GetAPI())
 		{
@@ -77,7 +77,7 @@ namespace Li
 		return nullptr;
 	}
 
-	uint32_t BufferLayout::GetComponentCount() const
+	uint32_t VertexBufferLayout::GetComponentCount() const
 	{
 		uint32_t count = 0;
 		for (const BufferElement& element : m_Elements)

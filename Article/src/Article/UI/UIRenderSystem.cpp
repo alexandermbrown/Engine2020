@@ -25,20 +25,10 @@ void RenderQuads(entt::registry& registry)
 		bool has_color = registry.has<cp::color>(entity);
 		bool has_texture = registry.has<cp::texture>(entity);
 
-		if (has_color && has_texture)
-		{
-			Li::Renderer::UISubmitColoredTexture(registry.get<cp::texture>(entity).alias, registry.get<cp::color>(entity).color,
-				transform.transform, registry.has<cp::ui_texture_crop>(entity));
-		}
-		else if (has_texture)
-		{
-			Li::Renderer::UISubmitTextured(registry.get<cp::texture>(entity).alias,
-				transform.transform, registry.has<cp::ui_texture_crop>(entity));
-		}
-		else if (has_color)
-		{
-			Li::Renderer::UISubmitColored(registry.get<cp::color>(entity).color, transform.transform);
-		}
+		std::string texture_alias = has_texture ? registry.get<cp::texture>(entity).alias : "texture_white";
+		glm::vec4 color = has_color ? registry.get<cp::color>(entity).color : glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+		Li::Renderer::UISubmitQuad(texture_alias, color, transform.transform, registry.has<cp::ui_texture_crop>(entity));
 	}
 	Li::Renderer::EndUI();
 }
@@ -47,13 +37,10 @@ void RenderLabels(entt::registry& registry)
 {
 	registry.view<cp::ui_transform, cp::label>().each([&registry](entt::entity entity, auto& transform, auto& label)
 	{
-		if (registry.has<cp::color>(entity))
-		{
-			Li::Renderer::UISubmitLabel(registry.get<cp::label>(entity).label_ref, transform.transform, registry.get<cp::color>(entity).color);
-		}
-		else
-		{
-			Li::Renderer::UISubmitLabel(registry.get<cp::label>(entity).label_ref, transform.transform, { 1.0f, 1.0f, 1.0f, 1.0f });
-		}
+		glm::vec4 color = registry.has<cp::color>(entity)
+			? registry.get<cp::color>(entity).color
+			: glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+		Li::Renderer::UISubmitLabel(registry.get<cp::label>(entity).label_ref, transform.transform, color);
 	});
 }

@@ -31,7 +31,7 @@ Assets::WrapType ConvertWrapType(const std::string& type)
 	throw std::runtime_error("Unknown wrap type " + type);
 }
 
-flatbuffers::Offset<Assets::Texture2D> SerializeTexture2D(flatbuffers::FlatBufferBuilder& builder, const std::filesystem::path& base_path, const std::string& name, YAML::Node texture, bool debug_mode)
+flatbuffers::Offset<Assets::Texture2D> SerializeTexture2D(flatbuffers::FlatBufferBuilder& builder, const std::filesystem::path& base_path, const std::string& name, YAML::Node texture)
 {
 	flatbuffers::Offset<flatbuffers::String> name_offset = builder.CreateString(name);
 

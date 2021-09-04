@@ -32,7 +32,8 @@ void VideoPlayerLayer::OnUpdate(Li::Duration::us dt)
 		float scaled_width = scale * m_VideoPlayer.GetWidth();
 		float scaled_height = scale * m_VideoPlayer.GetHeight();
 
-		Li::Renderer::UISubmit(m_VideoPlayer.GetTexture(), glm::translate(glm::mat4(1.0f), { (window_width - scaled_width) / 2, (window_height - scaled_height) / 2, 1.0f })
+		Li::Renderer::UIRenderQuadImmediate(m_VideoPlayer.GetTexture(), glm::translate(glm::mat4(1.0f),
+			{ (window_width - scaled_width) / 2, (window_height - scaled_height) / 2, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { scaled_width, scaled_height, 1.0f }));
 	}
 	Li::Renderer::EndUI();

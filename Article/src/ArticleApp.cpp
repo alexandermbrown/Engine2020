@@ -22,9 +22,9 @@ ArticleApp::ArticleApp()
 	: Li::Application({ "Article", 768, 384, false, true, true})
 {
 #ifdef HZ_DEBUG
-	Li::ResourceManager::Load("data/preload.lab-debug");
+	Li::ResourceManager::Load("data/preload-debug.lpack");
 #else
-	Li::ResourceManager::Load("data/preload.lab");
+	Li::ResourceManager::Load("data/preload.lpack");
 #endif
 	Li::Localization::Init();
 	Li::Renderer::Init();

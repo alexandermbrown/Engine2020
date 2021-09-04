@@ -6,6 +6,8 @@
 #include "Loaders/FontLoader.h"
 #include "Loaders/LocaleLoader.h"
 
+#include "Lithium/Core/Exceptions.h"
+
 #include <fstream>
 
 namespace Li
@@ -40,13 +42,13 @@ namespace Li
 		s_Data.reset();
 	}
 
-	void ResourceManager::Load(const std::string& lab_file_path)
+	void ResourceManager::Load(const std::string& lpack_file_path)
 	{
-		Log::CoreInfo("Loading asset base {}...", lab_file_path);
-		std::ifstream in_file(lab_file_path, std::ios::in | std::ios::binary);
+		Log::CoreInfo("Loading asset pack {}...", lpack_file_path);
 
+		std::ifstream in_file(lpack_file_path, std::ios::in | std::ios::binary);
 		if (!in_file.good())
-			throw std::runtime_error("Error opening asset base " + lab_file_path);
+			throw AssetPackError("Error opening asset pack " + lpack_file_path);
 
 		in_file.seekg(0, std::ios::end);
 		long filesize = (long)in_file.tellg();
@@ -57,7 +59,7 @@ namespace Li
 
 		const Assets::AssetBundle* asset_bundle = flatbuffers::GetRoot<Assets::AssetBundle>(buffer);
 		if (!asset_bundle->Verify(flatbuffers::Verifier(buffer, filesize))) 
-			throw std::runtime_error("Corrupt asset base " + lab_file_path + ". Verify or reinstall game files.");
+			throw AssetPackError("Corrupt asset pack " + lpack_file_path + ". Verify or reinstall game files.");
 
 		for (const Assets::Texture2D* texture : *asset_bundle->textures())
 		{

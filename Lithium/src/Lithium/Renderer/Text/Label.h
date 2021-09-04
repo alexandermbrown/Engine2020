@@ -3,7 +3,7 @@
 #include "Font.h"
 #include "Lithium/Core/Memory.h"
 #include "Lithium/Renderer/Texture.h"
-#include "Lithium/Renderer/VertexArray.h"
+#include "Lithium/Renderer/Pipeline.h"
 
 #include "glm/glm.hpp"
 #include "hb.h"
@@ -27,8 +27,6 @@ namespace Li
 
 		inline int GetPointSize() const { return m_PointSize; }
 		inline float GetDistanceFactor() const { return m_DistanceFactor; }
-
-		inline const Ref<VertexArray>& GetVertexArray() { return m_VertexArray; }
 		inline const Ref<Font>& GetFont() { return m_Font; }
 
 		void SetText(const char* utf8_text);
@@ -49,9 +47,11 @@ namespace Li
 		std::vector<GlyphVertex> m_GlyphVertices;
 		std::vector<uint32_t> m_GlyphIndices;
 
-		Ref<VertexArray> m_VertexArray;
 		Ref<VertexBuffer> m_VertexBuffer;
+		Ref<IndexBuffer> m_IndexBuffer;
 
 		hb_buffer_t* m_Buffer;
+
+		friend class Renderer;
 	};
 }

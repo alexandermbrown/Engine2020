@@ -7,7 +7,7 @@
 class AssetPack
 {
 public:
-	AssetPack(const std::filesystem::path& path, bool debug_mode);
+	AssetPack(const std::filesystem::path& path, const std::filesystem::path& models_path, bool debug_mode);
 
 	inline uint8_t* GetBufferPointer() const { return m_Builder.GetBufferPointer(); }
 	inline uint32_t GetBufferSize() const { return m_Builder.GetSize(); }

@@ -23,9 +23,9 @@ void SplashScreenScene::OnShow()
 #endif
 
 #ifdef HZ_DEBUG
-	Li::ResourceManager::BeginStaggeredLoad("data/resources.lab-debug");
+	Li::ResourceManager::BeginStaggeredLoad("data/resources-debug.lpack");
 #else
-	Li::ResourceManager::BeginStaggeredLoad("data/resources.lab");
+	Li::ResourceManager::BeginStaggeredLoad("data/resources.lpack");
 #endif
 }
 

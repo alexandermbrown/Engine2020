@@ -1,99 +1,8 @@
 
-### Shaders ###
-shader_batched:
-  type: shader
-  dir: "./res/shaders/batched"
-  samplers:
-    0: ["u_Texture0", "u_Sampler0"]
-    1: ["u_Texture1", "u_Sampler1"]
-    2: ["u_Texture2", "u_Sampler2"]
-    3: ["u_Texture3", "u_Sampler3"]
-    4: ["u_Texture4", "u_Sampler4"]
-    5: ["u_Texture5", "u_Sampler5"]
-    6: ["u_Texture6", "u_Sampler6"]
-    7: ["u_Texture7", "u_Sampler7"]
-
-shader_label:
-  type: shader
-  dir: "./res/shaders/label"
-  samplers:
-    0: ["u_Texture0", "u_Sampler0"]
-    1: ["u_Texture1", "u_Sampler1"]
-    2: ["u_Texture2", "u_Sampler2"]
-    3: ["u_Texture3", "u_Sampler3"]
-    4: ["u_Texture4", "u_Sampler4"]
-    5: ["u_Texture5", "u_Sampler5"]
-    6: ["u_Texture6", "u_Sampler6"]
-    7: ["u_Texture7", "u_Sampler7"]
-
-shader_line:
-  type: shader
-  dir: "./res/shaders/line"
-
-shader_terrain:
-  type: shader
-  dir: "./res/shaders/terrain"
-  samplers:
-    0: ["u_Texture", "u_TextureSampler"]
-    1: ["u_Noise1", "u_Noise1Sampler"]
-    2: ["u_Noise2", "u_Noise2Sampler"]
-    3: ["u_Noise3", "u_Noise3Sampler"]
-
-# Particle emitter.
-
-shader_emitter_update_begin:
-  type: shader
-  sources:
-    - "./res/shaders/emitter/emitter_update_begin_cs.hlsl"
-
-shader_emitter_emit:
-  type: shader
-  sources:
-    - "./res/shaders/emitter/emitter_emit_cs.hlsl"
-
-shader_emitter_simulate:
-  type: shader
-  sources:
-    - "./res/shaders/emitter/emitter_simulate_cs.hlsl"
-
-shader_emitter_update_end:
-  type: shader
-  sources:
-    - "./res/shaders/emitter/emitter_update_end_cs.hlsl"
-
-shader_emitter_draw:
-  type: shader
-  sources:
-    - "./res/shaders/emitter/emitter_draw_vs.hlsl"
-    - "./res/shaders/emitter/emitter_draw_ps.hlsl"
-
-# GPU Sort.
-shader_gpusort_begin:
-  type: shader
-  sources:
-    - "./res/shaders/gpusort/gpusort_begin_cs.hlsl"
-
-shader_gpusort_sort:
-  type: shader
-  sources:
-    - "./res/shaders/gpusort/gpusort_sort_cs.hlsl"
-
-shader_gpusort_sort_inner:
-  type: shader
-  sources:
-    - "./res/shaders/gpusort/gpusort_sort_inner_cs.hlsl"
-
-shader_gpusort_sort_step:
-  type: shader
-  sources:
-    - "./res/shaders/gpusort/gpusort_sort_step_cs.hlsl"
-
-  
-
 ### Textures ###
 texture_default:
   type: texture2d
-  path: './res/textures/default.png'
+  path: "./res/textures/default.png"
   min_filter: NEAREST
   mag_filter: NEAREST
   wrap_s: REPEAT
@@ -101,7 +10,7 @@ texture_default:
 
 texture_terrain_test:
   type: texture2d
-  path: './res/textures/terrain_test.png'
+  path: "./res/textures/terrain_test.png"
   min_filter: NEAREST
   mag_filter: NEAREST
   wrap_s: REPEAT
@@ -110,32 +19,32 @@ texture_terrain_test:
 ### Fonts ###
 Lato-Regular:
   type: font
-  path: './res/fonts/Lato/Lato-Regular.ttf'
+  path: "./res/fonts/Lato/Lato-Regular.ttf"
   glyph_scale: 24
 
 Lora-Regular:
   type: font
-  path: './res/fonts/Lora/Lora-Regular.ttf'
+  path: "./res/fonts/Lora/Lora-Regular.ttf"
   glyph_scale: 32
 
 Tomorrow-Regular:
   type: font
-  path: './res/fonts/Tomorrow/Tomorrow-Regular.ttf'
+  path: "./res/fonts/Tomorrow/Tomorrow-Regular.ttf"
   glyph_scale: 32
 
 SourceCodePro-Regular:
   type: font
-  path: './res/fonts/SourceCodePro/SourceCodePro-Regular.ttf'
+  path: "./res/fonts/SourceCodePro/SourceCodePro-Regular.ttf"
   glyph_scale: 32
 
 SourceCodePro-Light:
   type: font
-  path: './res/fonts/SourceCodePro/SourceCodePro-Light.ttf'
+  path: "./res/fonts/SourceCodePro/SourceCodePro-Light.ttf"
   glyph_scale: 32
 
 SourceCodePro-Bold:
   type: font
-  path: './res/fonts/SourceCodePro/SourceCodePro-Bold.ttf'
+  path: "./res/fonts/SourceCodePro/SourceCodePro-Bold.ttf"
   glyph_scale: 32
 
 ### Texture Atlases ###
@@ -157,13 +66,24 @@ atlas_terrain_earth:
 ### Audio ###
 audio_wind:
   type: audio
-  path: './res/audio/wind.ogg'
+  path: "./res/audio/wind.ogg"
 
 ### Locales ###
 en-us:
   type: locale
-  path: './res/locales/en-us.yaml'
+  path: "./res/locales/en-us.yaml"
 
 test:
   type: locale
-  path: './res/locales/test.yaml'
+  path: "./res/locales/test.yaml"
+
+### Models ###
+
+material_teapot:
+  type: material
+
+model_teapot:
+  type: model
+  path: "./res/models/teapot.obj"
+  materials:
+    - material_teapot

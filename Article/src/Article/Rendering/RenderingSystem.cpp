@@ -20,15 +20,15 @@ void RenderingSystem::Render(entt::registry& registry)
 
 		if (registry.has<cp::color>(entity) && registry.has<cp::texture>(entity))
 		{
-			Li::Renderer::SubmitColoredTexture(registry.get<cp::texture>(entity).alias, registry.get<cp::color>(entity).color, transform.transform);
+			Li::Renderer::SubmitQuad(registry.get<cp::texture>(entity).alias, registry.get<cp::color>(entity).color, transform.transform);
 		}
 		else if (registry.has<cp::color>(entity))
 		{
-			Li::Renderer::SubmitColored(registry.get<cp::color>(entity).color, transform.transform);
+			Li::Renderer::SubmitQuad("texture_white", registry.get<cp::color>(entity).color, transform.transform);
 		}
 		else if (registry.has<cp::texture>(entity))
 		{
-			Li::Renderer::SubmitTextured(registry.get<cp::texture>(entity).alias, transform.transform);
+			Li::Renderer::SubmitQuad(registry.get<cp::texture>(entity).alias, { 1.0f, 1.0f, 1.0f, 1.0f }, transform.transform);
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Li
 		else LI_CORE_ASSERT(false, "Buffer without data must be dynamic.\n");
 	}
 
-	D3D11VertexBuffer::D3D11VertexBuffer(float* vertices, uint32_t size, BufferUsage usage)
+	D3D11VertexBuffer::D3D11VertexBuffer(const float* vertices, uint32_t size, BufferUsage usage)
 		: m_Size(size)
 	{
 		D3D11Context* context = (D3D11Context*)Application::Get().GetWindow().GetContext();
@@ -54,7 +54,7 @@ namespace Li
 		D3D11Call( m_DeviceHandle->CreateBuffer(&buffer_desc, &buffer_data, &m_Buffer) );
 	}
 
-	void D3D11VertexBuffer::SetSubData(float* data, uint32_t size, uint32_t offset, bool discard)
+	void D3D11VertexBuffer::SetSubData(const float* data, uint32_t size, uint32_t offset, bool discard)
 	{
 		LI_CORE_ASSERT(size <= m_Size, "Buffer overflow.");
 
@@ -92,7 +92,7 @@ namespace Li
 		else LI_CORE_ASSERT(false, "Buffer without data must be dynamic.\n");
 	}
 
-	D3D11IndexBuffer::D3D11IndexBuffer(uint32_t* indices, uint32_t count, BufferUsage usage)
+	D3D11IndexBuffer::D3D11IndexBuffer(const uint32_t* indices, uint32_t count, BufferUsage usage)
 		: m_Size(count * sizeof(uint32_t)), m_Count(count)
 	{
 		D3D11Context* context = (D3D11Context*)Application::Get().GetWindow().GetContext();
@@ -120,7 +120,7 @@ namespace Li
 		m_ContextHandle->IASetIndexBuffer(m_Buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	}
 
-	void D3D11IndexBuffer::SetSubData(uint32_t* data, uint32_t size, uint32_t offset, bool discard)
+	void D3D11IndexBuffer::SetSubData(const uint32_t* data, uint32_t size, uint32_t offset, bool discard)
 	{
 		LI_CORE_ASSERT(size <= m_Size - offset, "Buffer overflow.");
 		m_Count = offset / sizeof(uint32_t) + size / sizeof(uint32_t);

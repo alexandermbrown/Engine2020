@@ -69,6 +69,11 @@ Copy-Item $shader_conductor_dll_path -Destination "build\Debug-windows-x86_64\As
 Copy-Item $shader_conductor_dll_path -Destination "build\Release-windows-x86_64\AssetBase"
 Copy-Item $shader_conductor_dll_path -Destination "build\Dist-windows-x86_64\AssetBase"
 
+$assimp_dll_path = "AssetBase\vendor\assimp\win64\assimp-vc142-mt.dll"
+Copy-Item $assimp_dll_path -Destination "build\Debug-windows-x86_64\AssetBase"
+Copy-Item $assimp_dll_path -Destination "build\Release-windows-x86_64\AssetBase"
+Copy-Item $assimp_dll_path -Destination "build\Dist-windows-x86_64\AssetBase"
+
 Write-Host "[Win-Setup.ps1] Generating projects..." -ForegroundColor DarkGreen
 bin/Win-GenProjects.ps1 -noprompt
 Pop-Location

@@ -1,8 +1,9 @@
+models_path: "output/models"
 
 includes:
   - "../Lithium/src/Lithium/Renderer/ShaderInterop"
   - "../Article/src/Article/Rendering/ShaderInterop"
 
 packs:
-  - ["preload.yaml", "output/preload.lab"]
-  - ["resources.yaml", "output/resources.lab"]
+  - ["preload.yaml", "output/preload.lpack"]
+  - ["resources.yaml", "output/resources.lpack"]

@@ -24,7 +24,6 @@ namespace Li
 		Window& window = Application::Get().GetWindow();
 		window.GetContext()->SetDepthTest(false);
 		window.GetContext()->SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-
 		s_Data->FrameUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
 		s_Data->FrameUB->BindBase();
 
@@ -37,55 +36,60 @@ namespace Li
 		s_Data->FontUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FontCB), sizeof(FontCB));
 		s_Data->FontUB->BindBase();
 
+
 		s_Data->Camera = nullptr;
-
-		s_Data->TextureShader = ResourceManager::GetShader("shader_splash");
-
 		s_Data->UICamera = MakeUnique<Camera>();
 		s_Data->UICamera->SetOrtho(0.0f, (float)window.GetWidth(), 0.0f, (float)window.GetHeight());
 		
-		//////////////////////////////////
-		// Create Textured Quad Buffers //
-		//////////////////////////////////
+		// IMMEDIATE QUAD RENDERING //
+		s_Data->TextureShader = ResourceManager::GetShader("shader_splash");
+		VertexBufferLayout quad_layout = {
+			{ ShaderDataType::Float2, "POSITION", 0 },
+			{ ShaderDataType::Float2, "TEXCOORD", 1 }
+		};
+		Pipeline::Spec quad_spec;
+		quad_spec.VertexBufferCount = 1;
+		quad_spec.Layouts[0] = quad_layout;
+		quad_spec.Shader = s_Data->TextureShader;
+		s_Data->QuadPipeline = Pipeline::Create(quad_spec);
 
-		s_Data->QuadVA = VertexArray::Create();
-
-		float quad_vertices[16] = {
+		constexpr float quad_vertices[16] = {
 			0.0, 0.0, 0.0f, 0.0f,
 			1.0, 0.0, 1.0f, 0.0f,
 			1.0, 1.0, 1.0f, 1.0f,
 			0.0, 1.0, 0.0f, 1.0f
 		};
+		s_Data->QuadVB = VertexBuffer::Create(quad_vertices, sizeof(quad_vertices), BufferUsage::StaticDraw);
+		s_Data->QuadVB->SetLayout(quad_layout);
 
-		Ref<VertexBuffer> quad_vb = VertexBuffer::Create(quad_vertices, sizeof(quad_vertices), BufferUsage::StaticDraw);
+		constexpr uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
+		s_Data->QuadIB = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 
-		uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
-		Ref<IndexBuffer> quad_ib = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 
-		quad_vb->SetLayout({
-			{ ShaderDataType::Float2, "POSITION", 0 },
-			{ ShaderDataType::Float2, "TEXCOORD", 1 }
-		});
-
-		s_Data->QuadVA->SetIndexBuffer(quad_ib);
-		s_Data->QuadVA->AddVertexBuffer(quad_vb);
-		s_Data->QuadVA->Finalize(s_Data->TextureShader);
-	}
-
-	void Renderer::InitPostResourceLoad()
-	{
+		// 2D BATCH RENDERER //
 		s_Data->Sorter = MakeRef<GPUSort>();
 
-		s_Data->FontShader = ResourceManager::GetShader("shader_label");
-
-		s_Data->SceneRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.5f, 0.5f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
-		s_Data->UIRenderer = MakeUnique<BatchRenderer>(glm::vec2{ 0.0f, 0.0f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
+		s_Data->SceneRenderer2D = MakeUnique<BatchRenderer2D>(glm::vec2{ 0.5f, 0.5f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
+		s_Data->UIRenderer2D = MakeUnique<BatchRenderer2D>(glm::vec2{ 0.0f, 0.0f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
 		s_Data->SceneLineRenderer = MakeUnique<LineBatchRenderer>(s_Data->CameraUB);
 
 		Ref<TextureAtlas> texture_white_atlas = ResourceManager::GetTextureAtlas("texture_white_atlas");
-		s_Data->SceneRenderer->AddTextureAtlas(texture_white_atlas);
-		s_Data->UIRenderer->AddTextureAtlas(texture_white_atlas);
-		s_Data->ResourcesLoaded = true;
+		s_Data->SceneRenderer2D->AddTextureAtlas(texture_white_atlas);
+		s_Data->UIRenderer2D->AddTextureAtlas(texture_white_atlas);
+
+		// FONT //
+		s_Data->FontShader = ResourceManager::GetShader("shader_label");
+		VertexBufferLayout font_layout = {
+			{ ShaderDataType::Float3, "POSITION", 0 },
+			{ ShaderDataType::Float2, "TEXCOORD", 1 },
+			{ ShaderDataType::Float, "TEXINDEX", 2 }
+		};
+
+		Pipeline::Spec font_spec;
+		font_spec.VertexBufferCount = 1;
+		font_spec.Layouts[0] = font_layout;
+		font_spec.Shader = s_Data->FontShader;
+		s_Data->FontPipeline = Pipeline::Create(font_spec);
 	}
 
 	void Renderer::Shutdown()
@@ -95,8 +99,8 @@ namespace Li
 
 	void Renderer::AddTextureAtlas(Ref<TextureAtlas> atlas)
 	{
-		s_Data->SceneRenderer->AddTextureAtlas(atlas);
-		s_Data->UIRenderer->AddTextureAtlas(atlas);
+		s_Data->SceneRenderer2D->AddTextureAtlas(atlas);
+		s_Data->UIRenderer2D->AddTextureAtlas(atlas);
 	}
 
 	void Renderer::BeginFrame(Duration::us run_time, Duration::us delta_time)
@@ -122,13 +126,13 @@ namespace Li
 		camera_cb.u_ViewProj = camera->GetViewProjectionMatrix();
 		s_Data->CameraUB->SetData(&camera_cb);
 
-		s_Data->SceneRenderer->BeginScene();
+		s_Data->SceneRenderer2D->BeginScene();
 		s_Data->SceneLineRenderer->BeginScene();
 	}
 
 	void Renderer::EndScene()
 	{
-		s_Data->SceneRenderer->EndScene();
+		s_Data->SceneRenderer2D->EndScene();
 		s_Data->SceneLineRenderer->EndScene();
 	}
 
@@ -138,30 +142,23 @@ namespace Li
 		camera_cb.u_ViewProj = s_Data->UICamera->GetViewProjectionMatrix();
 		s_Data->CameraUB->SetData(&camera_cb);
 
-		s_Data->UIRenderer->BeginScene();
+		s_Data->UIRenderer2D->BeginScene();
 	}
 
 	void Renderer::EndUI()
 	{
-		s_Data->UIRenderer->EndScene();
+		s_Data->UIRenderer2D->EndScene();
 	}
 
-	void Renderer::SubmitTextured(const std::string& textureAlias, const glm::mat4& transform, bool crop)
+	void Renderer::SubmitQuad(const std::string& texture_alias, const glm::vec4& color, const glm::mat4& transform, bool crop)
 	{
-		LI_CORE_ASSERT(s_Data->ResourcesLoaded, "Resources not loaded!");
-		s_Data->SceneRenderer->Submit(textureAlias, glm::vec4(1.0f), transform, crop);
+		s_Data->SceneRenderer2D->Submit(texture_alias, color, transform, crop);
 	}
 
-	void Renderer::SubmitColored(const glm::vec4& color, const glm::mat4& transform)
+	void Renderer::SubmitModel(const Ref<Model>& model, const glm::mat4& transform)
 	{
-		LI_CORE_ASSERT(s_Data->ResourcesLoaded, "Resources not loaded!");
-		s_Data->SceneRenderer->Submit("texture_white", color, transform, false);
-	}
-
-	void Renderer::SubmitColoredTexture(const std::string& textureAlias, const glm::vec4& color, const glm::mat4& transform, bool crop)
-	{
-		LI_CORE_ASSERT(s_Data->ResourcesLoaded, "Resources not loaded!");
-		s_Data->SceneRenderer->Submit(textureAlias, color, transform, crop);
+		model->m_Indices->Bind();
+		model->m_Vertices->Bind();
 	}
 
 	void Renderer::SubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
@@ -197,36 +194,22 @@ namespace Li
 		}
 	}
 
-	void Renderer::Submit(const Ref<Texture>& texture, const glm::mat4& transform)
+	void Renderer::RenderQuadImmediate(const Ref<Texture>& texture, const glm::mat4& transform)
 	{
 		RenderQuad(texture, transform, s_Data->Camera->GetViewProjectionMatrix());
 	}
 
-	void Renderer::UISubmitTextured(const std::string& textureAlias, const glm::mat4& transform, bool crop)
+	void Renderer::UISubmitQuad(const std::string& texture_alias, const glm::vec4& color, const glm::mat4& transform, bool crop)
 	{
-		LI_CORE_ASSERT(s_Data->ResourcesLoaded, "Resources not loaded!");
-		s_Data->UIRenderer->Submit(textureAlias, glm::vec4(1.0f), transform, crop);
-	}
-
-	void Renderer::UISubmitColored(const glm::vec4& color, const glm::mat4& transform)
-	{
-		LI_CORE_ASSERT(s_Data->ResourcesLoaded, "Resources not loaded!");
-		s_Data->UIRenderer->Submit("texture_white", color, transform, false);
-	}
-
-	void Renderer::UISubmitColoredTexture(const std::string& textureAlias, const glm::vec4& color, const glm::mat4& transform, bool crop)
-	{
-		LI_CORE_ASSERT(s_Data->ResourcesLoaded, "Resources not loaded!");
-		s_Data->UIRenderer->Submit(textureAlias, color, transform, crop);
+		s_Data->UIRenderer2D->Submit(texture_alias, color, transform, crop);
 	}
 
 	void Renderer::UISubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
 	{
-		LI_CORE_ASSERT(s_Data->ResourcesLoaded, "Resources not loaded!");
 		RenderLabel(label, transform, color);
 	}
 
-	void Renderer::UISubmit(const Ref<Texture>& texture, const glm::mat4& transform)
+	void Renderer::UIRenderQuadImmediate(const Ref<Texture>& texture, const glm::mat4& transform)
 	{
 		RenderQuad(texture, transform, s_Data->UICamera->GetViewProjectionMatrix());
 	}
@@ -238,6 +221,7 @@ namespace Li
 
 	void Renderer::RenderQuad(const Ref<Texture>& texture, const glm::mat4& transform, const glm::mat4& view_projection)
 	{
+		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		s_Data->TextureShader->Bind();
 
 		TransformCB transform_cb;
@@ -247,20 +231,24 @@ namespace Li
 		CameraCB camera_cb;
 		camera_cb.u_ViewProj = view_projection;
 		s_Data->CameraUB->SetData(&camera_cb);
-
 		s_Data->CameraUB->Bind(ShaderType::Vertex);
 		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
+
 		texture->Bind();
-		s_Data->QuadVA->Bind();
-		GraphicsContext* context = Application::Get().GetWindow().GetContext();
+
+		Pipeline::BindArray vertex_buffers;
+		vertex_buffers[0] = s_Data->QuadVB;
+		s_Data->QuadPipeline->Bind(vertex_buffers);
+		s_Data->QuadIB->Bind();
+
 		context->SetDrawMode(DrawMode::Triangles);
-		context->DrawIndexed(s_Data->QuadVA->GetIndexBuffer()->GetCount());
+		context->DrawIndexed(s_Data->QuadIB->GetCount());
 		context->UnbindVertexArray();
 	}
 
 	void Renderer::RenderLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
 	{
-		const Ref<VertexArray>& vertex_array = label->GetVertexArray();
+		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		s_Data->FontShader->Bind();
 
 		TransformCB transform_cb;
@@ -281,10 +269,14 @@ namespace Li
 		for (int i = 0; i < font->GetTextureCount(); i++)
 			textures[i]->Bind(i);
 		
-		vertex_array->Bind();
-		GraphicsContext* context = Application::Get().GetWindow().GetContext();
+		Pipeline::BindArray vertex_buffers;
+		vertex_buffers[0] = label->m_VertexBuffer;
+
+		s_Data->FontPipeline->Bind(vertex_buffers);
+		label->m_IndexBuffer->Bind();
+
 		context->SetDrawMode(DrawMode::Triangles);
-		context->DrawIndexed(vertex_array->GetIndexBuffer()->GetCount());
+		context->DrawIndexed(label->m_IndexBuffer->GetCount());
 		context->UnbindVertexArray();
 	}
 }
