@@ -54,6 +54,7 @@ namespace Li
 		inline static const Ref<Shader>& GetFontShader() { return s_Data->FontShader; }
 		inline static const Ref<GPUSort>& GetSorter() { return s_Data->Sorter; }
 
+		inline static const Ref<Pipeline>& GetModelPipeline() { return s_Data->ModelPipeline; }
 		inline static const Ref<Pipeline>& GetFontPipeline() { return s_Data->FontPipeline; }
 
 	private:
@@ -66,11 +67,12 @@ namespace Li
 			Unique<BatchRenderer2D> UIRenderer2D = nullptr;
 			Unique<LineBatchRenderer> SceneLineRenderer = nullptr;
 
+			Ref<Shader> TextureShader;
+			Ref<Shader> ModelShader;
 			Ref<Shader> FontShader;
 
-			Ref<Shader> TextureShader;
-
 			Ref<Pipeline> QuadPipeline;
+			Ref<Pipeline> ModelPipeline;
 			Ref<Pipeline> FontPipeline;
 
 			Ref<VertexBuffer> QuadVB;

@@ -17,7 +17,7 @@ catch {
 ..\build\Release-windows-x86_64\AssetBase\AssetBase.exe
 
 function Copy-Assets {
-	Copy-Item ".\output\*.*" -Destination "..\Article\data\"
+	Copy-Item ".\output\*" -Destination "..\Article\data\" -Recurse -Force
 	Write-Host "Copied asset bundles."
 }
 

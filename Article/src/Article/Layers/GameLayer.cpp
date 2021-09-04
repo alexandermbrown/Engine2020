@@ -59,6 +59,8 @@ GameLayer::GameLayer()
 	m_Emitter = Li::MakeRef<Li::ParticleEmitter>(emitter);
 
 	m_EmitPosition = { 0.0f, 2.0f, 0.0f };
+
+	m_Teapot = Li::MakeRef<Li::Model>("./data/models/model_teapot.lmodel");
 }
 
 GameLayer::~GameLayer()
@@ -96,6 +98,9 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 	//m_Emitter->PrintDebug("Emitter");
 	m_Emitter->Update(dt, glm::translate(glm::mat4(1.0f), m_EmitPosition));
 	m_Emitter->Draw(Li::ResourceManager::GetTexture2D("texture_default"));
+
+	glm::mat4 model_transform = glm::rotate(glm::mat4(1.0f), (float)(M_PI / 2.0f), { 1.0f, 0.0f, 0.0f });
+	Li::Renderer::SubmitModel(m_Teapot, model_transform);
 
 	//RenderingSystem::Render(m_Registry);
 

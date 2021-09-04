@@ -1,6 +1,8 @@
 #include "lipch.h"
 #include "Model.h"
 
+#include "Renderer.h"
+
 #include "flatbuffers/flatbuffers.h"
 #include "lab_serial/assets_generated.h"
 
@@ -39,5 +41,7 @@ namespace Li
 
 		m_Vertices = VertexBuffer::Create(vertices->data(), vertices->size() * sizeof(float), BufferUsage::StaticDraw);
 		m_Indices = IndexBuffer::Create(indices->data(), indices->size(), BufferUsage::StaticDraw);
+
+		m_Vertices->SetLayout(Renderer::GetModelPipeline()->GetSpec().Layouts[0]);
 	}
 }

@@ -9,6 +9,7 @@
 
 #include "Lithium/Core/Layer.h"
 #include "Lithium/Audio/AudioSource.h"
+#include "Lithium/Renderer/Model.h"
 #include "Lithium/Renderer/ParticleEmitter.h"
 #include "Lithium/Utility/Timer.h"
 #include "glm/glm.hpp"
@@ -39,7 +40,8 @@ private:
 #endif
 
 	Li::Ref<Li::ParticleEmitter> m_Emitter;
-
 	glm::vec3 m_EmitPosition;
 	Li::Timer m_BurstTimer;
+
+	Li::Ref<Li::Model> m_Teapot;
 };

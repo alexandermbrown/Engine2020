@@ -42,17 +42,11 @@ shader_line:
   type: shader
   dir: "./res/shaders/line"
 
-shader_terrain:
+shader_model:
   type: shader
-  dir: "./res/shaders/terrain"
-  samplers:
-    0: ["u_Texture", "u_TextureSampler"]
-    1: ["u_Noise1", "u_Noise1Sampler"]
-    2: ["u_Noise2", "u_Noise2Sampler"]
-    3: ["u_Noise3", "u_Noise3Sampler"]
+  dir: "./res/shaders/model"
 
 # Particle emitter.
-
 shader_emitter_update_begin:
   type: shader
   sources:

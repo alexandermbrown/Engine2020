@@ -36,6 +36,7 @@ namespace Li
 		s_Data->FontUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FontCB), sizeof(FontCB));
 		s_Data->FontUB->BindBase();
 
+		s_Data->Sorter = MakeRef<GPUSort>();
 
 		s_Data->Camera = nullptr;
 		s_Data->UICamera = MakeUnique<Camera>();
@@ -43,7 +44,7 @@ namespace Li
 		
 		// IMMEDIATE QUAD RENDERING //
 		s_Data->TextureShader = ResourceManager::GetShader("shader_splash");
-		VertexBufferLayout quad_layout = {
+		VertexBufferLayout quad_layout {
 			{ ShaderDataType::Float2, "POSITION", 0 },
 			{ ShaderDataType::Float2, "TEXCOORD", 1 }
 		};
@@ -67,8 +68,6 @@ namespace Li
 
 
 		// 2D BATCH RENDERER //
-		s_Data->Sorter = MakeRef<GPUSort>();
-
 		s_Data->SceneRenderer2D = MakeUnique<BatchRenderer2D>(glm::vec2{ 0.5f, 0.5f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
 		s_Data->UIRenderer2D = MakeUnique<BatchRenderer2D>(glm::vec2{ 0.0f, 0.0f }, s_Data->CameraUB, s_Data->TransformMatrixUB);
 		s_Data->SceneLineRenderer = MakeUnique<LineBatchRenderer>(s_Data->CameraUB);
@@ -77,9 +76,21 @@ namespace Li
 		s_Data->SceneRenderer2D->AddTextureAtlas(texture_white_atlas);
 		s_Data->UIRenderer2D->AddTextureAtlas(texture_white_atlas);
 
+		// 3D MODELS //
+		s_Data->ModelShader = ResourceManager::GetShader("shader_model");
+
+		VertexBufferLayout model_layout {
+			{ ShaderDataType::Float3, "POSITION", 0 }
+		};
+		Pipeline::Spec model_spec;
+		model_spec.VertexBufferCount = 1;
+		model_spec.Layouts[0] = model_layout;
+		model_spec.Shader = s_Data->ModelShader;
+		s_Data->ModelPipeline = Pipeline::Create(model_spec);
+
 		// FONT //
 		s_Data->FontShader = ResourceManager::GetShader("shader_label");
-		VertexBufferLayout font_layout = {
+		VertexBufferLayout font_layout {
 			{ ShaderDataType::Float3, "POSITION", 0 },
 			{ ShaderDataType::Float2, "TEXCOORD", 1 },
 			{ ShaderDataType::Float, "TEXINDEX", 2 }
@@ -157,8 +168,27 @@ namespace Li
 
 	void Renderer::SubmitModel(const Ref<Model>& model, const glm::mat4& transform)
 	{
+		GraphicsContext* context = Application::Get().GetWindow().GetContext();
+		s_Data->ModelShader->Bind();
+
+		TransformCB transform_cb;
+		transform_cb.u_Transform = transform;
+		s_Data->TransformMatrixUB->SetData(&transform_cb);
+
+		CameraCB camera_cb;
+		camera_cb.u_ViewProj = s_Data->Camera->GetViewProjectionMatrix();
+		s_Data->CameraUB->SetData(&camera_cb);
+		s_Data->CameraUB->Bind(ShaderType::Vertex);
+		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
+		
+		Pipeline::BindArray vertex_buffers;
+		vertex_buffers[0] = model->m_Vertices;
+		s_Data->ModelPipeline->Bind(vertex_buffers);
 		model->m_Indices->Bind();
-		model->m_Vertices->Bind();
+
+		context->SetDrawMode(DrawMode::Triangles);
+		context->DrawIndexed(model->m_Indices->GetCount());
+		context->UnbindVertexArray();
 	}
 
 	void Renderer::SubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
