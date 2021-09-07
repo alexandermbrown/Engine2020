@@ -79,11 +79,15 @@ test:
 
 ### Models ###
 
-material_teapot:
-  type: material
+# material_teapot:
+#   type: material
 
 model_teapot:
   type: model
   path: "./res/models/teapot.obj"
-  materials:
-    - material_teapot
+  # materials:
+  #   - material_teapot
+
+model_scene:
+  type: model
+  path: "./res/models/scene.obj"

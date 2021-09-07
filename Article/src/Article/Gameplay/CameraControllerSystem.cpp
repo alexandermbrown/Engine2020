@@ -19,7 +19,7 @@ void CameraControllerSystem::Init(entt::registry& registry)
 
 	const float half_zoom = camera.current_zoom * 0.5f;
 	camera.camera = Li::MakeUnique<Li::Camera>();
-	camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
+	camera.camera->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
 }
 
 void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us dt)
@@ -49,7 +49,7 @@ void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us d
 			camera.current_zoom = camera.target_zoom;
 
 		const float half_zoom = camera.current_zoom * 0.5f;
-		camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
+		camera.camera->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
 
 		if (camera.current_zoom == camera.target_zoom)
 			camera.finished_zoom = true;
@@ -81,7 +81,7 @@ void CameraControllerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 			camera.aspect_ratio = (float)Li::Application::Get().GetWindow().GetWidth()
 				/ (float)Li::Application::Get().GetWindow().GetHeight();
 			const float half_zoom = camera.current_zoom * 0.5f;
-			camera.camera->SetPerspective(80.0f, camera.aspect_ratio, 0.1f, 100.0f);
+			camera.camera->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
 		}
 	}
 }

@@ -44,4 +44,6 @@ private:
 	Li::Timer m_BurstTimer;
 
 	Li::Ref<Li::Model> m_Teapot;
+	Li::Ref<Li::Model> m_Scene;
+	float m_TeapotRotation;
 };

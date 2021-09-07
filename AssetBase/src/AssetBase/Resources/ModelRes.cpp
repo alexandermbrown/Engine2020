@@ -24,6 +24,7 @@ flatbuffers::Offset<Assets::Model> SerializeModel(flatbuffers::FlatBufferBuilder
 		aiProcess_ValidateDataStructure |
 		aiProcess_SortByPType |
 		aiProcess_FindInvalidData |
+		aiProcess_GenNormals |
 		aiProcess_GenUVCoords |
 		aiProcess_OptimizeMeshes 
 	);
@@ -40,8 +41,8 @@ flatbuffers::Offset<Assets::Model> SerializeModel(flatbuffers::FlatBufferBuilder
 
 	struct Vertex
 	{
-		// TODO: Add other components.
 		float x, y, z;
+		float norm_x, norm_y, norm_z;
 	};
 
 	for (int m = 0; m < scene->mNumMeshes; m++)
@@ -64,9 +65,13 @@ flatbuffers::Offset<Assets::Model> SerializeModel(flatbuffers::FlatBufferBuilder
 		for (size_t v = 0; v < mesh->mNumVertices; v++)
 		{
 			const aiVector3D& vert = mesh->mVertices[v];
+			const aiVector3D& norm = mesh->mNormals[v];
 			vertices.push_back(vert.x);
 			vertices.push_back(vert.y);
 			vertices.push_back(vert.z);
+			vertices.push_back(norm.x);
+			vertices.push_back(norm.y);
+			vertices.push_back(norm.z);
 		}
 
 		for (size_t f = 0; f < mesh->mNumFaces; f++)

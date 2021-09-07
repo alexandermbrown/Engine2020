@@ -7,9 +7,9 @@ static const int INDICES[] = {
 
 static const float3 BILLBOARD[] = {
 	float3(-0.5, -0.5, 0),	// 0
-	float3(0.5, -0.5, 0),	// 1
-	float3(0.5, 0.5, 0),	// 2
-	float3(-0.5, 0.5, 0),	// 3
+	float3( 0.5, -0.5, 0),	// 1
+	float3( 0.5,  0.5, 0),	// 2
+	float3(-0.5,  0.5, 0),	// 3
 };
 
 StructuredBuffer<Particle> particle_buffer : register(t1);

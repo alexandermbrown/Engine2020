@@ -214,7 +214,7 @@ namespace Li
 
 	Unique<Window> Application::MakeWindow(const WindowProps& props)
 	{
-#if 0
+#if 1
 #ifdef LI_PLATFORM_WINDOWS
 		try {
 			m_RendererAPI = RendererAPI::D3D11;

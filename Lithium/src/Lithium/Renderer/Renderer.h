@@ -89,6 +89,7 @@ namespace Li
 			Unique<Li::Camera> UICamera;
 
 			uint64_t FrameNumber{ 0 };
+			bool SceneBegun{ false };
 		};
 
 		static Unique<RendererData> s_Data;

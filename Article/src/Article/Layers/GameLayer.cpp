@@ -41,7 +41,7 @@ GameLayer::GameLayer()
 	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
 	emitter.ParticleScale = { 0.4f, 0.4f, 1.0f };
 
-	emitter.AirResistance = 6.0f;
+	emitter.AirResistance = 10.0f;
 
 	//emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
 	//emitter.AngularVelocity = { -1.0f, 1.0f };
@@ -61,6 +61,9 @@ GameLayer::GameLayer()
 	m_EmitPosition = { 0.0f, 2.0f, 0.0f };
 
 	m_Teapot = Li::MakeRef<Li::Model>("./data/models/model_teapot.lmodel");
+	m_Scene = Li::MakeRef<Li::Model>("./data/models/model_scene.lmodel");
+	
+	m_TeapotRotation = 0;
 }
 
 GameLayer::~GameLayer()
@@ -87,8 +90,8 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 	//if (m_EmitPosition.x > 10.0f)
 	//	m_EmitPosition.x = -10.0f;
 
-	if (m_BurstTimer.Update(dt))
-		m_Emitter->Burst(256);
+	//if (m_BurstTimer.Update(dt))
+	//	m_Emitter->Burst(256);
 
 	cp::camera& camera = m_Registry.ctx<cp::camera>();
 
@@ -99,8 +102,11 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 	m_Emitter->Update(dt, glm::translate(glm::mat4(1.0f), m_EmitPosition));
 	m_Emitter->Draw(Li::ResourceManager::GetTexture2D("texture_default"));
 
-	glm::mat4 model_transform = glm::rotate(glm::mat4(1.0f), (float)(M_PI / 2.0f), { 1.0f, 0.0f, 0.0f });
-	Li::Renderer::SubmitModel(m_Teapot, model_transform);
+	m_TeapotRotation += Li::Duration::Cast<Li::Duration::fsec>(dt).count();
+	//glm::mat4 model_transform = glm::rotate(glm::mat4(1.0f), m_TeapotRotation, { 0.0f, 0.0f, 1.0f })
+	//	* glm::rotate(glm::mat4(1.0f), (float)(M_PI / 2.0f), { 1.0f, 0.0f, 0.0f });
+	Li::Renderer::SubmitModel(m_Scene, glm::rotate(glm::mat4(1.0f), (float)M_PI / 4.0f, { 0.0f, 0.0f, 1.0f }));
+	Li::Renderer::SubmitModel(m_Teapot, glm::mat4(1.0f));
 
 	//RenderingSystem::Render(m_Registry);
 

@@ -293,11 +293,11 @@ namespace Li
 		D3D11_DEPTH_STENCIL_DESC depth_stencil_desc;
 		ZeroMemory(&depth_stencil_desc, sizeof(depth_stencil_desc));
 		
-		depth_stencil_desc.DepthEnable = false;
+		depth_stencil_desc.DepthEnable = true;
 		depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS;
 
-		depth_stencil_desc.StencilEnable = false;
+		depth_stencil_desc.StencilEnable = true;
 		depth_stencil_desc.StencilReadMask = 0xFF;
 		depth_stencil_desc.StencilWriteMask = 0xFF;
 
@@ -341,7 +341,7 @@ namespace Li
 		// Setup the raster description which will determine how and what polygons will be drawn.
 		D3D11_RASTERIZER_DESC raster_desc;
 		raster_desc.FillMode = D3D11_FILL_SOLID;
-		raster_desc.CullMode = D3D11_CULL_NONE;
+		raster_desc.CullMode = D3D11_CULL_BACK;
 		raster_desc.FrontCounterClockwise = true;
 		raster_desc.DepthBias = 0;
 		raster_desc.DepthBiasClamp = 0.0f;

@@ -23,7 +23,7 @@ namespace Li
 
 		Window& window = Application::Get().GetWindow();
 		window.GetContext()->SetDepthTest(false);
-		window.GetContext()->SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+		window.GetContext()->SetClearColor({ 0.7f, 0.7f, 0.7f, 1.0f });
 		s_Data->FrameUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
 		s_Data->FrameUB->BindBase();
 
@@ -80,7 +80,8 @@ namespace Li
 		s_Data->ModelShader = ResourceManager::GetShader("shader_model");
 
 		VertexBufferLayout model_layout {
-			{ ShaderDataType::Float3, "POSITION", 0 }
+			{ ShaderDataType::Float3, "POSITION", 0 },
+			{ ShaderDataType::Float3, "NORMAL", 1 }
 		};
 		Pipeline::Spec model_spec;
 		model_spec.VertexBufferCount = 1;
@@ -135,14 +136,17 @@ namespace Li
 		camera_cb.u_View = camera->GetViewMatrix();
 		camera_cb.u_Proj = camera->GetProjectionMatrix();
 		camera_cb.u_ViewProj = camera->GetViewProjectionMatrix();
+		camera_cb.u_CameraPos = camera->GetPosition();
 		s_Data->CameraUB->SetData(&camera_cb);
 
 		s_Data->SceneRenderer2D->BeginScene();
 		s_Data->SceneLineRenderer->BeginScene();
+		s_Data->SceneBegun = true;
 	}
 
 	void Renderer::EndScene()
 	{
+		s_Data->SceneBegun = false;
 		s_Data->SceneRenderer2D->EndScene();
 		s_Data->SceneLineRenderer->EndScene();
 	}
@@ -150,7 +154,10 @@ namespace Li
 	void Renderer::BeginUI()
 	{
 		CameraCB camera_cb;
+		camera_cb.u_View = s_Data->UICamera->GetViewMatrix();
+		camera_cb.u_Proj = s_Data->UICamera->GetProjectionMatrix();
 		camera_cb.u_ViewProj = s_Data->UICamera->GetViewProjectionMatrix();
+		camera_cb.u_CameraPos = s_Data->UICamera->GetPosition();
 		s_Data->CameraUB->SetData(&camera_cb);
 
 		s_Data->UIRenderer2D->BeginScene();
@@ -163,11 +170,14 @@ namespace Li
 
 	void Renderer::SubmitQuad(const std::string& texture_alias, const glm::vec4& color, const glm::mat4& transform, bool crop)
 	{
+		LI_CORE_ASSERT(s_Data->SceneBegun, "Scene not begun");
 		s_Data->SceneRenderer2D->Submit(texture_alias, color, transform, crop);
 	}
 
 	void Renderer::SubmitModel(const Ref<Model>& model, const glm::mat4& transform)
 	{
+		LI_CORE_ASSERT(s_Data->SceneBegun, "Scene not begun");
+
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		s_Data->ModelShader->Bind();
 
@@ -175,10 +185,8 @@ namespace Li
 		transform_cb.u_Transform = transform;
 		s_Data->TransformMatrixUB->SetData(&transform_cb);
 
-		CameraCB camera_cb;
-		camera_cb.u_ViewProj = s_Data->Camera->GetViewProjectionMatrix();
-		s_Data->CameraUB->SetData(&camera_cb);
 		s_Data->CameraUB->Bind(ShaderType::Vertex);
+		s_Data->CameraUB->Bind(ShaderType::Fragment);
 		s_Data->TransformMatrixUB->Bind(ShaderType::Vertex);
 		
 		Pipeline::BindArray vertex_buffers;
@@ -193,16 +201,19 @@ namespace Li
 
 	void Renderer::SubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
 	{
+		LI_CORE_ASSERT(s_Data->SceneBegun, "Scene not begun");
 		RenderLabel(label, transform, color);
 	}
 
 	void Li::Renderer::SubmitLine(const glm::vec4& color, const glm::vec3& point1, const glm::vec3& point2)
 	{
+		LI_CORE_ASSERT(s_Data->SceneBegun, "Scene not begun");
 		s_Data->SceneLineRenderer->Submit(color, point1, point2);
 	}
 
 	void Li::Renderer::SubmitCircle(const glm::vec4& color, const glm::vec3& center, float radius)
 	{
+		LI_CORE_ASSERT(s_Data->SceneBegun, "Scene not begun");
 		glm::vec3 prev_point = {
 				center.x + radius,
 				center.y,
@@ -251,6 +262,7 @@ namespace Li
 
 	void Renderer::RenderQuad(const Ref<Texture>& texture, const glm::mat4& transform, const glm::mat4& view_projection)
 	{
+		LI_CORE_ASSERT(!s_Data->SceneBegun, "Do not render quad during scene pass.");
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		s_Data->TextureShader->Bind();
 

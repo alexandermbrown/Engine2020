@@ -28,6 +28,7 @@ namespace cp
 	{
 		Li::Unique<Li::Camera> camera;
 		
+		float fov = 70.0f;
 		float aspect_ratio = 1.0f;
 
 		float current_zoom = 10.0f;
