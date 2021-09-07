@@ -41,6 +41,6 @@ void RenderLabels(entt::registry& registry)
 			? registry.get<cp::color>(entity).color
 			: glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f };
 
-		Li::Renderer::UISubmitLabel(registry.get<cp::label>(entity).label_ref, transform.transform, color);
+		Li::Renderer::UISubmitLabel(registry.get<cp::label>(entity).label_ref.get(), transform.transform, color);
 	});
 }

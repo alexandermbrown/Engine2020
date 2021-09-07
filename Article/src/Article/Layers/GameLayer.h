@@ -43,7 +43,7 @@ private:
 	glm::vec3 m_EmitPosition;
 	Li::Timer m_BurstTimer;
 
-	Li::Ref<Li::Model> m_Teapot;
-	Li::Ref<Li::Model> m_Scene;
+	Li::Unique<Li::Model> m_Teapot;
+	Li::Unique<Li::Model> m_Scene;
 	float m_TeapotRotation;
 };

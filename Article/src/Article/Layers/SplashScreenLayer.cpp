@@ -41,7 +41,7 @@ void SplashScreenLayer::OnUpdate(Li::Duration::us dt)
 
 		app.Transition(Li::MakeUnique<ScriptScene>("MainMenuScene"), true);
 	}
-	Li::Renderer::UIRenderQuadImmediate(m_Texture, m_Transform);
+	Li::Renderer::UIRenderQuadImmediate(m_Texture.get(), m_Transform);
 }
 #ifndef LI_DIST
 void SplashScreenLayer::OnImGuiRender()

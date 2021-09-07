@@ -27,7 +27,7 @@ namespace Li
 
 		inline int GetPointSize() const { return m_PointSize; }
 		inline float GetDistanceFactor() const { return m_DistanceFactor; }
-		inline const Ref<Font>& GetFont() { return m_Font; }
+		inline const Ref<Font>& GetFont() const { return m_Font; }
 
 		void SetText(const char* utf8_text);
 

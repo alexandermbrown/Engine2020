@@ -151,7 +151,7 @@ void UIFunctions::LoadFunctions(sol::state& lua)
 		if (text && pt_size && font)
 		{
 			cp::label& label_cp = (*registry_ptr).emplace<cp::label>(element);
-			label_cp.label_ref = Li::MakeRef<Li::Label>(text.value(), pt_size.value(), Li::ResourceManager::GetFont(font.value()), dynamic.value_or(false), excess.value_or(0));
+			label_cp.label_ref = Li::MakeUnique<Li::Label>(text.value(), pt_size.value(), Li::ResourceManager::GetFont(font.value()), dynamic.value_or(false), excess.value_or(0));
 		}
 		else Li::Log::Error("Missing label data in UIElementSetLabel(..), entity {}", element);
 	});

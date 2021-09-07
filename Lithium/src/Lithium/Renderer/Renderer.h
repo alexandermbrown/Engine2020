@@ -29,22 +29,22 @@ namespace Li
 
 		static void BeginFrame(Duration::us run_time, Duration::us delta_time);
 
-		static void BeginScene(Camera* camera);
+		static void BeginScene(const Camera* camera);
 		static void EndScene();
 
 		static void BeginUI();
 		static void EndUI();
 
 		static void SubmitQuad(const std::string& texture_alias, const glm::vec4& color, const glm::mat4& transform, bool crop = false);
-		static void SubmitModel(const Ref<Model>& model, const glm::mat4& transform);
-		static void SubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color);
+		static void SubmitModel(const Model* model, const glm::mat4& transform);
+		static void SubmitLabel(const Label* label, const glm::mat4& transform, const glm::vec4& color);
 		static void SubmitLine(const glm::vec4& color, const glm::vec3& point1, const glm::vec3& point2);
 		static void SubmitCircle(const glm::vec4& color, const glm::vec3& center, float radius);
-		static void RenderQuadImmediate(const Ref<Texture>& texture, const glm::mat4& transform);
+		static void RenderQuadImmediate(const Texture* texture, const glm::mat4& transform);
 
 		static void UISubmitQuad(const std::string& texture_alias, const glm::vec4& color, const glm::mat4& transform, bool crop = false);
-		static void UISubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color);
-		static void UIRenderQuadImmediate(const Ref<Texture>& texture, const glm::mat4& transform);
+		static void UISubmitLabel(const Label* label, const glm::mat4& transform, const glm::vec4& color);
+		static void UIRenderQuadImmediate(const Texture* texture, const glm::mat4& transform);
 
 		static void Resize(int width, int height);
 
@@ -58,8 +58,8 @@ namespace Li
 		inline static const Ref<Pipeline>& GetFontPipeline() { return s_Data->FontPipeline; }
 
 	private:
-		static void RenderQuad(const Ref<Texture>& texture, const glm::mat4& transform, const glm::mat4& view_projection);
-		static void RenderLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color);
+		static void RenderQuad(const Texture* texture, const glm::mat4& transform, const glm::mat4& view_projection);
+		static void RenderLabel(const Label* label, const glm::mat4& transform, const glm::vec4& color);
 
 		struct RendererData
 		{
@@ -85,7 +85,7 @@ namespace Li
 
 			Ref<GPUSort> Sorter;
 
-			Camera* Camera;
+			const Camera* Camera;
 			Unique<Li::Camera> UICamera;
 
 			uint64_t FrameNumber{ 0 };

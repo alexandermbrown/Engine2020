@@ -60,8 +60,8 @@ GameLayer::GameLayer()
 
 	m_EmitPosition = { 0.0f, 2.0f, 0.0f };
 
-	m_Teapot = Li::MakeRef<Li::Model>("./data/models/model_teapot.lmodel");
-	m_Scene = Li::MakeRef<Li::Model>("./data/models/model_scene.lmodel");
+	m_Teapot = Li::MakeUnique<Li::Model>("./data/models/model_teapot.lmodel");
+	m_Scene = Li::MakeUnique<Li::Model>("./data/models/model_scene.lmodel");
 	
 	m_TeapotRotation = 0;
 }
@@ -105,8 +105,8 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 	m_TeapotRotation += Li::Duration::Cast<Li::Duration::fsec>(dt).count();
 	//glm::mat4 model_transform = glm::rotate(glm::mat4(1.0f), m_TeapotRotation, { 0.0f, 0.0f, 1.0f })
 	//	* glm::rotate(glm::mat4(1.0f), (float)(M_PI / 2.0f), { 1.0f, 0.0f, 0.0f });
-	Li::Renderer::SubmitModel(m_Scene, glm::rotate(glm::mat4(1.0f), (float)M_PI / 4.0f, { 0.0f, 0.0f, 1.0f }));
-	Li::Renderer::SubmitModel(m_Teapot, glm::mat4(1.0f));
+	Li::Renderer::SubmitModel(m_Scene.get(), glm::rotate(glm::mat4(1.0f), (float)M_PI / 4.0f, { 0.0f, 0.0f, 1.0f }));
+	Li::Renderer::SubmitModel(m_Teapot.get(), glm::mat4(1.0f));
 
 	//RenderingSystem::Render(m_Registry);
 

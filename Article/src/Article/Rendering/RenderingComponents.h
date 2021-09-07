@@ -2,6 +2,7 @@
 
 #include "Lithium/Core/Memory.h"
 #include "Lithium/Renderer/Camera.h"
+#include "Lithium/Renderer/Model.h"
 #include "Lithium/Renderer/Text/Label.h"
 #include "Lithium/Utility/Timer.h"
 
@@ -19,9 +20,14 @@ namespace cp
 		glm::vec4 color;
 	};
 
+	struct model
+	{
+		Li::Unique<Li::Model> model;
+	};
+
 	struct label
 	{
-		Li::Ref<Li::Label> label_ref;
+		Li::Unique<Li::Label> label_ref;
 	};
 
 	struct camera

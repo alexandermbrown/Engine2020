@@ -128,7 +128,7 @@ namespace Li
 		s_Data->FrameUB->SetData(&frame_cb);
 	}
 
-	void Renderer::BeginScene(Camera* camera)
+	void Renderer::BeginScene(const Camera* camera)
 	{
 		s_Data->Camera = camera;
 
@@ -174,7 +174,7 @@ namespace Li
 		s_Data->SceneRenderer2D->Submit(texture_alias, color, transform, crop);
 	}
 
-	void Renderer::SubmitModel(const Ref<Model>& model, const glm::mat4& transform)
+	void Renderer::SubmitModel(const Model* model, const glm::mat4& transform)
 	{
 		LI_CORE_ASSERT(s_Data->SceneBegun, "Scene not begun");
 
@@ -199,7 +199,7 @@ namespace Li
 		context->UnbindVertexArray();
 	}
 
-	void Renderer::SubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
+	void Renderer::SubmitLabel(const Label* label, const glm::mat4& transform, const glm::vec4& color)
 	{
 		LI_CORE_ASSERT(s_Data->SceneBegun, "Scene not begun");
 		RenderLabel(label, transform, color);
@@ -235,7 +235,7 @@ namespace Li
 		}
 	}
 
-	void Renderer::RenderQuadImmediate(const Ref<Texture>& texture, const glm::mat4& transform)
+	void Renderer::RenderQuadImmediate(const Texture* texture, const glm::mat4& transform)
 	{
 		RenderQuad(texture, transform, s_Data->Camera->GetViewProjectionMatrix());
 	}
@@ -245,12 +245,12 @@ namespace Li
 		s_Data->UIRenderer2D->Submit(texture_alias, color, transform, crop);
 	}
 
-	void Renderer::UISubmitLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
+	void Renderer::UISubmitLabel(const Label* label, const glm::mat4& transform, const glm::vec4& color)
 	{
 		RenderLabel(label, transform, color);
 	}
 
-	void Renderer::UIRenderQuadImmediate(const Ref<Texture>& texture, const glm::mat4& transform)
+	void Renderer::UIRenderQuadImmediate(const Texture* texture, const glm::mat4& transform)
 	{
 		RenderQuad(texture, transform, s_Data->UICamera->GetViewProjectionMatrix());
 	}
@@ -260,7 +260,7 @@ namespace Li
 		s_Data->UICamera->SetOrtho(0, (float)width, 0, (float)height);
 	}
 
-	void Renderer::RenderQuad(const Ref<Texture>& texture, const glm::mat4& transform, const glm::mat4& view_projection)
+	void Renderer::RenderQuad(const Texture* texture, const glm::mat4& transform, const glm::mat4& view_projection)
 	{
 		LI_CORE_ASSERT(!s_Data->SceneBegun, "Do not render quad during scene pass.");
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
@@ -288,7 +288,7 @@ namespace Li
 		context->UnbindVertexArray();
 	}
 
-	void Renderer::RenderLabel(const Ref<Label>& label, const glm::mat4& transform, const glm::vec4& color)
+	void Renderer::RenderLabel(const Label* label, const glm::mat4& transform, const glm::vec4& color)
 	{
 		GraphicsContext* context = Application::Get().GetWindow().GetContext();
 		s_Data->FontShader->Bind();
