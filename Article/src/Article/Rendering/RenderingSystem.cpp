@@ -12,23 +12,19 @@ void RenderingSystem::Render(entt::registry& registry)
 		return lhs.position.z < rhs.position.z;
 	});
 
-
 	auto transform_view = registry.view<cp::transform>();
 	for (entt::entity entity : transform_view)
 	{
-		auto& transform = transform_view.get<cp::transform>(entity);
+		const auto& transform = transform_view.get<cp::transform>(entity);
 
-		if (registry.has<cp::color>(entity) && registry.has<cp::texture>(entity))
-		{
-			Li::Renderer::SubmitQuad(registry.get<cp::texture>(entity).alias, registry.get<cp::color>(entity).color, transform.transform);
-		}
-		else if (registry.has<cp::color>(entity))
-		{
-			Li::Renderer::SubmitQuad("texture_white", registry.get<cp::color>(entity).color, transform.transform);
-		}
-		else if (registry.has<cp::texture>(entity))
-		{
-			Li::Renderer::SubmitQuad(registry.get<cp::texture>(entity).alias, { 1.0f, 1.0f, 1.0f, 1.0f }, transform.transform);
-		}
+		std::string alias = registry.has<cp::texture>(entity)
+			? registry.get<cp::texture>(entity).alias
+			: "texture_white";
+
+		glm::vec4 color = registry.has<cp::color>(entity)
+			? registry.get<cp::color>(entity).color
+			: glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+		Li::Renderer::SubmitQuad(alias, color, transform.transform);
 	}
 }
