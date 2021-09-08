@@ -10,14 +10,10 @@
 
 namespace cp
 {
-	struct texture
+	struct quad
 	{
-		std::string alias;
-	};
-
-	struct color
-	{
-		glm::vec4 color;
+		std::string texture_alias;
+		glm::vec4 color{ 1.0f, 1.0f, 1.0f, 1.0f };
 	};
 
 	struct model
@@ -28,6 +24,7 @@ namespace cp
 	struct label
 	{
 		Li::Unique<Li::Label> label_ref;
+		glm::vec4 color{ 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
 	struct camera

@@ -74,11 +74,8 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 			else if (event.data1 == entt::type_info<cp::transform>::id())
 				AddComponent<cp::transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::texture>::id())
-				AddComponent<cp::texture>(registry, event);
-
-			else if (event.data1 == entt::type_info<cp::color>::id())
-				AddComponent<cp::color>(registry, event);
+			else if (event.data1 == entt::type_info<cp::quad>::id())
+				AddComponent<cp::quad>(registry, event);
 
 			else if (event.data1 == entt::type_info<cp::player>::id())
 				AddComponent<cp::player>(registry, event);
@@ -93,11 +90,8 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 			else if (event.data1 == entt::type_info<cp::transform>::id())
 				RemoveComponent<cp::transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::texture>::id())
-				RemoveComponent<cp::texture>(registry, event);
-
-			else if (event.data1 == entt::type_info<cp::color>::id())
-				RemoveComponent<cp::color>(registry, event);
+			else if (event.data1 == entt::type_info<cp::quad>::id())
+				RemoveComponent<cp::quad>(registry, event);
 
 			else if (event.data1 == entt::type_info<cp::player>::id())
 				RemoveComponent<cp::player>(registry, event);

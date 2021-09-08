@@ -8,13 +8,13 @@ local function CreateMenuButton(context, name, text, transition_scene)
 	button:SetBehave(UI.Behave.Top)
 	button:SetSize(200, 40)
 	button:SetMargins({ top = 10, bottom = 10 })
-	button:SetColor(0.0, 0.0, 0.0, 1.0)
+	button:SetQuad("texture_white", 0.0, 0.0, 0.0, 1.0)
 
 	local inner = context:NewElement(name .. "__INNER")
 	inner:SetContain(UI.Contain.Column)
 	inner:SetBehave(UI.Behave.Fill)
 	inner:SetMargins({ bottom = 2 })
-	inner:SetColor(1.0, 1.0, 1.0, 1.0)
+	inner:SetQuad("texture_white", 1.0, 1.0, 1.0, 1.0)
 	button:AddChild(inner)
 
 	-- TODO: make labels a lua class.
@@ -22,7 +22,7 @@ local function CreateMenuButton(context, name, text, transition_scene)
 	label:SetContain(UI.Contain.Column)
 	label:SetBehave(UI.Behave.Left, UI.Behave.Bottom)
 	label:SetSize(1, 1)
-	label:SetColor(0.0, 0.0, 0.0, 1.0)
+	label:SetQuad("texture_white", 0.0, 0.0, 0.0, 1.0)
 	label:SetMargins({ bottom = -20, left = 12 })
 	label:SetLabel({
 		text = text,
@@ -39,11 +39,11 @@ local function CreateMenuButton(context, name, text, transition_scene)
 			return false;
 		end,
 		OnMouseEnter = function(registry, entity)
-			inner:SetColor(0.9, 0.9, 0.9, 1.0)
+			inner:SetQuad("texture_white", 0.9, 0.9, 0.9, 1.0)
 			return true;
 		end,
 		OnMouseLeave = function(registry, entity)
-			inner:SetColor(1.0, 1.0, 1.0, 1.0)
+			inner:SetQuad("texture_white", 1.0, 1.0, 1.0, 1.0)
 			return true;
 		end,
 	})
@@ -71,14 +71,14 @@ function MainMenuLayer:Init(registry)
 	local bg_black = self.context:NewElement("bg_black")
 	bg_black:SetContain(UI.Contain.Column)
 	bg_black:SetBehave(UI.Behave.Fill)
-	bg_black:SetColor(0.0, 0.0, 0.0, 1.0)
+	bg_black:SetQuad("texture_white", 0.0, 0.0, 0.0, 1.0)
 	bg_black:SetMargins({ left = 6, right = 6, top = 6, bottom = 6 })
 	self.context:AddChild(bg_black)
 
 	local bg_white = self.context:NewElement("bg_white")
 	bg_white:SetContain(UI.Contain.Column)
 	bg_white:SetBehave(UI.Behave.Fill)
-	bg_white:SetColor(1.0, 1.0, 1.0, 1.0)
+	bg_white:SetQuad("texture_white", 1.0, 1.0, 1.0, 1.0)
 	bg_black:AddChild(bg_white)
 
 	-- Buttons.

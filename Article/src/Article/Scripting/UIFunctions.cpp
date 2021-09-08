@@ -130,14 +130,10 @@ void UIFunctions::LoadFunctions(sol::state& lua)
 		(*registry_ptr).get<cp::ui_element>(element).layout_behave = flags;
 	});
 
-	UI.set_function("UIElementSetColor", [](sol::light<entt::registry> registry_ptr, entt::entity element, float red, float green, float blue, float alpha)
+	UI.set_function("UIElementSetQuad", [](sol::light<entt::registry> registry_ptr, entt::entity element,
+		std::string texture, float red, float green, float blue, float alpha)
 	{
-		(*registry_ptr).emplace_or_replace<cp::color>(element, glm::vec4{ red, green, blue, alpha });
-	});
-
-	UI.set_function("UIElementSetTexture", [](sol::light<entt::registry> registry_ptr, entt::entity element, std::string texture)
-	{
-		(*registry_ptr).emplace_or_replace<cp::texture>(element, std::move(texture));
+		(*registry_ptr).emplace_or_replace<cp::quad>(element, std::move(texture), glm::vec4{ red, green, blue, alpha });
 	});
 
 	UI.set_function("UIElementSetLabel", [](sol::light<entt::registry> registry_ptr, entt::entity element, sol::table label_data)
@@ -166,8 +162,6 @@ void UIFunctions::LoadFunctions(sol::state& lua)
 		entt::registry& registry = registry_ptr;
 		registry.emplace<cp::flicker>(element, magnitude,
 				Li::Timer(Li::Duration::Cast<Li::Duration::us>(Li::Duration::fsec(delay)), false, true));
-
-		registry.emplace_or_replace<cp::color>(element, glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f });
 	});
 
 	UI.set_function("UIElementSetEvents", [](sol::light<entt::registry> registry_ptr, entt::entity element, sol::table handlers)

@@ -22,13 +22,10 @@ void RenderQuads(entt::registry& registry)
 	{
 		auto& transform = ui_transform_view.get<cp::ui_transform>(entity);
 
-		bool has_color = registry.has<cp::color>(entity);
-		bool has_texture = registry.has<cp::texture>(entity);
-
-		std::string texture_alias = has_texture ? registry.get<cp::texture>(entity).alias : "texture_white";
-		glm::vec4 color = has_color ? registry.get<cp::color>(entity).color : glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f };
-
-		Li::Renderer::UISubmitQuad(texture_alias, color, transform.transform, registry.has<cp::ui_texture_crop>(entity));
+		if (const cp::quad* quad = registry.try_get<cp::quad>(entity))
+		{
+			Li::Renderer::UISubmitQuad(quad->texture_alias, quad->color, transform.transform, registry.has<cp::ui_texture_crop>(entity));
+		}
 	}
 	Li::Renderer::EndUI();
 }
@@ -37,10 +34,6 @@ void RenderLabels(entt::registry& registry)
 {
 	registry.view<cp::ui_transform, cp::label>().each([&registry](entt::entity entity, auto& transform, auto& label)
 	{
-		glm::vec4 color = registry.has<cp::color>(entity)
-			? registry.get<cp::color>(entity).color
-			: glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f };
-
-		Li::Renderer::UISubmitLabel(registry.get<cp::label>(entity).label_ref.get(), transform.transform, color);
+		Li::Renderer::UISubmitLabel(label.label_ref.get(), transform.transform, label.color);
 	});
 }

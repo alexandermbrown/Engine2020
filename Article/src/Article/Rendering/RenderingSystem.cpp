@@ -17,14 +17,9 @@ void RenderingSystem::Render(entt::registry& registry)
 	{
 		const auto& transform = transform_view.get<cp::transform>(entity);
 
-		std::string alias = registry.has<cp::texture>(entity)
-			? registry.get<cp::texture>(entity).alias
-			: "texture_white";
-
-		glm::vec4 color = registry.has<cp::color>(entity)
-			? registry.get<cp::color>(entity).color
-			: glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f };
-
-		Li::Renderer::SubmitQuad(alias, color, transform.transform);
+		if (const cp::quad* quad = registry.try_get<cp::quad>(entity))
+		{
+			Li::Renderer::SubmitQuad(quad->texture_alias, quad->color, transform.transform);
+		}
 	}
 }

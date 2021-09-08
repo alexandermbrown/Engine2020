@@ -31,13 +31,8 @@ function UIElement:AddChild(child)
 	UI.UIElementAddChild(self.registry, self.id, child.id)
 end
 
--- Set RGBA color between 0 and 1.
-function UIElement:SetColor(red, green, blue, alpha)
-	UI.UIElementSetColor(self.registry, self.id, red, green, blue, alpha)
-end
-
-function UIElement:SetTexture(texture)
-	UI.UIElementSetTexture(self.registry, self.id, texture)
+function UIElement:SetQuad(texture, red, green, blue, alpha)
+	UI.UIElementSetQuad(self.registry, self.id, texture, red, green, blue, alpha)
 end
 
 function UIElement:SetLabel(label_data)
