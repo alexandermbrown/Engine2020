@@ -22,13 +22,13 @@ void PlayerSystem::Init(entt::registry& registry, SyncEventQueue* queue)
 	registry.emplace<cp::sync>(player, sync_id);
 	registry.emplace<cp::sync_transform>(player, sync_id, glm::vec3{ 5.0f, 1.0f, 0.0f }  );
 
-	cp::quad* quad = new cp::quad{ "test_small" }; // TODO: set player texture.
+	cp::Quad* quad = new cp::Quad{ "test_small" }; // TODO: set player texture.
 	cp::sync_transform* transform = new cp::sync_transform{ sync_id, { 5.0f, 1.0f, 0.0f } };
 
 	queue->enqueue(SyncEvent::CreateEntity(sync_id));
 	queue->enqueue(SyncEvent::AddComponent<cp::player>(sync_id, nullptr));
 	queue->enqueue(SyncEvent::AddComponent<cp::sync_transform>(sync_id, transform));
-	queue->enqueue(SyncEvent::AddComponent<cp::quad>(sync_id, quad));
+	queue->enqueue(SyncEvent::AddComponent<cp::Quad>(sync_id, quad));
 
 	// Init physics body.
 	cp::physics_body& physBody = registry.emplace<cp::physics_body>(player);

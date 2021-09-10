@@ -133,7 +133,7 @@ void UIFunctions::LoadFunctions(sol::state& lua)
 	UI.set_function("UIElementSetQuad", [](sol::light<entt::registry> registry_ptr, entt::entity element,
 		std::string texture, float red, float green, float blue, float alpha)
 	{
-		(*registry_ptr).emplace_or_replace<cp::quad>(element, std::move(texture), glm::vec4{ red, green, blue, alpha });
+		(*registry_ptr).emplace_or_replace<cp::Quad>(element, std::move(texture), glm::vec4{ red, green, blue, alpha });
 	});
 
 	UI.set_function("UIElementSetLabel", [](sol::light<entt::registry> registry_ptr, entt::entity element, sol::table label_data)
@@ -146,8 +146,8 @@ void UIFunctions::LoadFunctions(sol::state& lua)
 
 		if (text && pt_size && font)
 		{
-			cp::label& label_cp = (*registry_ptr).emplace<cp::label>(element);
-			label_cp.label_ref = Li::MakeUnique<Li::Label>(text.value(), pt_size.value(), Li::ResourceManager::GetFont(font.value()), dynamic.value_or(false), excess.value_or(0));
+			cp::Label& label_cp = (*registry_ptr).emplace<cp::Label>(element);
+			label_cp.label = Li::MakeUnique<Li::Label>(text.value(), pt_size.value(), Li::ResourceManager::GetFont(font.value()), dynamic.value_or(false), excess.value_or(0));
 		}
 		else Li::Log::Error("Missing label data in UIElementSetLabel(..), entity {}", element);
 	});

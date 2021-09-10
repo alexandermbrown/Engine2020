@@ -38,12 +38,4 @@ private:
 #ifdef HZ_PHYSICS_DEBUG_DRAW
 	DebugPhysicsRenderer m_DebugPhysicsRenderer;
 #endif
-
-	Li::Ref<Li::ParticleEmitter> m_Emitter;
-	glm::vec3 m_EmitPosition;
-	Li::Timer m_BurstTimer;
-
-	Li::Unique<Li::Model> m_Teapot;
-	Li::Unique<Li::Model> m_Scene;
-	float m_TeapotRotation;
 };

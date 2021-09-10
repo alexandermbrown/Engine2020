@@ -6,7 +6,7 @@
 
 void TransformUpdateSystem::Update(entt::registry& registry)
 {
-	registry.view<cp::transform>().each([](cp::transform& transform) {
+	registry.view<cp::Transform>().each([](cp::Transform& transform) {
 		if (transform.old)
 		{
 			transform.transform = glm::translate(glm::mat4(1.0f), transform.position);

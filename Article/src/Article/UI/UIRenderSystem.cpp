@@ -17,12 +17,12 @@ void Systems::UIRender::OnRender(entt::registry& registry)
 void RenderQuads(entt::registry& registry)
 {
 	Li::Renderer::BeginUI();
-	auto ui_transform_view = registry.view<cp::ui_transform>(entt::exclude<cp::label>);
+	auto ui_transform_view = registry.view<cp::ui_transform>(entt::exclude<cp::Label>);
 	for (entt::entity entity : ui_transform_view)
 	{
 		auto& transform = ui_transform_view.get<cp::ui_transform>(entity);
 
-		if (const cp::quad* quad = registry.try_get<cp::quad>(entity))
+		if (const cp::Quad* quad = registry.try_get<cp::Quad>(entity))
 		{
 			Li::Renderer::UISubmitQuad(quad->texture_alias, quad->color, transform.transform, registry.has<cp::ui_texture_crop>(entity));
 		}
@@ -32,8 +32,8 @@ void RenderQuads(entt::registry& registry)
 
 void RenderLabels(entt::registry& registry)
 {
-	registry.view<cp::ui_transform, cp::label>().each([&registry](entt::entity entity, auto& transform, auto& label)
+	registry.view<cp::ui_transform, cp::Label>().each([&registry](entt::entity entity, auto& transform, auto& label)
 	{
-		Li::Renderer::UISubmitLabel(label.label_ref.get(), transform.transform, label.color);
+		Li::Renderer::UISubmitLabel(label.label.get(), transform.transform, label.color);
 	});
 }

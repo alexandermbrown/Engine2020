@@ -10,26 +10,26 @@
 
 namespace cp
 {
-	struct quad
+	struct Quad
 	{
 		std::string texture_alias;
 		glm::vec4 color{ 1.0f, 1.0f, 1.0f, 1.0f };
 	};
 
-	struct model
+	struct Model
 	{
 		Li::Unique<Li::Model> model;
 	};
 
-	struct label
+	struct Label
 	{
-		Li::Unique<Li::Label> label_ref;
+		Li::Unique<Li::Label> label;
 		glm::vec4 color{ 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
-	struct camera
+	struct Camera
 	{
-		Li::Unique<Li::Camera> camera;
+		Li::Unique<Li::Camera> camera_ptr;
 		
 		float fov = 70.0f;
 		float aspect_ratio = 1.0f;

@@ -9,7 +9,6 @@ namespace Li
 	public:
 		Model(const std::string& path);
 		
-
 	private:
 		std::string m_Name;
 		Ref<VertexBuffer> m_Vertices;

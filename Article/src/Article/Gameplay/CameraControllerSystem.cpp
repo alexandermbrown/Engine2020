@@ -10,7 +10,7 @@
 
 void CameraControllerSystem::Init(entt::registry& registry)
 {
-	cp::camera& camera = registry.set<cp::camera>();
+	cp::Camera& camera = registry.set<cp::Camera>();
 
 	camera.current_zoom = 10.0f;
 	camera.target_zoom = 10.0f;
@@ -18,24 +18,24 @@ void CameraControllerSystem::Init(entt::registry& registry)
 		/ (float)Li::Application::Get().GetWindow().GetHeight();
 
 	const float half_zoom = camera.current_zoom * 0.5f;
-	camera.camera = Li::MakeUnique<Li::Camera>();
-	camera.camera->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
+	camera.camera_ptr = Li::MakeUnique<Li::Camera>();
+	camera.camera_ptr->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
 }
 
 void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us dt)
 {
-	cp::camera& camera = registry.ctx<cp::camera>();
+	cp::Camera& camera = registry.ctx<cp::Camera>();
 
-	for (auto&& [entity, transform, player] : registry.view<cp::transform, cp::player>().proxy())
+	for (auto&& [entity, transform, player] : registry.view<cp::Transform, cp::player>().proxy())
 	{
 		glm::vec3 camera_pos = {
 			transform.position.x,
 			transform.position.y - camera.current_zoom,
 			transform.position.z + camera.current_zoom,
 		};
-		if (camera.camera->GetPosition() != camera_pos)
+		if (camera.camera_ptr->GetPosition() != camera_pos)
 		{
-			camera.camera->SetLookAt(camera_pos, transform.position, { 0.0f, 0.0f, 1.0f });
+			camera.camera_ptr->SetLookAt(camera_pos, transform.position, { 0.0f, 0.0f, 1.0f });
 		}
 		break;
 	}
@@ -49,7 +49,7 @@ void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us d
 			camera.current_zoom = camera.target_zoom;
 
 		const float half_zoom = camera.current_zoom * 0.5f;
-		camera.camera->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
+		camera.camera_ptr->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
 
 		if (camera.current_zoom == camera.target_zoom)
 			camera.finished_zoom = true;
@@ -60,7 +60,7 @@ void CameraControllerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 {
 	if (event->type == SDL_MOUSEWHEEL)
 	{
-		cp::camera& camera = registry.ctx<cp::camera>();
+		cp::Camera& camera = registry.ctx<cp::Camera>();
 
 		camera.target_zoom -= event->wheel.y * std::sqrtf(camera.target_zoom) / 2.0f;
 
@@ -76,12 +76,12 @@ void CameraControllerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 	{
 		if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		{
-			cp::camera& camera = registry.ctx<cp::camera>();
+			cp::Camera& camera = registry.ctx<cp::Camera>();
 
 			camera.aspect_ratio = (float)Li::Application::Get().GetWindow().GetWidth()
 				/ (float)Li::Application::Get().GetWindow().GetHeight();
 			const float half_zoom = camera.current_zoom * 0.5f;
-			camera.camera->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
+			camera.camera_ptr->SetPerspective(camera.fov, camera.aspect_ratio, 0.1f, 100.0f);
 		}
 	}
 }

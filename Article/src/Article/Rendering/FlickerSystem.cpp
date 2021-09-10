@@ -9,7 +9,7 @@ void Systems::Flicker::OnUpdate(entt::registry& registry, Li::Duration::us dt)
 {
 	Li::Random& rand = registry.ctx<Li::Random>();
 
-	registry.view<cp::quad, cp::flicker>().each([dt, &rand](entt::entity entity, cp::quad& quad, cp::flicker& flicker)
+	registry.view<cp::Quad, cp::flicker>().each([dt, &rand](entt::entity entity, cp::Quad& quad, cp::flicker& flicker)
 	{
 		float value = flicker.current + (flicker.target - flicker.current) * flicker.timer.GetFraction();
 		quad.color.r = value;

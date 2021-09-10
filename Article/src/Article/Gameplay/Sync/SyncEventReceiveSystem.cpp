@@ -71,11 +71,11 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 			if (event.data1 == entt::type_info<cp::sync_transform>::id())
 				AddComponent<cp::sync_transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::transform>::id())
-				AddComponent<cp::transform>(registry, event);
+			else if (event.data1 == entt::type_info<cp::Transform>::id())
+				AddComponent<cp::Transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::quad>::id())
-				AddComponent<cp::quad>(registry, event);
+			else if (event.data1 == entt::type_info<cp::Quad>::id())
+				AddComponent<cp::Quad>(registry, event);
 
 			else if (event.data1 == entt::type_info<cp::player>::id())
 				AddComponent<cp::player>(registry, event);
@@ -87,11 +87,11 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 			if (event.data1 == entt::type_info<cp::sync_transform>::id())
 				RemoveComponent<cp::sync_transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::transform>::id())
-				RemoveComponent<cp::transform>(registry, event);
+			else if (event.data1 == entt::type_info<cp::Transform>::id())
+				RemoveComponent<cp::Transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::quad>::id())
-				RemoveComponent<cp::quad>(registry, event);
+			else if (event.data1 == entt::type_info<cp::Quad>::id())
+				RemoveComponent<cp::Quad>(registry, event);
 
 			else if (event.data1 == entt::type_info<cp::player>::id())
 				RemoveComponent<cp::player>(registry, event);

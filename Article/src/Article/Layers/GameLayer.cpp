@@ -20,7 +20,7 @@
 using namespace std::chrono_literals;
 
 GameLayer::GameLayer()
-	: Layer("GameLayer"), m_BurstTimer(3000ms, false, true)
+	: Layer("GameLayer")
 {
 	m_TickThread.Begin(m_Registry);
 
@@ -30,40 +30,19 @@ GameLayer::GameLayer()
 	m_AudioSource->SetAudio(Li::ResourceManager::GetAudioBuffer("audio_wind"));
 	m_AudioSource->Play();
 
-	Li::EmitterProps emitter;
-	emitter.MaxCount = 1024;
-	emitter.Continuous = false;
-	emitter.RelativeToWorld = true;
-	emitter.LifeSpan = { 2.6f, 3.0f };
-	emitter.SpeedRange = { 0.0f, 200.0f };
-	emitter.EmitVolume = { 0.3f, 0.3f, 0.3f };
-	emitter.EmitRate = 20000.0f;
-	//emitter.EmitRate = emitter.MaxCount / (emitter.LifeSpan.y - (emitter.LifeSpan.y - emitter.LifeSpan.x) / 2.1f);
-	emitter.ParticleScale = { 0.4f, 0.4f, 1.0f };
+	Li::Unique<Li::Model> teapot_model = Li::MakeUnique<Li::Model>("./data/models/model_teapot.lmodel");
+	Li::Unique<Li::Model> scene_model = Li::MakeUnique<Li::Model>("./data/models/model_scene.lmodel");
 
-	emitter.AirResistance = 10.0f;
+	entt::entity scene = m_Registry.create();
+	m_Registry.emplace<cp::Model>(scene, std::move(scene_model));
+	cp::Transform& scene_transform = m_Registry.emplace<cp::Transform>(scene);
+	scene_transform.rotation = glm::quat({ 0.0f, 0.0f, (float)M_PI / 4.0f });
+	scene_transform.old = true;
 
-	//emitter.InitialAngle = { 0.0f, (float)M_PI / 4.0f };
-	//emitter.AngularVelocity = { -1.0f, 1.0f };
+	entt::entity teapot = m_Registry.create();
+	m_Registry.emplace<cp::Model>(teapot, std::move(teapot_model));
+	m_Registry.emplace<cp::Transform>(teapot);
 
-	emitter.AlphaGraph[0] = { 0.0f, 0.0f };
-	emitter.AlphaGraph[1] = { 0.01f, 0.7f };
-	emitter.AlphaGraph[2] = { 0.8f, 0.7f };
-	emitter.AlphaGraph[3] = { 1.0f, 0.0f };
-
-	emitter.ScaleGraph[0] = { 0.0f, 0.0f };
-	emitter.ScaleGraph[1] = { 0.01f, 1.0f };
-	emitter.ScaleGraph[2] = { 0.8f, 1.0f };
-	emitter.ScaleGraph[3] = { 1.0f, 0.0f };
-
-	m_Emitter = Li::MakeRef<Li::ParticleEmitter>(emitter);
-
-	m_EmitPosition = { 0.0f, 2.0f, 0.0f };
-
-	m_Teapot = Li::MakeUnique<Li::Model>("./data/models/model_teapot.lmodel");
-	m_Scene = Li::MakeUnique<Li::Model>("./data/models/model_scene.lmodel");
-	
-	m_TeapotRotation = 0;
 }
 
 GameLayer::~GameLayer()
@@ -75,40 +54,15 @@ void GameLayer::OnUpdate(Li::Duration::us dt)
 {
 	m_TickThread.UpdateSync(m_Registry, dt);
 
-	//auto player_view = m_Registry.view<cp::sync_transform, cp::player>();
-	//for (entt::entity player : player_view)
-	//{
-	//	cp::sync_transform& player_transform = player_view.get<cp::sync_transform>(player);
-	//	break;
-	//}
-
 	CameraControllerSystem::Update(m_Registry, dt);
 
 	TransformUpdateSystem::Update(m_Registry);
 
-	//m_EmitPosition.x += 5.0f * Li::Duration::Cast<Li::Duration::fsec>(dt).count();
-	//if (m_EmitPosition.x > 10.0f)
-	//	m_EmitPosition.x = -10.0f;
+	cp::Camera& camera = m_Registry.ctx<cp::Camera>();
 
-	//if (m_BurstTimer.Update(dt))
-	//	m_Emitter->Burst(256);
+	Li::Renderer::BeginScene(camera.camera_ptr.get());
 
-	cp::camera& camera = m_Registry.ctx<cp::camera>();
-
-	
-	Li::Renderer::BeginScene(camera.camera.get());
-
-	//m_Emitter->PrintDebug("Emitter");
-	m_Emitter->Update(dt, glm::translate(glm::mat4(1.0f), m_EmitPosition));
-	m_Emitter->Draw(Li::ResourceManager::GetTexture2D("texture_default"));
-
-	m_TeapotRotation += Li::Duration::Cast<Li::Duration::fsec>(dt).count();
-	//glm::mat4 model_transform = glm::rotate(glm::mat4(1.0f), m_TeapotRotation, { 0.0f, 0.0f, 1.0f })
-	//	* glm::rotate(glm::mat4(1.0f), (float)(M_PI / 2.0f), { 1.0f, 0.0f, 0.0f });
-	Li::Renderer::SubmitModel(m_Scene.get(), glm::rotate(glm::mat4(1.0f), (float)M_PI / 4.0f, { 0.0f, 0.0f, 1.0f }));
-	Li::Renderer::SubmitModel(m_Teapot.get(), glm::mat4(1.0f));
-
-	//RenderingSystem::Render(m_Registry);
+	RenderingSystem::Render(m_Registry);
 
 #ifdef HZ_PHYSICS_DEBUG_DRAW
 	m_DebugPhysicsRenderer.SubmitLines(m_TickThread.GetDebugDrawQueue());
