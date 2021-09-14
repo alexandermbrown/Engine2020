@@ -6,7 +6,7 @@
 
 void PhysicsSystem::Init(entt::registry& registry)
 {
-	cp::physics_world& physics_world = registry.set<cp::physics_world>();
+	cp::PhysicsWorld& physics_world = registry.set<cp::PhysicsWorld>();
 	
 	b2Vec2 gravity(0.0f, 0.0f);
 	physics_world.world = Li::MakeUnique<b2World>(gravity);
@@ -14,6 +14,6 @@ void PhysicsSystem::Init(entt::registry& registry)
 
 void PhysicsSystem::Step(entt::registry& registry, Li::Duration::us dt)
 {
-	registry.ctx<cp::physics_world>().world->Step(Li::Duration::fsec(dt).count(),
+	registry.ctx<cp::PhysicsWorld>().world->Step(Li::Duration::fsec(dt).count(),
 		Constants::PhysVelocityIterations, Constants::PhysPositionIterations);
 }

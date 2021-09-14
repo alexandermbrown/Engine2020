@@ -63,5 +63,6 @@ namespace Li
 		D3D11_VIEWPORT m_Viewport;
 
 		glm::vec4 m_ClearColor;
+		bool m_DepthTest;
 	};
 }

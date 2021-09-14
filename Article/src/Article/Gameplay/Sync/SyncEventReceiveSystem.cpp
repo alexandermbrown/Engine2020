@@ -12,9 +12,9 @@
 template<typename Component>
 void AddComponent(entt::registry& registry, SyncEvent& event)
 {
-	cp::sync_tracker& tracker = registry.ctx<cp::sync_tracker>();
+	cp::SyncTracker& tracker = registry.ctx<cp::SyncTracker>();
 	entt::entity entity = tracker.map[event.sync_id];
-	LI_ASSERT(registry.get<cp::sync>(entity).sync_id == event.sync_id, "Sync IDs do not match!");
+	LI_ASSERT(registry.get<cp::Sync>(entity).sync_id == event.sync_id, "Sync IDs do not match!");
 
 	if (event.data)
 	{
@@ -31,16 +31,16 @@ void AddComponent(entt::registry& registry, SyncEvent& event)
 template<typename Component>
 void RemoveComponent(entt::registry& registry, SyncEvent& event)
 {
-	cp::sync_tracker& tracker = registry.ctx<cp::sync_tracker>();
+	cp::SyncTracker& tracker = registry.ctx<cp::SyncTracker>();
 	entt::entity entity = tracker.map[event.sync_id];
-	LI_ASSERT(registry.get<cp::sync>(entity).sync_id == event.sync_id, "Sync IDs do not match!");
+	LI_ASSERT(registry.get<cp::Sync>(entity).sync_id == event.sync_id, "Sync IDs do not match!");
 
 	registry.remove<Component>(entity);
 }
 
 void SyncEventReceiveSystem::Init(entt::registry& registry)
 {
-	cp::sync_tracker& tracker = registry.set<cp::sync_tracker>();
+	cp::SyncTracker& tracker = registry.set<cp::SyncTracker>();
 	tracker.map = std::unordered_map<uint64_t, entt::entity>();
 }
 
@@ -52,24 +52,24 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 		if (event.type == SyncType::CreateEntity)
 		{
 			entt::entity new_ent = registry.create();
-			registry.emplace<cp::sync>(new_ent, event.sync_id);
+			registry.emplace<cp::Sync>(new_ent, event.sync_id);
 
-			registry.ctx<cp::sync_tracker>().map[event.sync_id] = new_ent;
+			registry.ctx<cp::SyncTracker>().map[event.sync_id] = new_ent;
 
 		}
 		else if (event.type == SyncType::RemoveEntity)
 		{
-			cp::sync_tracker& tracker = registry.ctx<cp::sync_tracker>();
+			cp::SyncTracker& tracker = registry.ctx<cp::SyncTracker>();
 			entt::entity entity = tracker.map[event.sync_id];
-			LI_ASSERT(registry.get<cp::sync>(entity).sync_id == event.sync_id, "Sync IDs do not match!");
+			LI_ASSERT(registry.get<cp::Sync>(entity).sync_id == event.sync_id, "Sync IDs do not match!");
 
 			registry.destroy(entity);
 			tracker.map.erase(event.sync_id);
 		}
 		else if (event.type == SyncType::AddComponent)
 		{
-			if (event.data1 == entt::type_info<cp::sync_transform>::id())
-				AddComponent<cp::sync_transform>(registry, event);
+			if (event.data1 == entt::type_info<cp::SyncTransform>::id())
+				AddComponent<cp::SyncTransform>(registry, event);
 
 			else if (event.data1 == entt::type_info<cp::Transform>::id())
 				AddComponent<cp::Transform>(registry, event);
@@ -77,15 +77,15 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 			else if (event.data1 == entt::type_info<cp::Quad>::id())
 				AddComponent<cp::Quad>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::player>::id())
-				AddComponent<cp::player>(registry, event);
+			else if (event.data1 == entt::type_info<cp::Player>::id())
+				AddComponent<cp::Player>(registry, event);
 
 			else Li::Log::Error("Unknown component type {}", event.data1);
 		}
 		else if (event.type == SyncType::RemoveComponent)
 		{
-			if (event.data1 == entt::type_info<cp::sync_transform>::id())
-				RemoveComponent<cp::sync_transform>(registry, event);
+			if (event.data1 == entt::type_info<cp::SyncTransform>::id())
+				RemoveComponent<cp::SyncTransform>(registry, event);
 
 			else if (event.data1 == entt::type_info<cp::Transform>::id())
 				RemoveComponent<cp::Transform>(registry, event);
@@ -93,8 +93,8 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 			else if (event.data1 == entt::type_info<cp::Quad>::id())
 				RemoveComponent<cp::Quad>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::player>::id())
-				RemoveComponent<cp::player>(registry, event);
+			else if (event.data1 == entt::type_info<cp::Player>::id())
+				RemoveComponent<cp::Player>(registry, event);
 
 			else Li::Log::Error("Unknown component type {}", event.data1);
 		}

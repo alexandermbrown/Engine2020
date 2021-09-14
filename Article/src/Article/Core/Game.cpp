@@ -135,7 +135,4 @@ void Game::Update(Li::Duration::us dt)
 
 void Game::Deinit()
 {
-#ifdef HZ_PHYSICS_DEBUG_DRAW
-	DebugDrawSystem::Shutdown(m_Registry);
-#endif
 }

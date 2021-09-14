@@ -7,7 +7,7 @@
 
 namespace cp
 {
-	struct sync_transform
+	struct SyncTransform
 	{
 		uint64_t sync_id = 0;
 
@@ -19,7 +19,7 @@ namespace cp
 
 		bool is_upright = false;
 
-		bool operator==(const sync_transform& other)
+		bool operator==(const SyncTransform& other)
 		{
 			return sync_id == other.sync_id
 				&& position == other.position
@@ -29,7 +29,7 @@ namespace cp
 				&& is_upright == other.is_upright;
 		}
 
-		bool operator!=(const sync_transform& other)
+		bool operator!=(const SyncTransform& other)
 		{
 			return sync_id != other.sync_id
 				|| position != other.position
@@ -41,4 +41,4 @@ namespace cp
 	};
 }
 
-using SyncTransformQueue = moodycamel::ReaderWriterQueue<cp::sync_transform>;
+using SyncTransformQueue = moodycamel::ReaderWriterQueue<cp::SyncTransform>;

@@ -5,9 +5,9 @@
 
 void SyncTransformSendSystem::Update(entt::registry& registry, SyncTransformQueue* queue)
 {
-	registry.view<cp::sync_transform, cp::physics_body>().each([queue](cp::sync_transform& sync_transform, cp::physics_body& body)
+	registry.view<cp::SyncTransform, cp::PhysicsBody>().each([queue](cp::SyncTransform& sync_transform, cp::PhysicsBody& body)
 	{
-		cp::sync_transform transform;
+		cp::SyncTransform transform;
 
 		transform.position = { body.body->GetPosition().x, body.body->GetPosition().y, sync_transform.position.z };
 		transform.velocity = { body.body->GetLinearVelocity().x, body.body->GetLinearVelocity().y, 0.0f };

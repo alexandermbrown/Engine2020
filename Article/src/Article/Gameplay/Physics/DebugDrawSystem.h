@@ -12,21 +12,20 @@ namespace DebugDrawSystem
 {
 	void Init(entt::registry& registry, DebugDrawCommandQueue* queue);
 	void Draw(entt::registry& registry);
-	void Shutdown(entt::registry& registry);
 };
 
-class PhysicsDebugDraw : public b2Draw
+class Box2DDebugDrawer : public b2Draw
 {
 public:
-	PhysicsDebugDraw(DebugDrawCommandQueue* queue);
+	Box2DDebugDrawer(DebugDrawCommandQueue* queue);
 
 	// Draw a closed polygon provided in CCW order.
-	virtual void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override;
+	virtual void DrawPolygon(const b2Vec2* vertices, int32 vertex_count, const b2Color& color) override;
 
 	// Draw a solid closed polygon provided in CCW order.
-	virtual inline void DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override
+	virtual inline void DrawSolidPolygon(const b2Vec2* vertices, int32 vertex_count, const b2Color& color) override
 	{
-		DrawPolygon(vertices, vertexCount, color);
+		DrawPolygon(vertices, vertex_count, color);
 	}
 
 	// Draw a circle.

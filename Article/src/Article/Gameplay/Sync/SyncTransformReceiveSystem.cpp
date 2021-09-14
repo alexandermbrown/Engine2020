@@ -6,7 +6,7 @@
 
 void AddSyncTransform(entt::registry& registry, entt::entity entity)
 {
-	cp::sync_transform& sync_transform = registry.get<cp::sync_transform>(entity);
+	cp::SyncTransform& sync_transform = registry.get<cp::SyncTransform>(entity);
 	cp::Transform& transform = registry.emplace<cp::Transform>(entity);
 
 	transform.position = sync_transform.position;
@@ -17,18 +17,18 @@ void AddSyncTransform(entt::registry& registry, entt::entity entity)
 
 void SyncTransformReceiveSystem::Init(entt::registry& registry)
 {
-	registry.on_construct<cp::sync_transform>().connect<&AddSyncTransform>();
+	registry.on_construct<cp::SyncTransform>().connect<&AddSyncTransform>();
 }
 
 void SyncTransformReceiveSystem::Update(entt::registry& registry, SyncTransformQueue* queue, Li::Duration::us dt)
 {
 	// Possible Improvement: Include a timestamp in the queue to better synchronize.
 
-	cp::sync_transform received;
+	cp::SyncTransform received;
 	while (queue->try_dequeue(received))
 	{
-		entt::entity entity = registry.ctx<cp::sync_tracker>().map.at(received.sync_id);
-		registry.emplace_or_replace<cp::sync_transform>(entity, received);
+		entt::entity entity = registry.ctx<cp::SyncTracker>().map.at(received.sync_id);
+		registry.emplace_or_replace<cp::SyncTransform>(entity, received);
 
 		if (registry.has<cp::Transform>(entity))
 		{
@@ -41,7 +41,7 @@ void SyncTransformReceiveSystem::Update(entt::registry& registry, SyncTransformQ
 	}
 
 	float dt_float = Li::Duration::fsec(dt).count();
-	registry.view<cp::sync_transform, cp::Transform>().each([dt_float](cp::sync_transform& sync, cp::Transform& transform)
+	registry.view<cp::SyncTransform, cp::Transform>().each([dt_float](cp::SyncTransform& sync, cp::Transform& transform)
 	{
 		if (sync.velocity.x || sync.velocity.y || sync.velocity.z || sync.angular_velocity != glm::identity<glm::quat>())
 		{

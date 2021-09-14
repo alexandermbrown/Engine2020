@@ -9,20 +9,20 @@
 
 namespace cp
 {
-	struct physics_world
+	struct PhysicsWorld
 	{
 		Li::Unique<b2World> world;
 	};
 
-	struct physics_body
+	struct PhysicsBody
 	{
 		b2Body* body;
 	};
 
 #ifdef HZ_PHYSICS_DEBUG_DRAW
-	struct physics_debug_draw
+	struct PhysicsDebugDraw
 	{
-		PhysicsDebugDraw* draw;
+		Li::Unique<Box2DDebugDrawer> draw;
 	};
 #endif
 }

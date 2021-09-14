@@ -7,17 +7,17 @@
 
 namespace cp
 {
-	struct sync_manager
+	struct SyncManager
 	{
 		uint64_t count = 0;
 	};
 
-	struct sync_tracker
+	struct SyncTracker
 	{
 		std::unordered_map<uint64_t, entt::entity> map;
 	};
 
-	struct sync
+	struct Sync
 	{
 		uint64_t sync_id = 0;
 	};

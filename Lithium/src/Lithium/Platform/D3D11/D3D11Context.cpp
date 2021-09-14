@@ -17,6 +17,7 @@ namespace Li
 	const void* const s_NullBlob[NullBlobCount] = {};
 
 	D3D11Context::D3D11Context(HWND hwnd, int width, int height)
+		: m_DepthTest(true)
 	{
 		UINT device_flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 #ifdef LI_DEBUG
@@ -183,6 +184,11 @@ namespace Li
 
 	void D3D11Context::SetDepthTest(bool enabled)
 	{
+		if (m_DepthTest == enabled)
+			return;
+
+		m_DepthTest = enabled;
+		InitDepthStencil();
 	}
 
 	void D3D11Context::SetDrawMode(DrawMode mode)
@@ -293,11 +299,11 @@ namespace Li
 		D3D11_DEPTH_STENCIL_DESC depth_stencil_desc;
 		ZeroMemory(&depth_stencil_desc, sizeof(depth_stencil_desc));
 		
-		depth_stencil_desc.DepthEnable = true;
+		depth_stencil_desc.DepthEnable = m_DepthTest;
 		depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS;
 
-		depth_stencil_desc.StencilEnable = true;
+		depth_stencil_desc.StencilEnable = false;
 		depth_stencil_desc.StencilReadMask = 0xFF;
 		depth_stencil_desc.StencilWriteMask = 0xFF;
 

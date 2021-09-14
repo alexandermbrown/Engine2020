@@ -11,56 +11,54 @@
 void PlayerSystem::Init(entt::registry& registry, SyncEventQueue* queue)
 {
 	entt::entity player = registry.create();
-	registry.emplace<cp::player>(player);
+	registry.emplace<cp::Player>(player);
 
 	// Sync player with rendering thread.
-	cp::sync_manager& sync_manager = registry.ctx<cp::sync_manager>();
+	cp::SyncManager& sync_manager = registry.ctx<cp::SyncManager>();
 
 	uint64_t sync_id = sync_manager.count;
 	sync_manager.count++;
 
-	registry.emplace<cp::sync>(player, sync_id);
-	registry.emplace<cp::sync_transform>(player, sync_id, glm::vec3{ 5.0f, 1.0f, 0.0f }  );
+	registry.emplace<cp::Sync>(player, sync_id);
+	registry.emplace<cp::SyncTransform>(player, sync_id, glm::vec3{ 5.0f, 1.0f, 0.0f }  );
 
-	cp::Quad* quad = new cp::Quad{ "test_small" }; // TODO: set player texture.
-	cp::sync_transform* transform = new cp::sync_transform{ sync_id, { 5.0f, 1.0f, 0.0f } };
+	cp::SyncTransform* transform = new cp::SyncTransform{ sync_id, { 5.0f, 1.0f, 0.0f } };
 
 	queue->enqueue(SyncEvent::CreateEntity(sync_id));
-	queue->enqueue(SyncEvent::AddComponent<cp::player>(sync_id, nullptr));
-	queue->enqueue(SyncEvent::AddComponent<cp::sync_transform>(sync_id, transform));
-	queue->enqueue(SyncEvent::AddComponent<cp::Quad>(sync_id, quad));
+	queue->enqueue(SyncEvent::AddComponent<cp::Player>(sync_id, nullptr));
+	queue->enqueue(SyncEvent::AddComponent<cp::SyncTransform>(sync_id, transform));
 
 	// Init physics body.
-	cp::physics_body& physBody = registry.emplace<cp::physics_body>(player);
+	cp::PhysicsBody& phys_body = registry.emplace<cp::PhysicsBody>(player);
 
 	// Get physics world from the registry.
-	cp::physics_world& world = registry.ctx<cp::physics_world>();
+	cp::PhysicsWorld& world = registry.ctx<cp::PhysicsWorld>();
 
 	// Create the player's physics body.
-	b2BodyDef playerBodyDef;
-	playerBodyDef.type = b2_dynamicBody;
-	playerBodyDef.position.Set(5.0f, 1.0f); // TODO: define where the player is in the world.
-	physBody.body = world.world->CreateBody(&playerBodyDef);
+	b2BodyDef player_body_def;
+	player_body_def.type = b2_dynamicBody;
+	player_body_def.position.Set(5.0f, 1.0f); // TODO: define where the player is in the world.
+	phys_body.body = world.world->CreateBody(&player_body_def);
 
 		
-	b2CircleShape playerShape;
-	playerShape.m_p.Set(0.0f, 0.0f);
-	playerShape.m_radius = 0.5f;
+	b2CircleShape player_shape;
+	player_shape.m_p.Set(0.0f, 0.0f);
+	player_shape.m_radius = 0.5f;
 
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &playerShape;
-	fixtureDef.density = 1.0f; // TODO: Set player density.
-	fixtureDef.friction = 0.3f; // TODO: Set player friction.
-	fixtureDef.restitution = 0.0f; // TODO: Set player restitution.
+	b2FixtureDef fixture_def;
+	fixture_def.shape = &player_shape;
+	fixture_def.density = 1.0f; // TODO: Set player density.
+	fixture_def.friction = 0.3f; // TODO: Set player friction.
+	fixture_def.restitution = 0.0f; // TODO: Set player restitution.
 
-	physBody.body->CreateFixture(&fixtureDef);
+	phys_body.body->CreateFixture(&fixture_def);
 }
 
 void PlayerSystem::Update(entt::registry& registry, Li::Duration::us dt)
 {
-	auto view = registry.view<cp::player, cp::physics_body>();
-	cp::player& player = view.get<cp::player>(view.front());
-	cp::physics_body& body = view.get<cp::physics_body>(view.front());
+	auto view = registry.view<cp::Player, cp::PhysicsBody>();
+	cp::Player& player = view.get<cp::Player>(view.front());
+	cp::PhysicsBody& body = view.get<cp::PhysicsBody>(view.front());
 
 	player.move_direction = {
 		(player.right ? 1.0f : 0.0f) - (player.left ? 1.0f : 0.0f),
@@ -68,11 +66,10 @@ void PlayerSystem::Update(entt::registry& registry, Li::Duration::us dt)
 	};
 
 	// Ensure the move direction is of length 1.
-	if (glm::length(player.move_direction) > 1.0f)
-	{
-		player.move_direction = glm::normalize(player.move_direction);
-	}
-	
+	float length = glm::length(player.move_direction);
+	if (length != 0.0f)
+		player.move_direction /= length;
+
 	// Apply an impulse to the physics body to get instant movement.
 	b2Vec2 vel = body.body->GetLinearVelocity();
 	b2Vec2 desired_vel = { player.move_direction.x * player.move_speed, player.move_direction.y * player.move_speed };
@@ -91,29 +88,29 @@ void PlayerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 
 		if (event->key.keysym.scancode == config.Get<int>("keybind_move_left"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.left = true;
 		}
 		else if (event->key.keysym.scancode == config.Get<int>("keybind_move_right"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.right = true;
 		}
 		else if (event->key.keysym.scancode == config.Get<int>("keybind_move_up"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.up = true;
 		}
 		else if (event->key.keysym.scancode == config.Get<int>("keybind_move_down"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.down = true;
 		}
@@ -124,29 +121,29 @@ void PlayerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 
 		if (event->key.keysym.scancode == config.Get<int>("keybind_move_left"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.left = false;
 		}
 		else if (event->key.keysym.scancode == config.Get<int>("keybind_move_right"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.right = false;
 		}
 		else if (event->key.keysym.scancode == config.Get<int>("keybind_move_up"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.up = false;
 		}
 		else if (event->key.keysym.scancode == config.Get<int>("keybind_move_down"))
 		{
-			auto view = registry.view<cp::player>();
-			cp::player& player = view.get<cp::player>(view.front());
+			auto view = registry.view<cp::Player>();
+			cp::Player& player = view.get<cp::Player>(view.front());
 
 			player.down = false;
 		}

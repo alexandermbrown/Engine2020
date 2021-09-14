@@ -6,45 +6,38 @@
 
 void DebugDrawSystem::Init(entt::registry& registry, DebugDrawCommandQueue* queue)
 {
-	cp::physics_world& world = registry.ctx<cp::physics_world>();
+	cp::PhysicsWorld& world = registry.ctx<cp::PhysicsWorld>();
 
-	cp::physics_debug_draw& draw = registry.set<cp::physics_debug_draw>(); 
-	draw.draw = new PhysicsDebugDraw(queue); // TODO: parse in reader writer queue pointer.
+	cp::PhysicsDebugDraw& draw = registry.set<cp::PhysicsDebugDraw>();
+	draw.draw = Li::MakeUnique<Box2DDebugDrawer>(queue);
 	draw.draw->SetFlags(0b01011);
-	world.world->SetDebugDraw(draw.draw);
+	world.world->SetDebugDraw(draw.draw.get());
 }
 
 void DebugDrawSystem::Draw(entt::registry& registry)
 {
-	cp::physics_world& world = registry.ctx<cp::physics_world>();
+	cp::PhysicsWorld& world = registry.ctx<cp::PhysicsWorld>();
 
-	cp::physics_debug_draw debugDraw = registry.ctx<cp::physics_debug_draw>();
+	cp::PhysicsDebugDraw& debug_draw = registry.ctx<cp::PhysicsDebugDraw>();
 
 	world.world->DebugDraw();
-	debugDraw.draw->EndDraw();
-}
-
-void DebugDrawSystem::Shutdown(entt::registry& registry)
-{
-	cp::physics_debug_draw debugDraw = registry.ctx<cp::physics_debug_draw>();
-
-	delete debugDraw.draw;
+	debug_draw.draw->EndDraw();
 }
 
 
-PhysicsDebugDraw::PhysicsDebugDraw(DebugDrawCommandQueue* queue)
-	: b2Draw(), m_CommandQueue(queue) {}
+Box2DDebugDrawer::Box2DDebugDrawer(DebugDrawCommandQueue* queue)
+	: m_CommandQueue(queue) {}
 
-void PhysicsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
+void Box2DDebugDrawer::DrawPolygon(const b2Vec2* vertices, int32 vertex_count, const b2Color& color)
 {
 	DebugDrawCommand command;
 	command.Type = DebugDrawType::PolygonOutline;
 	command.Color = { color.r, color.g, color.b, color.a };
 
-	command.Vertices = new glm::vec2[vertexCount];
-	command.VertexCount = vertexCount;
+	command.Vertices = new glm::vec2[vertex_count];
+	command.VertexCount = vertex_count;
 
-	for (int i = 0; i < vertexCount; i++)
+	for (int i = 0; i < vertex_count; i++)
 	{
 		command.Vertices[i] = { vertices[i].x, vertices[i].y };
 	}
@@ -52,7 +45,7 @@ void PhysicsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, co
 	m_CommandQueue->enqueue(command);
 }
 
-void PhysicsDebugDraw::DrawCircle(const b2Vec2& center, float radius, const b2Color& color)
+void Box2DDebugDrawer::DrawCircle(const b2Vec2& center, float radius, const b2Color& color)
 {
 	DebugDrawCommand command;
 	command.Type = DebugDrawType::Circle;
@@ -64,7 +57,7 @@ void PhysicsDebugDraw::DrawCircle(const b2Vec2& center, float radius, const b2Co
 	m_CommandQueue->enqueue(command);
 }
 
-void PhysicsDebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
+void Box2DDebugDrawer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
 {
 	DebugDrawCommand command;
 	command.Type = DebugDrawType::Line;
@@ -76,7 +69,7 @@ void PhysicsDebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2C
 	m_CommandQueue->enqueue(command);
 }
 
-void PhysicsDebugDraw::DrawPoint(const b2Vec2& p, float size, const b2Color& color)
+void Box2DDebugDrawer::DrawPoint(const b2Vec2& p, float size, const b2Color& color)
 {
 	DebugDrawCommand command;
 	command.Type = DebugDrawType::Point;
@@ -88,11 +81,10 @@ void PhysicsDebugDraw::DrawPoint(const b2Vec2& p, float size, const b2Color& col
 	m_CommandQueue->enqueue(command);
 }
 
-void PhysicsDebugDraw::EndDraw()
+void Box2DDebugDrawer::EndDraw()
 {
 	DebugDrawCommand command;
 	command.Type = DebugDrawType::End;
 	m_CommandQueue->enqueue(command);
 }
-
 #endif

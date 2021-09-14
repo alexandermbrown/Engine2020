@@ -5,5 +5,5 @@
 
 void SyncInitSystem::Init(entt::registry& registry)
 {
-	registry.set<cp::sync_manager>(0ull);
+	registry.set<cp::SyncManager>(0ull);
 }

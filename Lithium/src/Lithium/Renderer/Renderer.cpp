@@ -22,7 +22,9 @@ namespace Li
 		s_Data = MakeUnique<Renderer::RendererData>();
 
 		Window& window = Application::Get().GetWindow();
-		window.GetContext()->SetDepthTest(false);
+		int window_width = window.GetWidth();
+		int window_height = window.GetHeight();
+
 		window.GetContext()->SetClearColor({ 0.7f, 0.7f, 0.7f, 1.0f });
 		s_Data->FrameUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
 		s_Data->FrameUB->BindBase();
@@ -38,9 +40,9 @@ namespace Li
 
 		s_Data->Sorter = MakeRef<GPUSort>();
 
-		s_Data->Camera = nullptr;
+		s_Data->SceneCamera = nullptr;
 		s_Data->UICamera = MakeUnique<Camera>();
-		s_Data->UICamera->SetOrtho(0.0f, (float)window.GetWidth(), 0.0f, (float)window.GetHeight());
+		s_Data->UICamera->SetOrtho(0.0f, (float)window_width, 0.0f, (float)window_height);
 		
 		// IMMEDIATE QUAD RENDERING //
 		s_Data->TextureShader = ResourceManager::GetShader("shader_splash");
@@ -102,6 +104,10 @@ namespace Li
 		font_spec.Layouts[0] = font_layout;
 		font_spec.Shader = s_Data->FontShader;
 		s_Data->FontPipeline = Pipeline::Create(font_spec);
+
+		// POST PROCESSING //
+		//s_Data->PostprocessFB = Framebuffer::Create(window_width, window_height);
+		
 	}
 
 	void Renderer::Shutdown()
@@ -130,7 +136,7 @@ namespace Li
 
 	void Renderer::BeginScene(const Camera* camera)
 	{
-		s_Data->Camera = camera;
+		s_Data->SceneCamera = camera;
 
 		CameraCB camera_cb;
 		camera_cb.u_View = camera->GetViewMatrix();
@@ -237,7 +243,7 @@ namespace Li
 
 	void Renderer::RenderQuadImmediate(const Texture* texture, const glm::mat4& transform)
 	{
-		RenderQuad(texture, transform, s_Data->Camera->GetViewProjectionMatrix());
+		RenderQuad(texture, transform, s_Data->SceneCamera->GetViewProjectionMatrix());
 	}
 
 	void Renderer::UISubmitQuad(const std::string& texture_alias, const glm::vec4& color, const glm::mat4& transform, bool crop)
@@ -257,6 +263,7 @@ namespace Li
 
 	void Renderer::Resize(int width, int height)
 	{
+		//s_Data->PostprocessFB->Resize(width, height);
 		s_Data->UICamera->SetOrtho(0, (float)width, 0, (float)height);
 	}
 

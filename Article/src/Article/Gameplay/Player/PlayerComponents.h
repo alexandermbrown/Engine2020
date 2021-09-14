@@ -4,7 +4,7 @@
 
 namespace cp
 {
-	struct player
+	struct Player
 	{
 		bool left = false;
 		bool right = false;

@@ -3,15 +3,16 @@
 #include "Lithium/Core/Memory.h"
 #include "Lithium/Renderer/BatchRenderer2D.h"
 #include "Lithium/Renderer/Camera.h"
+#include "Lithium/Renderer/Framebuffer.h"
 #include "Lithium/Renderer/GPUSort.h"
 #include "Lithium/Renderer/LineBatchRenderer.h"
 #include "Lithium/Renderer/Model.h"
+#include "Lithium/Renderer/Pipeline.h"
 #include "Lithium/Renderer/RendererAPI.h"
 #include "Lithium/Renderer/RenderStage.h"
 #include "Lithium/Renderer/Shader.h"
 #include "Lithium/Renderer/Texture.h"
 #include "Lithium/Renderer/Text/Label.h"
-#include "Lithium/Renderer/Pipeline.h"
 #include "Lithium/Utility/Time.h"
 
 #include "glm/glm.hpp"
@@ -85,7 +86,9 @@ namespace Li
 
 			Ref<GPUSort> Sorter;
 
-			const Camera* Camera;
+			//Ref<Framebuffer> PostprocessFB;
+
+			const Camera* SceneCamera;
 			Unique<Li::Camera> UICamera;
 
 			uint64_t FrameNumber{ 0 };

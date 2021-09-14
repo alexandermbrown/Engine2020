@@ -93,3 +93,7 @@ shader_gpusort_sort_step:
   type: shader
   sources:
     - "./res/shaders/gpusort/gpusort_sort_step_cs.hlsl"
+
+shader_postprocess:
+  type: shader
+  dir: "./res/shaders/postprocess"

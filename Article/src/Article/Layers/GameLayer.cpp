@@ -42,7 +42,6 @@ GameLayer::GameLayer()
 	entt::entity teapot = m_Registry.create();
 	m_Registry.emplace<cp::Model>(teapot, std::move(teapot_model));
 	m_Registry.emplace<cp::Transform>(teapot);
-
 }
 
 GameLayer::~GameLayer()
