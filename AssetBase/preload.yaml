@@ -47,6 +47,7 @@ shader_model:
   dir: "./res/shaders/model"
 
 # Particle emitter.
+
 shader_emitter_update_begin:
   type: shader
   sources:

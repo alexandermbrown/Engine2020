@@ -52,6 +52,19 @@ namespace Li
 		GLCall(glGetIntegerv(GL_MAJOR_VERSION, &version_major));
 		GLCall(glGetIntegerv(GL_MINOR_VERSION, &version_minor));
 
+		struct GPUInfo
+		{
+			int max_compute_ssbo_count;
+			int max_ssbo_bindings;
+		};
+		GPUInfo info;
+
+		GLCall(glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &info.max_compute_ssbo_count));
+		GLCall(glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &info.max_ssbo_bindings));
+		Log::CoreDebug("Max Compute SSBO Count: {}", info.max_compute_ssbo_count);
+		Log::CoreDebug("Max SSBO Bindings: {}", info.max_ssbo_bindings);
+		
+
 #ifdef LI_DEBUG
 		constexpr int RequiredMajor = 4;
 		constexpr int RequiredMinor = 3;

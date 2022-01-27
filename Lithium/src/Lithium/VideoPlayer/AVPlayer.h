@@ -19,7 +19,6 @@ struct AVPacket;
 struct AVRational;
 struct SwsContext;
 struct SwrContext;
-enum AVSampleFormat;
 
 namespace Li
 {
@@ -63,7 +62,7 @@ namespace Li
 		{
 			AVCodec* Codec{ nullptr };
 			AVCodecContext* CodecCtx{ nullptr };
-			SwsContext* SwsContext{ nullptr };
+			SwsContext* SwsCtx{ nullptr };
 			uint8_t* PixelBuffer{ nullptr };
 			int Width{ 0 };
 			int Height{ 0 };
@@ -90,7 +89,7 @@ namespace Li
 			int Frequency;
 			int MaxNumSamples;
 			int OutBytesPerSample;
-			AVSampleFormat OutFormat;
+			uint32_t OutFormat;
 
 			Unique<AudioQueue> Queue{ nullptr };
 

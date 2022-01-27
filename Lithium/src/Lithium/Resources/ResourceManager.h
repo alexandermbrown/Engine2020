@@ -58,17 +58,17 @@ namespace Li
 		using ResourceMap = std::unordered_map<std::string, Ref<T>>;
 
 		template<typename T>
-		static Ref<T> GetResource(const ResourceMap<T>& map, const std::string& name, const char* default)
+		static Ref<T> GetResource(const ResourceMap<T>& map, const std::string& name, const char* default_name)
 		{
 			auto it = map.find(name);
 			if (it == map.end())
 			{
 				Log::CoreError("Resource {} not found.", name);
 
-				if (default)
+				if (default_name)
 				{
-					LI_CORE_ASSERT(map.find(default) != map.end(), "Default does not exist!");
-					return map.at(default);
+					LI_CORE_ASSERT(map.find(default_name) != map.end(), "Default does not exist!");
+					return map.at(default_name);
 				}
 				else return nullptr;
 			}

@@ -62,7 +62,7 @@ void CameraControllerSystem::OnEvent(entt::registry& registry, SDL_Event* event)
 	{
 		cp::Camera& camera = registry.ctx<cp::Camera>();
 
-		camera.target_zoom -= event->wheel.y * std::sqrtf(camera.target_zoom) / 2.0f;
+		camera.target_zoom -= event->wheel.y * std::sqrt(camera.target_zoom) / 2.0f;
 
 		if (camera.target_zoom < camera.min_zoom)
 			camera.target_zoom = camera.min_zoom;

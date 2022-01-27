@@ -4,6 +4,14 @@
 
 namespace Li
 {
+	class SDLInitError : public std::runtime_error
+	{
+	public:
+		SDLInitError(const char* message)
+			: std::runtime_error(message) {}
+		virtual ~SDLInitError() = default;
+	};
+
 	class SDLWindowInitError : public std::runtime_error
 	{
 	public:

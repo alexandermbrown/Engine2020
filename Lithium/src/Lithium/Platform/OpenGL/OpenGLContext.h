@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lithium/Renderer/GraphicsContext.h"
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 namespace Li
 {

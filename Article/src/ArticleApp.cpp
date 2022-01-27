@@ -14,8 +14,13 @@
 #include "Lithium/Renderer/Renderer.h"
 #include "Lithium/Resources/ResourceManager.h"
 
-#ifdef HZ_PLATFORM_WINDOWS
+#ifdef LI_PLATFORM_WINDOWS
 #include <shlobj.h>
+#endif
+#ifdef LI_PLATFORM_LINUX
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 #endif
 
 ArticleApp::ArticleApp()
@@ -76,23 +81,17 @@ void ArticleApp::LoadConfig()
 {
 	m_ConfigLoader.RegisterDefaults("data/config/config_default.yaml");
 
-#ifdef HZ_PLATFORM_WINDOWS
-	// Get the location of %APPDATA% in Windows.
-	PWSTR path_str;
-	SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path_str);
-
-	std::filesystem::path path(path_str);
-	path /= "Article/config/config.yaml";
-
-	m_ConfigStore = m_ConfigLoader.LoadStore(path);
-
-	CoTaskMemFree(static_cast<LPVOID>(path_str));
-#endif
+	m_ConfigStore = m_ConfigLoader.LoadStore(GetConfigPath());
 }
 
 void ArticleApp::SaveConfig()
 {
-#ifdef HZ_PLATFORM_WINDOWS
+	m_ConfigLoader.SaveStore(m_ConfigStore, GetConfigPath());
+}
+
+std::filesystem::path ArticleApp::GetConfigPath()
+{
+#ifdef LI_PLATFORM_WINDOWS
 	// Get the location of %APPDATA% in Windows.
 	PWSTR path_str;
 	SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path_str);
@@ -100,9 +99,16 @@ void ArticleApp::SaveConfig()
 	std::filesystem::path path(path_str);
 	path /= "Article/config/config.yaml";
 
-	m_ConfigLoader.SaveStore(m_ConfigStore, path);
-
 	CoTaskMemFree(static_cast<LPVOID>(path_str));
+
+	return path;
+#else
+	const char *homedir;
+
+	if ((homedir = getenv("HOME")) == NULL) {
+		homedir = getpwuid(getuid())->pw_dir;
+	}
+	return std::filesystem::path(homedir) / ".config/Article/config/config.yaml";
 #endif
 }
 

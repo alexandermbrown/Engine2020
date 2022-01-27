@@ -3,7 +3,7 @@
 #include "UIComponents.h"
 #include "Lithium/Utility/Time.h"
 #include "entt/entt.hpp"
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 namespace Systems::UILayout
 {

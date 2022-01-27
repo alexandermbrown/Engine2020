@@ -52,7 +52,7 @@ namespace Li
 		Pipeline::Spec spec;
 		spec.VertexBufferCount = 1;
 		spec.Layouts[0] = layout;
-		spec.Shader = m_Shader;
+		spec.ShaderRef = m_Shader;
 		m_Pipeline = Pipeline::Create(spec);
 	}
 

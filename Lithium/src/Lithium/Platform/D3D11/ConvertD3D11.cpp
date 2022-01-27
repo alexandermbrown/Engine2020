@@ -1,6 +1,8 @@
 #include "lipch.h"
-#include "ConvertD3D11.h"
 
+#ifdef LI_PLATFORM_WINDOWS
+
+#include "ConvertD3D11.h"
 #include <iostream>
 
 namespace Li
@@ -53,3 +55,5 @@ namespace Li
 		}
 	}
 }
+
+#endif

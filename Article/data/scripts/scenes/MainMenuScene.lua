@@ -1,4 +1,4 @@
-local Class = require("data.scripts.class")
+local Class = require("data.scripts.Class")
 
 local MainMenuScene = Class()
 

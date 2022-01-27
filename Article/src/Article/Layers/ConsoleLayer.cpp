@@ -162,7 +162,7 @@ void ConsoleLayer::UpdateHistory(ImGuiInputTextCallbackData* data)
 		while (index < 0)
 			index += InputHistoryCount;
 
-		strcpy_s(data->Buf, data->BufSize, m_HistoryBuffer[index].c_str());
+		strcpy(data->Buf, m_HistoryBuffer[index].c_str());
 		data->BufTextLen = (int)m_HistoryBuffer[index].size();
 	}
 	data->BufDirty = true;
@@ -170,5 +170,4 @@ void ConsoleLayer::UpdateHistory(ImGuiInputTextCallbackData* data)
 	data->SelectionStart = data->CursorPos;
 	data->SelectionEnd = data->CursorPos;
 }
-
 #endif

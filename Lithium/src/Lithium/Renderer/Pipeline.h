@@ -17,13 +17,13 @@ namespace Li
 		{
 			unsigned int VertexBufferCount;
 			std::array<VertexBufferLayout, MaxVertexBufferCount> Layouts;
-			Ref<Shader> Shader;
+			Ref<Shader> ShaderRef;
 		};
 
 		Pipeline(const Pipeline::Spec& spec)
 			: m_Spec(spec)
 		{
-			LI_CORE_ASSERT(spec.VertexBufferCount < MaxVertexBufferCount);
+			LI_CORE_ASSERT(spec.VertexBufferCount < MaxVertexBufferCount, "Vertex buffer count too large!");
 		}
 
 		virtual ~Pipeline() = default;

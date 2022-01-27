@@ -53,7 +53,7 @@ namespace Li
 		Pipeline::Spec quad_spec;
 		quad_spec.VertexBufferCount = 1;
 		quad_spec.Layouts[0] = quad_layout;
-		quad_spec.Shader = s_Data->TextureShader;
+		quad_spec.ShaderRef = s_Data->TextureShader;
 		s_Data->QuadPipeline = Pipeline::Create(quad_spec);
 
 		constexpr float quad_vertices[16] = {
@@ -88,7 +88,7 @@ namespace Li
 		Pipeline::Spec model_spec;
 		model_spec.VertexBufferCount = 1;
 		model_spec.Layouts[0] = model_layout;
-		model_spec.Shader = s_Data->ModelShader;
+		model_spec.ShaderRef = s_Data->ModelShader;
 		s_Data->ModelPipeline = Pipeline::Create(model_spec);
 
 		// FONT //
@@ -102,7 +102,7 @@ namespace Li
 		Pipeline::Spec font_spec;
 		font_spec.VertexBufferCount = 1;
 		font_spec.Layouts[0] = font_layout;
-		font_spec.Shader = s_Data->FontShader;
+		font_spec.ShaderRef = s_Data->FontShader;
 		s_Data->FontPipeline = Pipeline::Create(font_spec);
 
 		// POST PROCESSING //

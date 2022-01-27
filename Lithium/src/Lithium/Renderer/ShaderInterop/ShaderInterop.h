@@ -11,7 +11,7 @@
 #ifdef LI_PLATFORM_WINDOWS
 #define LI_ALIGN_16 __declspec(align(16))
 #else
-#error Test attribute alignment on other platforms.
+#warning Test attribute alignment on other platforms.
 #define LI_ALIGN_16 __attribute__((aligned(16)))
 #endif
 

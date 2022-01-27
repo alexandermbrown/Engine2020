@@ -1,6 +1,7 @@
 #include "lipch.h"
 #include "Application.h"
 
+#include "Lithium/Core/Core.h"
 #include "Lithium/Core/Assert.h"
 #include "Lithium/Core/Exceptions.h"
 #include "Lithium/Core/Log.h"
@@ -8,26 +9,28 @@
 #include "Lithium/Resources/ResourceManager.h"
 #include "Lithium/Localization/Localization.h"
 
-#include "SDL.h"
+#include "SDL2/SDL.h"
 #ifndef LI_DIST
 #include "imgui.h"
 #endif
 
-namespace Li 
+#include <iostream>
+
+namespace Li
 {
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application(const WindowProps& props)
-		: m_Running(false), m_LayerStack(), m_EventHandled(false),
+		: m_Running(false), m_EventHandled(false),
 		m_CurrentScene(nullptr), m_NextScene(nullptr), m_TransitionFinished(true), m_CallOnTransition(false)
 	{
 		LI_CORE_ASSERT(s_Instance == nullptr, "Instance of Application already exists!");
 		s_Instance = this;
 
-		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		{
-			Log::CoreError("Failed to initialize SDL!");
-			return;
+			std::cout << "Failed to init SDL: " << SDL_GetError() << std::endl;
+			throw SDLInitError("Failed to initialize SDL!");
 		}
 
 		SDL_version compiled_version;
@@ -53,7 +56,7 @@ namespace Li
 #ifndef LI_DIST
 		m_ImGuiRenderer = ImGuiRenderer::Create();
 #endif
-		m_AudioContext = MakeUnique<AudioContext>(nullptr);
+		// m_AudioContext = MakeUnique<AudioContext>(nullptr);
 
 		ResourceManager::Init();
 	}

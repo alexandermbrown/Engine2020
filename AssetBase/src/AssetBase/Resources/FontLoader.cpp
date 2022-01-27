@@ -6,6 +6,8 @@
 
 #include <math.h>
 #include <thread>
+#include <fstream>
+#include <iostream>
 
 namespace fb = flatbuffers;
 namespace fs = std::filesystem;
@@ -33,8 +35,8 @@ fb::Offset<Assets::Font> FontLoader::Serialize(fb::FlatBufferBuilder& builder, c
 
 	int16_t glyph_scale = Convert::StringToInt(GetOptionalString(font, "glyph_scale"), "glyph_scale");
 
-	fb::Offset<fb::Vector<fb::Offset<Assets::FontImage>>> images_offset = NULL;
-	fb::Offset<fb::Vector<fb::Offset<Assets::GlyphEntry>>> glyphs_offset = NULL;
+	fb::Offset<fb::Vector<fb::Offset<Assets::FontImage>>> images_offset;
+	fb::Offset<fb::Vector<fb::Offset<Assets::GlyphEntry>>> glyphs_offset;
 	fb::Offset<fb::Vector<uint8_t>> ttf = LoadTTF(builder, font_path);
 
 	float em_size;
@@ -86,7 +88,8 @@ bool FontLoader::TryLoadCache(fb::FlatBufferBuilder& builder, const std::string&
 
 	const Assets::Font* font = fb::GetRoot<Assets::Font>(buffer.data());
 
-	if (!font->Verify(fb::Verifier(buffer.data(), file_size)))
+	fb::Verifier verifier(buffer.data(), file_size);
+	if (!font->Verify(verifier))
 		return false;
 	
 	if (name != font->name()->c_str() || glyph_scale != font->glyph_scale())

@@ -31,7 +31,8 @@ namespace Li
 		model_file.close();
 
 		const Assets::Model* model = fb::GetRoot<Assets::Model>(buffer.data());
-		if (!model->Verify(fb::Verifier(buffer.data(), filesize)))
+		fb::Verifier verifier(buffer.data(), filesize);
+		if (!model->Verify(verifier))
 			throw std::runtime_error("Corrupt model " + path + ". Verify or reinstall game files.");
 
 		m_Name = model->name()->str();

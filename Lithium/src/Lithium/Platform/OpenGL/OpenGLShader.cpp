@@ -8,26 +8,30 @@
 
 #include "OpenGLCore.h"
 
-namespace Li 
+namespace Li
 {
 	OpenGLShader::OpenGLShader(const std::string& name, const GLSLInput& input)
 		: m_Name(name), m_RendererID(0)
 	{
-		std::unordered_map<GLenum, const char*> sources;
-		if (input.VertexSrc)
-			sources[GL_VERTEX_SHADER] = input.VertexSrc;
-		if (input.TessControlSrc)
-			sources[GL_TESS_CONTROL_SHADER] = input.TessControlSrc;
-		if (input.TessEvalSrc)
-			sources[GL_TESS_EVALUATION_SHADER] = input.TessEvalSrc;
-		if (input.GeometrySrc)
-			sources[GL_GEOMETRY_SHADER] = input.GeometrySrc;
-		if (input.FragmentSrc)
-			sources[GL_FRAGMENT_SHADER] = input.FragmentSrc;
-		if (input.ComputeSrc)
-			sources[GL_COMPUTE_SHADER] = input.ComputeSrc;
+		std::vector<ShaderStage> sources;
+		sources.reserve(6);
+		if (input.VertexSrc) {
+			ShaderStage stage{"GL_VERTEX_SHADER", GL_VERTEX_SHADER, input.VertexSrc, 0};
 
-		Compile(sources);
+			sources.push_back(stage);
+		}
+		if (input.TessControlSrc)
+			sources.push_back(ShaderStage{"GL_TESS_CONTROL_SHADER", GL_TESS_CONTROL_SHADER, input.TessControlSrc, 0});
+		if (input.TessEvalSrc)
+			sources.push_back(ShaderStage{"GL_TESS_EVALUATION_SHADER", GL_TESS_EVALUATION_SHADER, input.TessEvalSrc, 0});
+		if (input.GeometrySrc)
+			sources.push_back(ShaderStage{"GL_GEOMETRY_SHADER", GL_GEOMETRY_SHADER, input.GeometrySrc, 0});
+		if (input.FragmentSrc)
+			sources.push_back(ShaderStage{"GL_FRAGMENT_SHADER", GL_FRAGMENT_SHADER, input.FragmentSrc, 0});
+		if (input.ComputeSrc)
+			sources.push_back(ShaderStage{"GL_COMPUTE_SHADER", GL_COMPUTE_SHADER, input.ComputeSrc, 0});
+
+		Compile(std::move(sources));
 	}
 
 	OpenGLShader::~OpenGLShader()
@@ -35,37 +39,35 @@ namespace Li
 		GLCall( glDeleteProgram(m_RendererID) );
 	}
 
-	void OpenGLShader::Compile(const std::unordered_map<GLenum, const char*>& shader_sources)
+	void OpenGLShader::Compile(std::vector<ShaderStage>&& stages)
 	{
 		GLuint program = glCreateProgram();
-		std::vector<GLenum> shader_ids;
-		shader_ids.reserve(shader_sources.size());
 
-		for (auto& kv : shader_sources)
+
+		for (ShaderStage& stage : stages)
 		{
-			GLuint shader_id = glCreateShader(kv.first);
-			glShaderSource(shader_id, 1, &kv.second, 0);
-			glCompileShader(shader_id);
+			stage.GlId = glCreateShader(stage.GlType);
+			glShaderSource(stage.GlId, 1, &stage.Source, 0);
+			glCompileShader(stage.GlId);
 
 			GLint is_compiled = 0;
-			glGetShaderiv(shader_id, GL_COMPILE_STATUS, &is_compiled);
+			glGetShaderiv(stage.GlId, GL_COMPILE_STATUS, &is_compiled);
 			if (is_compiled == GL_FALSE)
 			{
 				GLint max_length = 0;
-				glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &max_length);
+				glGetShaderiv(stage.GlId, GL_INFO_LOG_LENGTH, &max_length);
 
 				std::vector<GLchar> info_log(max_length);
-				glGetShaderInfoLog(shader_id, max_length, &max_length, &info_log[0]);
+				glGetShaderInfoLog(stage.GlId, max_length, &max_length, &info_log[0]);
 
-				glDeleteShader(shader_id);
+				glDeleteShader(stage.GlId);
 
-				Log::CoreError("{}: {}", m_Name, info_log.data());
-				LI_CORE_ASSERT(false, "Shader compilation failure!");
-				break;
+				std::string err_msg = "Failed to compile stage " + stage.Type + " of \"" + m_Name + "\"" + info_log.data();
+				Log::CoreError("{}", err_msg);
+				throw std::runtime_error(err_msg);
 			}
 
-			glAttachShader(program, shader_id);
-			shader_ids.push_back(shader_id);
+			glAttachShader(program, stage.GlId);
 		}
 		
 		glLinkProgram(program);
@@ -81,18 +83,22 @@ namespace Li
 			glGetProgramInfoLog(program, max_length, &max_length, &info_log[0]);
 
 			glDeleteProgram(program);
-			for (GLenum id : shader_ids)
-				glDeleteShader(id);
+			for (ShaderStage stage : stages)
+			{
+				glDeleteShader(stage.GlId);
+				stage.GlId = 0;
+			}
 
-			Log::CoreError("{}", info_log.data());
-			LI_CORE_ASSERT(false, "Shader link failure!");
-			return;
+			std::string err_msg = "Failed to link shader \"" + m_Name + "\"\n" + info_log.data();
+			Log::CoreError("{}", err_msg);
+			throw std::runtime_error(err_msg);
 		}
 
-		for (GLenum id : shader_ids)
+		for (ShaderStage stage : stages)
 		{
-			glDetachShader(program, id);
-			glDeleteShader(id);
+			glDetachShader(program, stage.GlId);
+			glDeleteShader(stage.GlId);
+			stage.GlId = 0;
 		}
 		m_RendererID = program;
 	}

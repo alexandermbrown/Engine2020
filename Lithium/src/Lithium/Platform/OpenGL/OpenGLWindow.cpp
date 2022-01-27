@@ -27,8 +27,10 @@ namespace Li
 
 		m_Window = SDL_CreateWindow(props.Title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_Width, m_Height, flags);
 		
-		if (m_Window == nullptr)
+		if (m_Window == nullptr) {
+			Log::CoreFatal("SDL ERROR: {}", SDL_GetError());
 			throw SDLWindowInitError("Failed to create SDL window.");
+		}
 
 		m_ID = SDL_GetWindowID(m_Window);
 

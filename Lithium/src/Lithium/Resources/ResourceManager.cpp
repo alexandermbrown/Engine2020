@@ -16,7 +16,7 @@ namespace Li
 
 	void ResourceManager::Init()
 	{
-		LI_CORE_ASSERT(s_Data == nullptr);
+		LI_CORE_ASSERT(s_Data == nullptr, "ResourceManager already instantiated");
 		s_Data = MakeUnique<ResourceData>();
 
 		// SETUP WHITE TEXTURE
@@ -53,12 +53,13 @@ namespace Li
 		in_file.seekg(0, std::ios::end);
 		long filesize = (long)in_file.tellg();
 		in_file.seekg(0, std::ios::beg);
-		uint8_t* buffer = new uint8_t[filesize];
-		in_file.read((char*)buffer, filesize);
+		std::vector<uint8_t> buffer(filesize);
+		in_file.read((char*)buffer.data(), filesize);
 		in_file.close();
 
-		const Assets::AssetBundle* asset_bundle = flatbuffers::GetRoot<Assets::AssetBundle>(buffer);
-		if (!asset_bundle->Verify(flatbuffers::Verifier(buffer, filesize))) 
+		const Assets::AssetBundle* asset_bundle = flatbuffers::GetRoot<Assets::AssetBundle>(buffer.data());
+		flatbuffers::Verifier verifier(buffer.data(), filesize);
+		if (!asset_bundle->Verify(verifier))
 			throw AssetPackError("Corrupt asset pack " + lpack_file_path + ". Verify or reinstall game files.");
 
 		for (const Assets::Texture2D* texture : *asset_bundle->textures())
@@ -93,8 +94,6 @@ namespace Li
 		{
 			Localization::AddLocale(Loaders::LoadLocale(locale));
 		}
-
-		delete[] buffer;
 	}
 
 	void ResourceManager::BeginStaggeredLoad(const std::string& lab_file_path)
@@ -113,7 +112,8 @@ namespace Li
 		in_file.close();
 
 		s_Data->LoadData.Bundle = flatbuffers::GetRoot<Assets::AssetBundle>(s_Data->LoadData.Buffer);
-		if (!s_Data->LoadData.Bundle->Verify(flatbuffers::Verifier(s_Data->LoadData.Buffer, filesize)))
+		flatbuffers::Verifier verifier(s_Data->LoadData.Buffer, filesize);
+		if (!s_Data->LoadData.Bundle->Verify(verifier))
 			throw std::runtime_error("Corrupt asset base " + lab_file_path + ". Verify or reinstall game files.");
 		
 		s_Data->LoadData.TextureIt = s_Data->LoadData.Bundle->textures()->begin();

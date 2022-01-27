@@ -4,7 +4,7 @@
 #include "Lithium/Core/Assert.h"
 
 #include "glm/glm.hpp"
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 // Sources:
 // https://adrianb.io/2014/08/09/perlinnoise.html

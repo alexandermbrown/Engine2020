@@ -6,7 +6,7 @@
 #include "Lithium/Renderer/Pipeline.h"
 
 #include "glm/glm.hpp"
-#include "hb.h"
+#include "harfbuzz/hb.h"
 
 #include <vector>
 

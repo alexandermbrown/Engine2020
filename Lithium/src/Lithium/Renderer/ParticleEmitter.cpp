@@ -82,7 +82,7 @@ namespace Li
 
 		float delta = std::min(Li::Duration::Cast<Li::Duration::fsec>(dt).count(), 0.2f);
 
-		m_EmitCount = std::max(0.0f, m_EmitCount - std::floorf(m_EmitCount));
+		m_EmitCount = std::max(0.0f, m_EmitCount - std::floor(m_EmitCount));
 		if (m_Continuous)
 		{
 			m_EmitCount += m_EmitRate * delta;

@@ -93,8 +93,8 @@ namespace Li
 		}
 
 		// Used to convert color space to RGBA.
-		m_Video.SwsContext = sws_getContext(m_Video.Width, m_Video.Height, m_Video.CodecCtx->pix_fmt, m_Video.Width, m_Video.Height, AV_PIX_FMT_RGBA, 2, NULL, NULL, NULL);
-		if (!m_Video.SwsContext)
+		m_Video.SwsCtx = sws_getContext(m_Video.Width, m_Video.Height, m_Video.CodecCtx->pix_fmt, m_Video.Width, m_Video.Height, AV_PIX_FMT_RGBA, 2, NULL, NULL, NULL);
+		if (!m_Video.SwsCtx)
 		{
 			Log::CoreError("Failed to create color space context ({})", path);
 			FreeInternal();
@@ -264,10 +264,10 @@ namespace Li
 			delete m_Video.PixelBuffer;
 			m_Video.PixelBuffer = nullptr;
 		}
-		if (m_Video.SwsContext)
+		if (m_Video.SwsCtx)
 		{
-			sws_freeContext(m_Video.SwsContext);
-			m_Video.SwsContext = nullptr;
+			sws_freeContext(m_Video.SwsCtx);
+			m_Video.SwsCtx = nullptr;
 		}
 		if (m_Frame)
 			av_frame_free(&m_Frame);
@@ -329,7 +329,7 @@ namespace Li
 			m_Frame->linesize[i] = -m_Frame->linesize[i];
 		}
 
-		sws_scale(m_Video.SwsContext, m_Frame->data, m_Frame->linesize, 0, m_Video.Height, &m_Video.PixelBuffer, &dst_stride);
+		sws_scale(m_Video.SwsCtx, m_Frame->data, m_Frame->linesize, 0, m_Video.Height, &m_Video.PixelBuffer, &dst_stride);
 
 		return true;
 	}
@@ -378,7 +378,7 @@ namespace Li
 				m_Audio.MaxNumSamples = m_Frame->nb_samples;
 
 				result = av_samples_alloc_array_and_samples(&m_Audio.DstData, nullptr,
-					m_Audio.Channels, m_Frame->nb_samples, m_Audio.OutFormat, 0);
+					m_Audio.Channels, m_Frame->nb_samples, (AVSampleFormat)m_Audio.OutFormat, 0);
 				if (result < 0 || m_Audio.DstData == nullptr)
 				{
 					Log::CoreError("Failed to allocate samples for audio resampling");
@@ -392,7 +392,7 @@ namespace Li
 			if (out_num_samples > m_Audio.MaxNumSamples)
 			{
 				av_freep(&m_Audio.DstData[0]);
-				result = av_samples_alloc(m_Audio.DstData, nullptr, m_Audio.Channels, m_Frame->nb_samples, m_Audio.OutFormat, 1);
+				result = av_samples_alloc(m_Audio.DstData, nullptr, m_Audio.Channels, m_Frame->nb_samples, (AVSampleFormat)m_Audio.OutFormat, 1);
 			}
 
 			result = swr_convert(m_Audio.SwrCtx, m_Audio.DstData, out_num_samples, const_cast<const uint8_t**>(m_Frame->data), m_Frame->nb_samples);

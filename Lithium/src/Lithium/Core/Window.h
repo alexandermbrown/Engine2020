@@ -4,7 +4,7 @@
 #include "Lithium/Renderer/GraphicsContext.h"
 #include "Lithium/Renderer/RendererAPI.h"
 
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 namespace Li
 {

@@ -7,6 +7,11 @@ namespace Li
 {
 	namespace Log
 	{
+		void InitLog();
+
+		spdlog::logger* GetCoreLogger();
+		spdlog::logger* GetClientLogger();
+		
 		template<typename... Args>
 		inline void Trace(Args&&... args)
 		{
@@ -78,10 +83,5 @@ namespace Li
 		{
 			GetCoreLogger()->critical(std::forward<Args>(args)...);
 		}
-
-		void InitLog();
-
-		spdlog::logger* GetCoreLogger();
-		spdlog::logger* GetClientLogger();
 	};
 }

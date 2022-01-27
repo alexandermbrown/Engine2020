@@ -1,6 +1,7 @@
 workspace "Article"
 	architecture "x86_64"
 	startproject "Article"
+	linkgroups "On"
 
 	configurations {
 		"Debug",
@@ -27,7 +28,7 @@ IncludeDir["libogg"] = "Lithium/vendor/libogg/include"
 IncludeDir["libvorbis"] = "Lithium/vendor/libvorbis/include"
 IncludeDir["simpleini"] = "Lithium/vendor/simpleini/include"
 IncludeDir["readerwriterqueue"] = "Lithium/vendor/readerwriterqueue/include"
-IncludeDir["harfbuzz"] = "Lithium/vendor/harfbuzz/src"
+IncludeDir["harfbuzz"] = "Lithium/vendor/harfbuzz/include"
 IncludeDir["utfcpp"] = "Lithium/vendor/utfcpp/include"
 IncludeDir["libav"] = "Lithium/vendor/libav/include"
 
@@ -52,9 +53,6 @@ group "vendor"
 include "Lithium/vendor/glad"
 include "Lithium/vendor/imgui"
 include "Lithium/vendor/zlib"
-include "Lithium/vendor/libvorbis"
-include "Lithium/vendor/openal-soft"
-include "Lithium/vendor/harfbuzz"
 include "AssetBase/vendor/msdf-atlas-gen"
 include "AssetBase/vendor/yaml-cpp"
 include "Article/vendor/box2d"
@@ -62,6 +60,31 @@ include "Article/vendor/nativefiledialog"
 group  ""
 
 ------------------------------ Lithium ----------------------------------
+
+LithiumLibs = {
+	"glad",
+	"zlib",
+	"ogg",
+	"vorbis",
+	"openal",
+	"SDL2",
+	"harfbuzz",
+	"vorbis",
+	"vorbisenc",
+	"vorbisfile"
+}
+
+LithiumLibs_NOTDIST = { "imgui" }
+
+LithiumLibDirs = {
+	"Lithium/vendor/libogg/lib/%{cfg.system}-%{cfg.architecture}",
+	"Lithium/vendor/libvorbis/lib/%{cfg.system}-%{cfg.architecture}",
+	"Lithium/vendor/openal-soft/lib/%{cfg.system}-%{cfg.architecture}",
+	"Lithium/vendor/harfbuzz/lib/%{cfg.system}-%{cfg.architecture}",
+	"Lithium/vendor/SDL2/lib/%{cfg.system}-%{cfg.architecture}"
+}
+
+LithiumLibDirs_NOTDIST = { "%{IncludeDir.imgui}" }
 
 project "Lithium"
 	location "Lithium"
@@ -105,23 +128,6 @@ project "Lithium"
 		"%{IncludeDir.libav}"
 	}
 
-	links {
-		"glad",
-		"zlib",
-		"libvorbis",
-		"openal-soft",
-		"SDL2",
-		"harfbuzz",
-		-- libav
-		"avcodec",
-		"avdevice",
-		"avformat",
-		"avutil",
-		"opus",
-		"swresample",
-		"swscale"
-	}
-
 	filter "system:windows"
 		systemversion "latest"
 
@@ -143,38 +149,55 @@ project "Lithium"
 			"Secur32.lib",
 			"mfplat.lib",
 			"mfuuid.lib",
-			"bcrypt.lib"
+			"bcrypt.lib",
+			"avcodec",
+			"avdevice",
+			"avformat",
+			"avutil",
+			"opus",
+			"swresample",
+			"swscale"
 		}
 
 	filter { "system:windows", "configurations:Dist"}
 		libdirs "Lithium/vendor/libav/build/Release-windows-x86_64"
 	filter { "system:windows", "configurations:not Dist"}
 		libdirs ("Lithium/vendor/libav/build/" .. outputdir)
+	
+	filter "system:linux"
+		-- buildoptions { "-fpermissive" }
+		excludes {
+			"Lithium/src/Lithium/Platform/D3D11/*",
+			"Lithium/src/Lithium/VideoPlayer/*"
+		}
+		defines {
+			"LI_PLATFORM_LINUX"
+		}
 
 	filter "configurations:Debug"
 		defines "LI_DEBUG"
 		runtime "Debug"
 		symbols "on"
-		links "imgui"
-		includedirs { "%{IncludeDir.imgui}" }
-
-		links "vpxmdd"
+		
+		-- links(LithiumLibs_NOTDIST)
+		includedirs(LithiumLibDirs_NOTDIST)
+		-- links "vpxmdd"
 
 	filter "configurations:Release"
 		defines "LI_RELEASE"
 		runtime "Release"
 		optimize "on"
-		links "imgui"
-		includedirs { "%{IncludeDir.imgui}" }
 
-		links "vpxmd"
+		-- links(LithiumLibs_NOTDIST)
+		includedirs(LithiumLibDirs_NOTDIST)
+		-- links "vpxmd"
 
 	filter "configurations:Dist"
 		defines "LI_DIST"
 		runtime "Release"
 		optimize "on"
 
-		links "vpxmd"
+		-- links "vpxmd"
 
 ------------------------------ Article ------------------------------
 
@@ -218,28 +241,42 @@ project "Article"
 		"%{IncludeDir.yamlcpp}"
 	}
 
+	links(LithiumLibs)
 	links {
 		"Lithium",
 		"box2d",
-		"lua51",
-		"luajit",
+		"lua",
 		"nativefiledialog",
 		"yaml-cpp"
+	}
+
+	libdirs(LithiumLibDirs)
+	libdirs {
+		-- "Article/vendor/steam/lib/%{cfg.system}-%{cfg.architecture}",
+		"Article/vendor/lua/lib/%{cfg.system}-%{cfg.architecture}"
 	}
 
 	filter "system:windows"
 		systemversion "latest"
 
 		defines {
-			"LI_PLATFORM_WINDOWS",
-			"HZ_PLATFORM_WINDOWS"
+			"LI_PLATFORM_WINDOWS"
 		}
 
-		libdirs { 
-			"Article/vendor/steam/lib/win64",
-			"Article/vendor/lua/lib/win64"
+		links {
+			"lua51",
+			"steam_api64"
 		}
-		links { "steam_api64" }
+	
+	filter "system:linux"
+		defines {
+			"LI_PLATFORM_LINUX"
+		}
+		linkoptions "-Wl,-rpath,'$$ORIGIN'"
+		links {
+			"dl",
+			"pthread"
+		}
 
 	filter "configurations:Debug"
 		defines {
@@ -250,7 +287,9 @@ project "Article"
 		}
 		runtime "Debug"
 		symbols "on"
-		includedirs { "%{IncludeDir.imgui}" }
+		
+		links(LithiumLibs_NOTDIST)
+		includedirs(LithiumLibDirs_NOTDIST)
 
 	filter "configurations:Release"
 		defines {
@@ -260,7 +299,9 @@ project "Article"
 		}
 		runtime "Release"
 		optimize "on"
-		includedirs { "%{IncludeDir.imgui}" }
+		
+		links(LithiumLibs_NOTDIST)
+		includedirs(LithiumLibDirs_NOTDIST)
 
 	filter "configurations:Dist"
 		defines {
@@ -310,23 +351,37 @@ project "AssetBase"
 		"msdf-atlas-gen",
 		"zlib",
 		"yaml-cpp",
-		"ShaderConductor"
-		-- "SPIRV-Tools",
-		-- "SPIRV-Tools-opt"
+		"ShaderConductor",
+		"freetype",
+		"assimp"
 	}
 	
-	libdirs "AssetBase/vendor/ShaderConductor/lib/win64"
+	libdirs "AssetBase/vendor/ShaderConductor/lib/Debug-%{cfg.system}-%{cfg.architecture}"
+	libdirs "AssetBase/vendor/freetype/lib/%{cfg.system}-%{cfg.architecture}"
+	libdirs "AssetBase/vendor/assimp/lib/%{cfg.system}-%{cfg.architecture}"
 	filter "system:windows"
 		systemversion "latest"
 
 		links {
 			"d3d11.lib",
 			"dxgi.lib",
-			"d3dcompiler.lib",
-			"AssetBase/vendor/freetype/win64/freetype.lib",
-			"AssetBase/vendor/assimp/win64/assimp-vc142-mt.lib",
+			"d3dcompiler.lib"
 		}
 
+		defines {
+			"LI_PLATFORM_WINDOWS"
+		}
+	
+	filter "system:linux"
+		linkoptions "-Wl,-rpath,'$$ORIGIN'"
+		defines {
+			"LI_PLATFORM_LINUX"
+		}
+
+		links {
+			"pthread"
+		}
+	
 	--filter { "system:windows", "configurations:Debug" }
 		--libdirs "AssetBase/vendor/ShaderConductor/lib/win64-debug"
 		-- links {

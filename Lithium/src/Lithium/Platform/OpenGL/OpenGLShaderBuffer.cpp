@@ -11,6 +11,9 @@ namespace Li
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_BufferID);
 
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_DRAW);
+
+		static int count = 1;
+		Log::CoreDebug("Create SSBO {}", count++);
 	}
 
 	void OpenGLShaderBuffer::BindBase(uint32_t slot) const

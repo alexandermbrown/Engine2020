@@ -5,7 +5,7 @@
 #include "Lithium/Core/Assert.h"
 #include "Lithium/Core/Log.h"
 
-bool StringToBool(const std::string& value, bool default)
+bool StringToBool(const std::string& value, bool default_val)
 {
 	if (value == "true")
 		return true;
@@ -13,36 +13,36 @@ bool StringToBool(const std::string& value, bool default)
 		return false;
 
 	Li::Log::Error("Invalid boolean {}. Must be either true or false.", value);
-	return default;
+	return default_val;
 }
 
-int StringToInt(const std::string & value, int default)
+int StringToInt(const std::string & value, int default_val)
 {
 	try {
 		return std::stoi(value);
 	}
 	catch (std::invalid_argument) {
 		Li::Log::Error("Invalid integer {}.", value);
-		return default;
+		return default_val;
 	}
 	catch (std::out_of_range) {
 		Li::Log::Error("Integer {} out of range.", value);
-		return default;
+		return default_val;
 	}
 }
 
-float StringToFloat(const std::string & value, float default)
+float StringToFloat(const std::string & value, float default_val)
 {
 	try {
 		return std::stof(value);
 	}
 	catch (const std::invalid_argument&) {
 		Li::Log::Error("Invalid float {}.", value);
-		return default;
+		return default_val;
 	}
 	catch (const std::out_of_range&) {
 		Li::Log::Error("Float {} out of range.", value);
-		return default;
+		return default_val;
 	}
 }
 
@@ -80,9 +80,9 @@ ConfigStore ConfigLoader::LoadStore(const std::filesystem::path& store_path) con
 	else
 	{
 		Li::Log::Warn("Config not found at {}", store_path);
-		Li::Log::Warn("Setting all config values to default.");
-		for (auto& default : m_Defaults)
-			store.SetVariant(default.Name, default.Default);
+		Li::Log::Warn("Setting all config values to default_val.");
+		for (auto& default_val : m_Defaults)
+			store.SetVariant(default_val.Name, default_val.Default);
 
 		SaveStore(store, store_path);
 	}
@@ -103,18 +103,18 @@ void ConfigLoader::SaveStore(const ConfigStore& store, const std::filesystem::pa
 	YAML::Emitter emitter;
 	emitter << YAML::BeginMap;
 
-	for (auto& default: m_Defaults)
+	for (auto& default_val: m_Defaults)
 	{
-		emitter << YAML::Key << default.Name;
+		emitter << YAML::Key << default_val.Name;
 
-		if (std::holds_alternative<bool>(default.Default))
-			emitter << YAML::Value << BoolToString(store.Get<bool>(default.Name));
-		if (std::holds_alternative<int>(default.Default))
-			emitter << YAML::Value << std::to_string(store.Get<int>(default.Name));
-		if (std::holds_alternative<float>(default.Default))
-			emitter << YAML::Value << std::to_string(store.Get<float>(default.Name));
-		if (std::holds_alternative<std::string>(default.Default))
-			emitter << YAML::Value << store.GetRef<std::string>(default.Name);
+		if (std::holds_alternative<bool>(default_val.Default))
+			emitter << YAML::Value << BoolToString(store.Get<bool>(default_val.Name));
+		if (std::holds_alternative<int>(default_val.Default))
+			emitter << YAML::Value << std::to_string(store.Get<int>(default_val.Name));
+		if (std::holds_alternative<float>(default_val.Default))
+			emitter << YAML::Value << std::to_string(store.Get<float>(default_val.Name));
+		if (std::holds_alternative<std::string>(default_val.Default))
+			emitter << YAML::Value << store.GetRef<std::string>(default_val.Name);
 	}
 	emitter << YAML::EndMap;
 	emitter << YAML::Newline;
@@ -128,24 +128,24 @@ void ConfigLoader::LoadStoreStream(ConfigStore& store, std::istream& stream) con
 
 	YAML::Node config = YAML::Load(stream);
 
-	for (auto& default : m_Defaults)
+	for (auto& default_val : m_Defaults)
 	{
-		YAML::Node var = config[default.Name];
+		YAML::Node var = config[default_val.Name];
 		if (var && var.IsScalar())
 		{
-			if (std::holds_alternative<bool>(default.Default))
-				store.Set(default.Name, StringToBool(var.Scalar(), std::get<bool>(default.Default)));
-			if (std::holds_alternative<int>(default.Default))
-				store.Set(default.Name, StringToInt(var.Scalar(), std::get<int>(default.Default)));
-			if (std::holds_alternative<float>(default.Default))
-				store.Set(default.Name, StringToFloat(var.Scalar(), std::get<float>(default.Default)));
-			if (std::holds_alternative<std::string>(default.Default))
-				store.Set(default.Name, var.Scalar());
+			if (std::holds_alternative<bool>(default_val.Default))
+				store.Set(default_val.Name, StringToBool(var.Scalar(), std::get<bool>(default_val.Default)));
+			if (std::holds_alternative<int>(default_val.Default))
+				store.Set(default_val.Name, StringToInt(var.Scalar(), std::get<int>(default_val.Default)));
+			if (std::holds_alternative<float>(default_val.Default))
+				store.Set(default_val.Name, StringToFloat(var.Scalar(), std::get<float>(default_val.Default)));
+			if (std::holds_alternative<std::string>(default_val.Default))
+				store.Set(default_val.Name, var.Scalar());
 		}
 		else
 		{
-			Li::Log::Warn("Config variable {} not found or invalid in user config. Setting value to default.");
-			store.SetVariant(default.Name, default.Default);
+			Li::Log::Warn("Config variable {} not found or invalid in user config. Setting value to default_val.");
+			store.SetVariant(default_val.Name, default_val.Default);
 		}
 	}
 }

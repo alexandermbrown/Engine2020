@@ -32,6 +32,8 @@ private:
 	void LoadConfig();
 	void SaveConfig();
 
+	std::filesystem::path GetConfigPath();
+
 	ConfigLoader m_ConfigLoader;
 	ConfigStore m_ConfigStore;
 

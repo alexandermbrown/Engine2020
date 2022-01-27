@@ -4,9 +4,18 @@
 
 #include "glm/glm.hpp"
 #include <unordered_map>
+#include <string>
 
 namespace Li
 {
+	struct ShaderStage
+	{
+		std::string Type;
+		unsigned int GlType;
+		const char* Source;
+		unsigned int GlId;
+	};
+
 	struct GLSLInput
 	{
 		const char* VertexSrc{ nullptr };
@@ -40,7 +49,7 @@ namespace Li
 		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 
 	private:
-		void Compile(const std::unordered_map<unsigned int, const char*>& shader_sources);
+		void Compile(std::vector<ShaderStage>&& shader_sources);
 
 		uint32_t m_RendererID;
 		std::string m_Name;

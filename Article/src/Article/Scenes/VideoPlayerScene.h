@@ -1,7 +1,7 @@
 #pragma once
 #include "Lithium/Core/Layer.h"
 #include "Lithium/Core/Scene.h"
-#include "Lithium/VideoPlayer/AVPlayer.h"
+// #include "Lithium/VideoPlayer/AVPlayer.h"
 #ifndef LI_DIST
 
 class VideoPlayerLayer : public Li::Layer
@@ -17,7 +17,7 @@ public:
 #endif
 
 private:
-	Li::AVPlayer m_VideoPlayer;
+	// Li::AVPlayer m_VideoPlayer;
 };
 
 class VideoPlayerScene : public Li::Scene

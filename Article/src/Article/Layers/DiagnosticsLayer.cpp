@@ -55,12 +55,12 @@ void DiagnosticsLayer::OnImGuiRender()
 	{
 		ImGui::Begin("Performance", &m_PerformanceOpen);
 
-		ImGui::Text(("Avg. FPS: " + std::to_string(1 / m_Average)).c_str());
+		ImGui::Text("Avg. FPS: %f", 1.0f / m_Average);
 		ImGui::Separator();
 
-		ImGui::Text(("Avg. Frame Time: " + std::to_string(m_Average)).c_str());
-		ImGui::Text(("Max. Frame Time: " + std::to_string(m_DisplayMax)).c_str());
-		ImGui::Text(("Min. Frame Time: " + std::to_string(m_DisplayMin)).c_str());
+		ImGui::Text("Avg. Frame Time: %f", m_Average);
+		ImGui::Text("Max. Frame Time: %f", m_DisplayMax);
+		ImGui::Text("Min. Frame Time: %f", m_DisplayMin);
 		ImGui::Separator();
 
 		ImGui::Text("Graph Settings");
@@ -135,9 +135,9 @@ void DiagnosticsLayer::OnImGuiRender()
 		ImGui::BeginChild("cvar_list");
 		for (auto&& [name, var] : config)
 		{
-			ImGui::Text(name.c_str());
+			ImGui::Text("%s", name.c_str());
 			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
-			ImGui::Text(VariantToString(var).c_str());
+			ImGui::Text("%s", VariantToString(var).c_str());
 		}
 		ImGui::EndChild();
 

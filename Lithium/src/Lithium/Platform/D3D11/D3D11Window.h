@@ -7,7 +7,7 @@
 
 #include "D3D11Context.h"
 
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 namespace Li
 {

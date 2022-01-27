@@ -17,7 +17,7 @@ namespace Systems::UILayout
 
 void Systems::UILayout::OnDeinit(entt::registry& registry)
 {
-	auto& view = registry.view<cp::ui_context>();
+	const auto& view = registry.view<cp::ui_context>();
 	registry.destroy(view.begin(), view.end());
 }
 

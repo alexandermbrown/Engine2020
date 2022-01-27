@@ -2,9 +2,9 @@
 #
 # These are the default settings for the game and may break something if changed.
 # Actual config is located at: (edit at your own risk)
-# [Windows] %APPDATA%/Horizons/config/config.yaml
+# [Windows] %APPDATA%/Article/config/config.yaml
 # [Mac]     ?
-# [Linux]   ?
+# [Linux]   ~/.config/Article/config/config.yaml
 
 # Graphics
 window_width: { type: int, default: 1280 }

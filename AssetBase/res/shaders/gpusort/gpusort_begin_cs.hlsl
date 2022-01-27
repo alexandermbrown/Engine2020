@@ -1,4 +1,4 @@
-#include "globals.hlsli"
+#include "Globals.hlsli"
 #include "GPUSortSI.h"
 
 ByteAddressBuffer counterBuffer : register(t0);

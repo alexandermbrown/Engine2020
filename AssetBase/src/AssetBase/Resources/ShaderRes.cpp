@@ -5,21 +5,26 @@
 #include "AssetBase/Util/OptionalField.h"
 
 #include "ShaderConductor/ShaderConductor.hpp"
+
+#ifdef LI_PLATFORM_WINDOWS
 #include <d3dcompiler.h>
 #include <wrl/client.h>
-
-#include <stdint.h>
-#include <filesystem>
-#include <sstream>
-
 #include <comdef.h>
+using namespace Microsoft::WRL;
+#endif
+
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <stdint.h>
+#include <regex>
 
 #undef max
 
 namespace fs = std::filesystem;
 namespace fb = flatbuffers;
 namespace SC = ShaderConductor;
-using namespace Microsoft::WRL;
 
 struct ShaderStore
 {
@@ -47,6 +52,7 @@ fs::path ResolveInclude(const char* path)
 	return "";
 }
 
+#ifdef LI_PLATFORM_WINDOWS
 class ShaderInclude : public ID3DInclude
 {
 public:
@@ -84,6 +90,7 @@ public:
 		return S_OK;
 	}
 };
+#endif
 
 SC::Blob LoadInclude(const char* include_name)
 {
@@ -113,7 +120,9 @@ SC::Blob LoadInclude(const char* include_name)
 
 static void CompileHLSL(fb::FlatBufferBuilder& builder, ShaderStore& store, const fs::path& entry_path, bool debug_mode);
 static std::string GetStageCharacters(const std::string& filename);
+#ifdef LI_PLATFORM_WINDOWS
 fb::Offset<fb::Vector<uint8_t>> CompileD3D11(fb::FlatBufferBuilder& builder, const fs::path& entry_path, const std::string& entrypoint, const std::string& target, bool debug_mode);
+#endif
 static fb::Offset<fb::Vector<fb::Offset<Assets::ShaderSampler>>> LoadSamplers(fb::FlatBufferBuilder& builder, const YAML::Node& shader);
 
 fb::Offset<Assets::Shader> SerializeShader(
@@ -233,7 +242,9 @@ static void CompileHLSL(fb::FlatBufferBuilder& builder, ShaderStore& store, cons
 		if (dxil_offset->o)
 			throw std::runtime_error(filename + ": invalid HLSL shader filename: character '" + stage_char + "' appears more than once.");
 
+		#ifdef LI_PLATFORM_WINDOWS
 		*dxil_offset = CompileD3D11(builder, entry_path, entrypoint, target, debug_mode);
+		#endif
 
 		// SHADER CONDUCTOR //
 		SC::Compiler::Compile(source, options, targets, TargetCount, results);
@@ -243,13 +254,27 @@ static void CompileHLSL(fb::FlatBufferBuilder& builder, ShaderStore& store, cons
 			if (results[i].hasError)
 			{
 				std::string error_msg((const char*)results[i].errorWarningMsg.Data(), results[i].errorWarningMsg.Size());
+				error_msg = "error: \"" + error_msg + "\"";
 				throw std::runtime_error(error_msg);
 			}
 		}
 
 		// GLSL Source code.
 		const SC::Compiler::ResultDesc& glsl_result = results[GlslIndex];
-		*glsl_offset = builder.CreateString((const char*)glsl_result.target.Data(), glsl_result.target.Size());
+
+		std::string glsl_out((const char*)glsl_result.target.Data(), glsl_result.target.Size());
+		std::size_t newline = glsl_out.find_first_of('\n');
+		std::string first_line = glsl_out.substr(0, newline);
+		std::string other_lines = glsl_out.substr(newline);
+		std::replace(other_lines.begin(), other_lines.end(), '\n', ' ');
+		std::replace(other_lines.begin(), other_lines.end(), '\r', ' ');
+
+		std::regex r("layout\\(binding\\s*=\\s*[0-9]+,\\s*std430\\)\\s*buffer\\s*\\w+\\s\\{\\s*int counter;\\s*\\}\\s*counter_var_\\w+;\\s+");
+		
+		std::string without_counters = std::regex_replace(other_lines, r, " ");
+
+		std::string modified = first_line + "\n" + without_counters;
+		*glsl_offset = builder.CreateString(modified);
 
 		fs::path cache_path = "./.lab-cache/shaders/" + filename + ".glsl";
 		fs::create_directories("./.lab-cache/shaders/");
@@ -288,6 +313,7 @@ std::string GetStageCharacters(const std::string& filename)
 	return filename.substr(underscore_pos + 1, dot_pos - underscore_pos - 2);
 }
 
+#ifdef LI_PLATFORM_WINDOWS
 fb::Offset<fb::Vector<uint8_t>> CompileD3D11(fb::FlatBufferBuilder& builder, const fs::path& entry_path,
 	const std::string& entrypoint, const std::string& target, bool debug_mode)
 {
@@ -320,6 +346,7 @@ fb::Offset<fb::Vector<uint8_t>> CompileD3D11(fb::FlatBufferBuilder& builder, con
 
 	return dxil_offset;
 }
+#endif
 
 fb::Offset<fb::Vector<fb::Offset<Assets::ShaderSampler>>>
 	LoadSamplers(fb::FlatBufferBuilder& builder, const YAML::Node& shader)
@@ -331,20 +358,20 @@ fb::Offset<fb::Vector<fb::Offset<Assets::ShaderSampler>>>
 		int binding = sampler.first.as<int>();
 		if (binding < 0 || binding > UINT8_MAX)
 		{
-			throw std::runtime_error((std::stringstream() <<
-				"Sampler binding " << binding << " is out of bounds for uint8").str());
+			throw std::runtime_error(std::string("Sampler with binding ") 
+				 + std::to_string(binding) + " is out of bounds for uint8");
 		}
 		if (!sampler.second.IsSequence())
 		{
-			throw std::runtime_error((std::stringstream() <<
-				"Sampler with binding " << binding << " is not a sequence").str());
+			throw std::runtime_error(std::string("Sampler with binding ") 
+				 + std::to_string(binding) + " is not a sequence");
 		}
 
 		constexpr int NumSamplerStrings = 2;
 		if (sampler.second.size() != NumSamplerStrings)
 		{
-			throw std::runtime_error((std::stringstream() <<
-				"Sampler with binding " << binding << " does not have 2 entries").str());
+			throw std::runtime_error(std::string("Sampler with binding ") 
+				 + std::to_string(binding) + " does not have 2 entries");
 		}
 
 		std::string combined = "SPIRV_Cross_Combined";
