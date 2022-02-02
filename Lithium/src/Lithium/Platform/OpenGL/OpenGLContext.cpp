@@ -54,8 +54,8 @@ namespace Li
 
 		struct GPUInfo
 		{
-			int max_compute_ssbo_count;
-			int max_ssbo_bindings;
+			int max_compute_ssbo_count = -1;
+			int max_ssbo_bindings = -1;
 		};
 		GPUInfo info;
 
