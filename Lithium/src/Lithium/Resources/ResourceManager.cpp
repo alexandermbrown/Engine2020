@@ -84,11 +84,11 @@ namespace Li
 			s_Data->Fonts[font->name()->c_str()] = Loaders::LoadFont(font);
 		}
 
-		for (const Assets::Audio* audio : *asset_bundle->audio())
-		{
-			const auto* data = audio->data();
-			s_Data->Audio[audio->name()->c_str()] = AudioBuffer::FromOggMemory(data->data(), (uint32_t)data->size());
-		}
+		//for (const Assets::Audio* audio : *asset_bundle->audio())
+		//{
+		//	const auto* data = audio->data();
+		//	s_Data->Audio[audio->name()->c_str()] = AudioBuffer::FromOggMemory(data->data(), (uint32_t)data->size());
+		//}
 
 		for (const Assets::Locale* locale : *asset_bundle->locales())
 		{
@@ -158,14 +158,14 @@ namespace Li
 
 			s_Data->LoadData.FontIt++;
 		}
-		else if (s_Data->LoadData.AudioIt != s_Data->LoadData.Bundle->audio()->end())
-		{
-			const Assets::Audio* audio = *s_Data->LoadData.AudioIt;
-			const auto* data = audio->data();
-			s_Data->Audio[audio->name()->c_str()] = AudioBuffer::FromOggMemory(data->data(), (uint32_t)data->size());
+		//else if (s_Data->LoadData.AudioIt != s_Data->LoadData.Bundle->audio()->end())
+		//{
+		//	const Assets::Audio* audio = *s_Data->LoadData.AudioIt;
+		//	const auto* data = audio->data();
+		//	s_Data->Audio[audio->name()->c_str()] = AudioBuffer::FromOggMemory(data->data(), (uint32_t)data->size());
 
-			s_Data->LoadData.AudioIt++;
-		}
+		//	s_Data->LoadData.AudioIt++;
+		//}
 		else if (s_Data->LoadData.LocaleIt != s_Data->LoadData.Bundle->locales()->end())
 		{
 			const Assets::Locale* locale = *s_Data->LoadData.LocaleIt;
@@ -193,7 +193,7 @@ namespace Li
 		Log::CoreInfo("    # Shaders         | {}", s_Data->Shaders.size());
 		Log::CoreInfo("    # TextureAtlases  | {}", s_Data->TextureAtlases.size());
 		Log::CoreInfo("    # Fonts           | {}", s_Data->Fonts.size());
-		Log::CoreInfo("    # Audio           | {}", s_Data->Audio.size());
+		//Log::CoreInfo("    # Audio           | {}", s_Data->Audio.size());
 		Log::CoreInfo("    # Locales         | {}", Localization::GetLocaleCount());
 		Log::CoreInfo("--------------------------------");
 	}													  

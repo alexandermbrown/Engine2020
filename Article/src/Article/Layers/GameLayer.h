@@ -8,7 +8,6 @@
 #endif
 
 #include "Lithium/Core/Layer.h"
-#include "Lithium/Audio/AudioSource.h"
 #include "Lithium/Renderer/Model.h"
 #include "Lithium/Renderer/ParticleEmitter.h"
 #include "Lithium/Utility/Timer.h"
@@ -29,8 +28,6 @@ public:
 #endif
 
 private:
-	Li::Ref<Li::AudioSource> m_AudioSource;
-
 	entt::registry m_Registry;
 
 	TickThread m_TickThread;

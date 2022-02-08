@@ -59,17 +59,22 @@ Copy-Item "$libav_build_path\Release-windows-x86_64\*.pdb" -Destination "build\D
 
 # Copy DLLs
 Write-Host "[Win-Setup.ps1] Copying DLL files..." -ForegroundColor DarkGreen
-$sdl_dll_path = "Lithium\vendor\SDL2\lib\win64\SDL2.dll"
+$sdl_dll_path = "Lithium\vendor\SDL2\lib\windows-x86_64\SDL2.dll"
 Copy-Item $sdl_dll_path -Destination "build\Debug-windows-x86_64\Article\"
 Copy-Item $sdl_dll_path -Destination "build\Release-windows-x86_64\Article\"
 Copy-Item $sdl_dll_path -Destination "build\Dist-windows-x86_64\Article\"
 
-$shader_conductor_dll_path = "AssetBase\vendor\ShaderConductor\lib\win64\*.dll"
+$harfbuzz_dll_path = "Lithium\vendor\harfbuzz\lib\windows-x86_64\harfbuzz.dll"
+Copy-Item $harfbuzz_dll_path -Destination "build\Debug-windows-x86_64\Article\"
+Copy-Item $harfbuzz_dll_path -Destination "build\Release-windows-x86_64\Article\"
+Copy-Item $harfbuzz_dll_path -Destination "build\Dist-windows-x86_64\Article\"
+
+$shader_conductor_dll_path = "AssetBase\vendor\ShaderConductor\lib\windows-x86_64\*.dll"
 Copy-Item $shader_conductor_dll_path -Destination "build\Debug-windows-x86_64\AssetBase"
 Copy-Item $shader_conductor_dll_path -Destination "build\Release-windows-x86_64\AssetBase"
 Copy-Item $shader_conductor_dll_path -Destination "build\Dist-windows-x86_64\AssetBase"
 
-$assimp_dll_path = "AssetBase\vendor\assimp\win64\assimp-vc142-mt.dll"
+$assimp_dll_path = "AssetBase\vendor\assimp\lib\windows-x86_64\assimp.dll"
 Copy-Item $assimp_dll_path -Destination "build\Debug-windows-x86_64\AssetBase"
 Copy-Item $assimp_dll_path -Destination "build\Release-windows-x86_64\AssetBase"
 Copy-Item $assimp_dll_path -Destination "build\Dist-windows-x86_64\AssetBase"

@@ -232,25 +232,25 @@ namespace Li
 		}
 
 		// AUDIO //
-		if (m_Audio.HasAudio && (!m_Audio.Queue || m_Audio.Queue->NeedsAudio()))
-		{
-			AVPacket* packet = m_Reader->DequeueAudio();
-			if (packet)
-			{
-				m_Playing = ProcessAudioPacket(packet);
+		//if (m_Audio.HasAudio && (!m_Audio.Queue || m_Audio.Queue->NeedsAudio()))
+		//{
+		//	AVPacket* packet = m_Reader->DequeueAudio();
+		//	if (packet)
+		//	{
+		//		m_Playing = ProcessAudioPacket(packet);
 
-				// Play media when audio queue is full.
-				if (m_Playing && !m_Audio.Queue->IsPlaying() && !m_Audio.Queue->NeedsAudio())
-				{
-					m_Audio.Queue->Play();
-					m_Audio.Started = true;
-				}
+		//		// Play media when audio queue is full.
+		//		if (m_Playing && !m_Audio.Queue->IsPlaying() && !m_Audio.Queue->NeedsAudio())
+		//		{
+		//			m_Audio.Queue->Play();
+		//			m_Audio.Started = true;
+		//		}
 
-				av_packet_free(&packet);
-			}
-			else if (!m_Reader->IsFinished())
-				Log::CoreWarn("No audio packet ready.");
-		}
+		//		av_packet_free(&packet);
+		//	}
+		//	else if (!m_Reader->IsFinished())
+		//		Log::CoreWarn("No audio packet ready.");
+		//}
 
 		return m_Playing;
 	}
@@ -277,7 +277,7 @@ namespace Li
 
 	void AVPlayer::FreeAudioInternal()
 	{
-		m_Audio.Queue.reset();
+		//m_Audio.Queue.reset();
 
 		if (m_Audio.DstData)
 		{
@@ -402,35 +402,35 @@ namespace Li
 				return true;
 			}
 
-			if (m_Audio.Queue == nullptr)
-				m_Audio.Queue = MakeUnique<AudioQueue>(m_Audio.OutBytesPerSample, m_Audio.Channels, m_Audio.Frequency, out_num_samples, m_Audio.Frequency);
+			//if (m_Audio.Queue == nullptr)
+			//	m_Audio.Queue = MakeUnique<AudioQueue>(m_Audio.OutBytesPerSample, m_Audio.Channels, m_Audio.Frequency, out_num_samples, m_Audio.Frequency);
 
-			if (m_Audio.Started)
-			{
-				// Sync video pts to audio pts.
-				if (m_Audio.Queue->SubmitAudio(m_Audio.DstData[0], out_num_samples))
-					m_Video.NextPTS = pts;
-			}
-			// Check if queue starts the audio.
-			else
-				m_Audio.Queue->SubmitAudio(m_Audio.DstData[0], out_num_samples);
+			//if (m_Audio.Started)
+			//{
+			//	// Sync video pts to audio pts.
+			//	if (m_Audio.Queue->SubmitAudio(m_Audio.DstData[0], out_num_samples))
+			//		m_Video.NextPTS = pts;
+			//}
+			//// Check if queue starts the audio.
+			//else
+			//	m_Audio.Queue->SubmitAudio(m_Audio.DstData[0], out_num_samples);
 		}
 		else
 		{
-			if (m_Audio.Queue == nullptr)
-			{
-				Log::CoreWarn("Non-resampled audio is not tested.");
-				m_Audio.Queue = MakeUnique<AudioQueue>(m_Audio.OutBytesPerSample, m_Audio.Channels, m_Audio.Frequency, m_Frame->nb_samples, m_Audio.Frequency);
-			}
+			//if (m_Audio.Queue == nullptr)
+			//{
+			//	Log::CoreWarn("Non-resampled audio is not tested.");
+			//	m_Audio.Queue = MakeUnique<AudioQueue>(m_Audio.OutBytesPerSample, m_Audio.Channels, m_Audio.Frequency, m_Frame->nb_samples, m_Audio.Frequency);
+			//}
 
-			if (m_Audio.Started)
-			{
-				// Sync video pts to audio pts.
-				if (m_Audio.Queue->SubmitAudio(m_Audio.DstData[0], m_Frame->nb_samples))
-					m_Video.NextPTS = pts;
-			}
-			else
-				m_Audio.Queue->SubmitAudio(m_Frame->data[0], m_Frame->nb_samples);
+			//if (m_Audio.Started)
+			//{
+			//	// Sync video pts to audio pts.
+			//	if (m_Audio.Queue->SubmitAudio(m_Audio.DstData[0], m_Frame->nb_samples))
+			//		m_Video.NextPTS = pts;
+			//}
+			//else
+			//	m_Audio.Queue->SubmitAudio(m_Frame->data[0], m_Frame->nb_samples);
 		}
 		return true;
 	}

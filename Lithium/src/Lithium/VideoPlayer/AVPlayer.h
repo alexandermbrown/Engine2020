@@ -3,7 +3,6 @@
 #include "Lithium/Core/Memory.h"
 #include "Lithium/Renderer/Texture.h"
 #include "Lithium/Utility/Time.h"
-#include "AudioQueue.h"
 #include "AVReader.h"
 
 #include "glm/glm.hpp"
@@ -91,7 +90,7 @@ namespace Li
 			int OutBytesPerSample;
 			uint32_t OutFormat;
 
-			Unique<AudioQueue> Queue{ nullptr };
+			//Unique<AudioQueue> Queue{ nullptr };
 
 			// Debug info
 			int DiscardCount{ 0 };

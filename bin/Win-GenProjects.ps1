@@ -3,7 +3,7 @@ param (
 )
 
 Push-Location "${PSScriptRoot}\..\"
-bin\premake\premake5.exe vs2019
+bin\premake\win64\premake5.exe vs2022
 Pop-Location
 
 if (-Not $noprompt)

@@ -6,7 +6,6 @@
 #include "Lithium/Renderer/Shader.h"
 #include "Lithium/Renderer/TextureAtlas.h"
 #include "Lithium/Renderer/Text/Font.h"
-#include "Lithium/Audio/AudioBuffer.h"
 
 #include <unordered_map>
 
@@ -46,11 +45,6 @@ namespace Li
 		static Ref<Font> GetFont(const std::string& name)
 		{
 			return GetResource(s_Data->Fonts, name, "Lato-Regular");
-		}
-
-		static Ref<AudioBuffer> GetAudioBuffer(const std::string& name)
-		{
-			return GetResource(s_Data->Audio, name, nullptr);
 		}
 
 	private:
@@ -97,7 +91,6 @@ namespace Li
 			ResourceMap<Shader> Shaders;
 			ResourceMap<TextureAtlas> TextureAtlases;
 			ResourceMap<Font> Fonts;
-			ResourceMap<AudioBuffer> Audio;
 
 			StaggeredLoadData LoadData;
 		};

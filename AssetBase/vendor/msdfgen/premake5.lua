@@ -41,7 +41,7 @@ project "msdfgen"
 			"MSDFGEN_USE_OPENMP"
 		}
 		links {
-			"../freetype/win64/freetype.lib"
+			"../freetype/lib/windows-x86_64/freetype.lib"
 		}
 
 	filter "configurations:Debug"

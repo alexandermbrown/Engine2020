@@ -71,7 +71,6 @@ namespace Li
 		ResourceManager::Shutdown();
 		Renderer::Shutdown();
 
-		m_AudioContext.reset();
 		m_Window.reset();
 
 		SDL_Quit();

@@ -4,7 +4,7 @@
 #include "Lithium/Renderer/Texture.h"
 
 #include "glm/glm.hpp"
-#include "harfbuzz/hb.h"
+#include "harfbuzz/hb.hh"
 
 #include <unordered_map>
 

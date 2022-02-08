@@ -26,10 +26,6 @@ GameLayer::GameLayer()
 
 	CameraControllerSystem::Init(m_Registry);
 
-	m_AudioSource = Li::MakeRef<Li::AudioSource>();
-	m_AudioSource->SetAudio(Li::ResourceManager::GetAudioBuffer("audio_wind"));
-	m_AudioSource->Play();
-
 	Li::Unique<Li::Model> teapot_model = Li::MakeUnique<Li::Model>("./data/models/model_teapot.lmodel");
 	Li::Unique<Li::Model> scene_model = Li::MakeUnique<Li::Model>("./data/models/model_scene.lmodel");
 

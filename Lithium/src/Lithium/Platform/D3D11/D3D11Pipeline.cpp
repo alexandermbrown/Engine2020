@@ -75,7 +75,7 @@ namespace Li
 
 		LI_CORE_ASSERT(input_desc.size() < 32, "Layout too large!");
 
-		D3D11Shader* d3d_shader = (D3D11Shader*)m_Spec.Shader.get();
+		D3D11Shader* d3d_shader = (D3D11Shader*)m_Spec.ShaderRef.get();
 		D3D11Call(context->GetDevice()->CreateInputLayout(
 			input_desc.data(),
 			(uint32_t)input_desc.size(),

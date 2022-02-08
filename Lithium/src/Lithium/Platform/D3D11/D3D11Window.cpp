@@ -5,7 +5,7 @@
 #include "Lithium/Core/Exceptions.h"
 
 #include "stb_image.h"
-#include "SDL_syswm.h"
+#include "SDL2/SDL_syswm.h"
 
 namespace Li
 {

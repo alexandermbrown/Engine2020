@@ -23,7 +23,6 @@ IncludeDir["glm"] = "Lithium/vendor/glm"
 IncludeDir["imgui"] = "Lithium/vendor/imgui"
 IncludeDir["stb_image"] = "Lithium/vendor/stb_image"
 IncludeDir["zlib"] = "Lithium/vendor/zlib"
-IncludeDir["openal"] = "Lithium/vendor/openal-soft/include"
 IncludeDir["libogg"] = "Lithium/vendor/libogg/include"
 IncludeDir["libvorbis"] = "Lithium/vendor/libvorbis/include"
 IncludeDir["simpleini"] = "Lithium/vendor/simpleini/include"
@@ -43,9 +42,9 @@ IncludeDir["lab_serial"] = "FlatBuffers/include"
 
 IncludeDir["entt"] = "Article/vendor/entt/include"
 IncludeDir["box2d"] = "Article/vendor/box2d/include"
-IncludeDir["steam"] = "Article/vendor/steam/include"
+--IncludeDir["steam"] = "Article/vendor/steam/include"
 IncludeDir["layout"] = "Article/vendor/layout/include"
-IncludeDir["lua"] = "Article/vendor/lua/include"
+IncludeDir["lua"] = "Article/vendor/lua/src"
 IncludeDir["sol"] = "Article/vendor/sol"
 IncludeDir["nativefiledialog"] = "Article/vendor/nativefiledialog/src/include"
 
@@ -56,6 +55,7 @@ include "Lithium/vendor/zlib"
 include "AssetBase/vendor/msdf-atlas-gen"
 include "AssetBase/vendor/yaml-cpp"
 include "Article/vendor/box2d"
+include "Article/vendor/lua"
 include "Article/vendor/nativefiledialog"
 group  ""
 
@@ -66,11 +66,10 @@ LithiumLibs = {
 	"zlib",
 	"ogg",
 	"vorbis",
-	"openal",
 	"SDL2",
 	"harfbuzz",
 	"vorbis",
-	"vorbisenc",
+	--"vorbisenc",
 	"vorbisfile"
 }
 
@@ -79,7 +78,6 @@ LithiumLibs_NOTDIST = { "imgui" }
 LithiumLibDirs = {
 	"Lithium/vendor/libogg/lib/%{cfg.system}-%{cfg.architecture}",
 	"Lithium/vendor/libvorbis/lib/%{cfg.system}-%{cfg.architecture}",
-	"Lithium/vendor/openal-soft/lib/%{cfg.system}-%{cfg.architecture}",
 	"Lithium/vendor/harfbuzz/lib/%{cfg.system}-%{cfg.architecture}",
 	"Lithium/vendor/SDL2/lib/%{cfg.system}-%{cfg.architecture}"
 }
@@ -117,7 +115,6 @@ project "Lithium"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.zlib}",
-		"%{IncludeDir.openal}",
 		"%{IncludeDir.libogg}",
 		"%{IncludeDir.libvorbis}",
 		"%{IncludeDir.readerwriterqueue}",
@@ -231,7 +228,7 @@ project "Article"
 		"%{IncludeDir.readerwriterqueue}",
 		"%{IncludeDir.layout}",
 		"%{IncludeDir.simpleini}",
-		"%{IncludeDir.steam}",
+		--"%{IncludeDir.steam}",
 		"%{IncludeDir.flatbuffers}",
 		"%{IncludeDir.lab_serial}",
 		"%{IncludeDir.harfbuzz}",
@@ -263,10 +260,9 @@ project "Article"
 			"LI_PLATFORM_WINDOWS"
 		}
 
-		links {
-			"lua51",
-			"steam_api64"
-		}
+		--links {
+		--	"steam_api64"
+		--}
 	
 	filter "system:linux"
 		defines {
@@ -356,7 +352,7 @@ project "AssetBase"
 		"assimp"
 	}
 	
-	libdirs "AssetBase/vendor/ShaderConductor/lib/Debug-%{cfg.system}-%{cfg.architecture}"
+	libdirs "AssetBase/vendor/ShaderConductor/lib/%{cfg.system}-%{cfg.architecture}"
 	libdirs "AssetBase/vendor/freetype/lib/%{cfg.system}-%{cfg.architecture}"
 	libdirs "AssetBase/vendor/assimp/lib/%{cfg.system}-%{cfg.architecture}"
 	filter "system:windows"
