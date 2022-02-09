@@ -12,6 +12,8 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 namespace Li
 {

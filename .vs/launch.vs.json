@@ -1,0 +1,27 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Article.exe (Article\\Article.exe)",
+      "name": "Article.exe (Article\\Article.exe)",
+      "currentDir": "${workspaceRoot}/Article"
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Article.exe",
+      "name": "Article.exe",
+      "currentDir": "${workspaceRoot}/Article"
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "AssetBase.exe",
+      "name": "AssetBase.exe",
+      "currentDir": "${workspaceRoot}/AssetBase"
+    }
+  ]
+}

@@ -37,7 +37,7 @@ bool OnMouseDown(entt::registry& registry, int x, int y, int button)
 	for (auto it = view.rbegin(); it != view.rend(); ++it)
 	{
 		entt::entity entity = *it;
-		if (!registry.has<cp::ui_click>(entity))
+		if (!registry.all_of<cp::ui_click>(entity))
 			continue;
 		auto& click = registry.get<cp::ui_click>(entity);
 		auto& transform = view.get<cp::ui_transform>(entity);
@@ -99,7 +99,7 @@ bool OnMouseUp(entt::registry& registry, int x, int y, int button)
 	for (auto it = view.rbegin(); it != view.rend(); ++it)
 	{
 		entt::entity entity = *it;
-		if (!registry.has<cp::ui_click>(entity))
+		if (!registry.all_of<cp::ui_click>(entity))
 			continue;
 		auto& click = registry.get<cp::ui_click>(entity);
 		auto& transform = view.get<cp::ui_transform>(entity);

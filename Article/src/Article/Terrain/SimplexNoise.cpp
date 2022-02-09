@@ -6,6 +6,9 @@
 #include "glm/glm.hpp"
 #include "SDL2/SDL.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 // Sources:
 // https://adrianb.io/2014/08/09/perlinnoise.html
 // http://weber.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java

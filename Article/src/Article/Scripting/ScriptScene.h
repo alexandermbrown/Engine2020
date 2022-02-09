@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lithium/Core/Scene.h"
-#include "sol.hpp"
+#include "sol/sol.hpp"
 
 class ScriptScene : public Li::Scene
 {

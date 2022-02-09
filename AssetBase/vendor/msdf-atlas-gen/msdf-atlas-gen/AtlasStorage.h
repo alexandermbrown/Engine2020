@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <msdfgen.h>
+#include <msdfgen/msdfgen.h>
 #include "Remap.h"
 
 namespace msdf_atlas {

@@ -68,32 +68,32 @@ void SyncEventReceiveSystem::Update(entt::registry& registry, SyncEventQueue* qu
 		}
 		else if (event.type == SyncType::AddComponent)
 		{
-			if (event.data1 == entt::type_info<cp::SyncTransform>::id())
+			if (event.data1 == entt::type_index<cp::SyncTransform>::value())
 				AddComponent<cp::SyncTransform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::Transform>::id())
+			else if (event.data1 == entt::type_index<cp::Transform>::value())
 				AddComponent<cp::Transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::Quad>::id())
+			else if (event.data1 == entt::type_index<cp::Quad>::value())
 				AddComponent<cp::Quad>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::Player>::id())
+			else if (event.data1 == entt::type_index<cp::Player>::value())
 				AddComponent<cp::Player>(registry, event);
 
 			else Li::Log::Error("Unknown component type {}", event.data1);
 		}
 		else if (event.type == SyncType::RemoveComponent)
 		{
-			if (event.data1 == entt::type_info<cp::SyncTransform>::id())
+			if (event.data1 == entt::type_index<cp::SyncTransform>::value())
 				RemoveComponent<cp::SyncTransform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::Transform>::id())
+			else if (event.data1 == entt::type_index<cp::Transform>::value())
 				RemoveComponent<cp::Transform>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::Quad>::id())
+			else if (event.data1 == entt::type_index<cp::Quad>::value())
 				RemoveComponent<cp::Quad>(registry, event);
 
-			else if (event.data1 == entt::type_info<cp::Player>::id())
+			else if (event.data1 == entt::type_index<cp::Player>::value())
 				RemoveComponent<cp::Player>(registry, event);
 
 			else Li::Log::Error("Unknown component type {}", event.data1);

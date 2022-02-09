@@ -26,7 +26,7 @@ void CameraControllerSystem::Update(entt::registry& registry, Li::Duration::us d
 {
 	cp::Camera& camera = registry.ctx<cp::Camera>();
 
-	for (auto&& [entity, transform, player] : registry.view<cp::Transform, cp::Player>().proxy())
+	for (auto&& [entity, transform, player] : registry.view<cp::Transform, cp::Player>().each())
 	{
 		glm::vec3 camera_pos = {
 			transform.position.x,

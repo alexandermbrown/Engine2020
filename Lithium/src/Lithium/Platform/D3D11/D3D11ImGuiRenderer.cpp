@@ -6,8 +6,8 @@
 #include "D3D11Context.h"
 
 #include "imgui.h"
-#include "examples/imgui_impl_sdl.h"
-#include "examples/imgui_impl_dx11.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_dx11.h"
 
 namespace Li
 {

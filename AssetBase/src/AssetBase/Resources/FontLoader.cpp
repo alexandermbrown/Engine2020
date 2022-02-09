@@ -4,6 +4,8 @@
 #include "AssetBase/Util/Convert.h"
 #include "AssetBase/Util/OptionalField.h"
 
+#include "stb_image_write.h"
+
 #include <math.h>
 #include <thread>
 #include <fstream>
@@ -140,9 +142,9 @@ void FontLoader::GenerateMSDF(fb::FlatBufferBuilder& builder, const std::string&
 	while (gindex != 0)
 	{
 		msdf_atlas::GlyphGeometry glyph;
-		if (glyph.load(font, charcode))
+		if (glyph.load(font, 1.0, charcode))
 		{
-			glyph.edgeColoring(3.0, 0);
+			glyph.edgeColoring(&msdfgen::edgeColoringInkTrap, 3.0, 0);
 			glyphs.push_back(std::move(glyph));
 			glyph_indices.push_back(gindex);
 		}
@@ -178,14 +180,13 @@ void FontLoader::GenerateMSDF(fb::FlatBufferBuilder& builder, const std::string&
 	if (image_width > 2048)
 		throw std::runtime_error("Image width greater than 2048. Implement multiple atlases.");
 
-	using BitmapStorageType = msdf_atlas::byte;
+	
 	msdf_atlas::ImmediateAtlasGenerator<float, MSDFChannels, msdf_atlas::msdfGenerator,
 		msdf_atlas::BitmapAtlasStorage<BitmapStorageType, MSDFChannels>> generator(image_width, image_height);
 
 	msdf_atlas::GeneratorAttributes attributes;
-	attributes.overlapSupport = false;
+	attributes.config.overlapSupport = false;
 	attributes.scanlinePass = false;
-	attributes.errorCorrectionThreshold = MSDFGEN_DEFAULT_ERROR_CORRECTION_THRESHOLD;
 
 	int n_threads = std::max((int)std::thread::hardware_concurrency(), 1);
 	generator.setAttributes(attributes);
@@ -229,11 +230,7 @@ void FontLoader::GenerateMSDF(fb::FlatBufferBuilder& builder, const std::string&
 		++it;
 	}
 	// Save image.
-	std::vector<uint8_t> image_data;
-	//if (msdfgen::savePng(bitmap, (name + ".png").c_str()) == false)
-	//	throw std::runtime_error("Failed to save png");
-	if (msdfgen::savePng(bitmap, image_data) == false)
-		throw std::runtime_error("Failed to save font png");
+	std::vector<uint8_t> image_data = makePng(bitmap);
 
 	out_images_vec.push_back(Assets::CreateFontImageDirect(builder, image_width, &image_data));
 	cache_images_vec.push_back(Assets::CreateFontImageDirect(cache_builder, image_width, &image_data));
@@ -258,4 +255,29 @@ void FontLoader::GenerateMSDF(fb::FlatBufferBuilder& builder, const std::string&
 
 	cache_file.write((const char*)cache_builder.GetBufferPointer(), cache_builder.GetSize());
 	cache_file.close();
+}
+
+std::vector<uint8_t> FontLoader::makePng(msdfgen::BitmapConstRef<BitmapStorageType, MSDFChannels> bitmap)
+{
+	std::vector<msdfgen::byte> pixels(bitmap.width * bitmap.height);
+	for (int y = 0; y < bitmap.height; ++y)
+		memcpy(&pixels[bitmap.width * y], bitmap(0, bitmap.height - y - 1), bitmap.width);
+
+	std::vector<uint8_t> out;
+
+	stbi_write_png_to_func([](void* context, void* data, int size) {
+		std::vector<uint8_t>* out_ptr = reinterpret_cast<std::vector<uint8_t>*>(context);
+
+		if (out_ptr->size() > 0)
+			throw std::runtime_error("Write called more than once.");
+
+		out_ptr->resize(size);
+		memcpy_s(out_ptr->data(), out_ptr->size(), data, size);
+
+	}, &out, bitmap.width, bitmap.height, MSDFChannels, pixels.data(), bitmap.width * MSDFChannels);
+
+	if (out.size() == 0)
+		throw std::runtime_error("Failed to write PNG");
+
+	return out;
 }

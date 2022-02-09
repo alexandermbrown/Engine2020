@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <msdfgen.h>
+#include <msdfgen/msdfgen.h>
 #include "GlyphGeometry.h"
 #include "AtlasGenerator.h"
 

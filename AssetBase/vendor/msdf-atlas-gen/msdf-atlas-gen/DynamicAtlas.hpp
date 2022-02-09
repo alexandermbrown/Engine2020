@@ -10,7 +10,8 @@ template <class AtlasGenerator>
 DynamicAtlas<AtlasGenerator>::DynamicAtlas(AtlasGenerator &&generator) : generator((AtlasGenerator &&) generator), glyphCount(0), side(0), totalArea(0), padding(0) { }
 
 template <class AtlasGenerator>
-void DynamicAtlas<AtlasGenerator>::add(GlyphGeometry *glyphs, int count) {
+typename DynamicAtlas<AtlasGenerator>::ChangeFlags DynamicAtlas<AtlasGenerator>::add(GlyphGeometry *glyphs, int count, bool allowRearrange) {
+    ChangeFlags changeFlags = 0;
     int start = rectangles.size();
     for (int i = 0; i < count; ++i) {
         if (!glyphs[i].isWhitespace()) {
@@ -27,24 +28,31 @@ void DynamicAtlas<AtlasGenerator>::add(GlyphGeometry *glyphs, int count) {
         }
     }
     if ((int) rectangles.size() > start) {
-        int oldSide = side;
         int packerStart = start;
-        while (packer.pack(rectangles.data()+packerStart, rectangles.size()-packerStart) > 0) {
-            side = side+!side<<1;
+        int remaining;
+        while ((remaining = packer.pack(rectangles.data()+packerStart, rectangles.size()-packerStart)) > 0) {
+            side = (side+!side)<<1;
             while (side*side < totalArea)
                 side <<= 1;
-            packer = RectanglePacker(side+padding, side+padding);
-            packerStart = 0;
+            if (allowRearrange) {
+                packer = RectanglePacker(side+padding, side+padding);
+                packerStart = 0;
+            } else {
+                packer.expand(side+padding, side+padding);
+                packerStart = rectangles.size()-remaining;
+            }
+            changeFlags |= RESIZED;
         }
         if (packerStart < start) {
-            for (int i = 0; i < start; ++i) {
+            for (int i = packerStart; i < start; ++i) {
                 Remap &remap = remapBuffer[i];
                 remap.source = remap.target;
                 remap.target.x = rectangles[i].x;
                 remap.target.y = rectangles[i].y;
             }
             generator.rearrange(side, side, remapBuffer.data(), start);
-        } else if (side != oldSide)
+            changeFlags |= REARRANGED;
+        } else if (changeFlags&RESIZED)
             generator.resize(side, side);
         for (int i = start; i < (int) rectangles.size(); ++i) {
             remapBuffer[i].target.x = rectangles[i].x;
@@ -52,8 +60,9 @@ void DynamicAtlas<AtlasGenerator>::add(GlyphGeometry *glyphs, int count) {
             glyphs[remapBuffer[i].index-glyphCount].placeBox(rectangles[i].x, rectangles[i].y);
         }
     }
-    generator.generate(glyphs, count, genAttribs);
+    generator.generate(glyphs, count);
     glyphCount += count;
+    return changeFlags;
 }
 
 template <class AtlasGenerator>

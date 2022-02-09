@@ -1,5 +1,9 @@
 #include "lipch.h"
 
+#ifndef _WINDEF_
+typedef unsigned long DWORD;
+#endif
+
 // Prefer dedicated GPUs.
 extern "C" {
 #ifdef LI_PLATFORM_WINDOWS

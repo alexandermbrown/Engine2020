@@ -30,14 +30,11 @@ void SyncTransformReceiveSystem::Update(entt::registry& registry, SyncTransformQ
 		entt::entity entity = registry.ctx<cp::SyncTracker>().map.at(received.sync_id);
 		registry.emplace_or_replace<cp::SyncTransform>(entity, received);
 
-		if (registry.has<cp::Transform>(entity))
-		{
-			cp::Transform& transform = registry.get<cp::Transform>(entity);
-			transform.position = { received.position.x, received.position.y, received.position.z };
-			transform.rotation = received.rotation;
+		cp::Transform& transform = registry.get_or_emplace<cp::Transform>(entity);
+		transform.position = { received.position.x, received.position.y, received.position.z };
+		transform.rotation = received.rotation;
 
-			transform.old = true;
-		}
+		transform.old = true;
 	}
 
 	float dt_float = Li::Duration::fsec(dt).count();

@@ -149,7 +149,7 @@ void UIFunctions::LoadFunctions(sol::state& lua)
 			cp::Label& label_cp = (*registry_ptr).emplace<cp::Label>(element);
 			label_cp.label = Li::MakeUnique<Li::Label>(text.value(), pt_size.value(), Li::ResourceManager::GetFont(font.value()), dynamic.value_or(false), excess.value_or(0));
 		}
-		else Li::Log::Error("Missing label data in UIElementSetLabel(..), entity {}", element);
+		else Li::Log::Error("Missing label data in UIElementSetLabel(..), entity {}", static_cast<entt::id_type>(element));
 	});
 
 	UI.set_function("UIElementAddTextureCrop", [](sol::light<entt::registry> registry_ptr, entt::entity element)

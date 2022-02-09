@@ -16,7 +16,7 @@ namespace Li
 		case BufferUsage::DynamicDraw:
 			return D3D11_USAGE_DYNAMIC;
 		default:
-			Log::CoreError("Unknown buffer usage {}.", usage);
+			LI_CORE_ASSERT(false, "Unknown buffer usage");
 			return D3D11_USAGE_DEFAULT;
 		}
 	}
@@ -34,7 +34,7 @@ namespace Li
 		case WrapType::ClampToBorder:
 			return D3D11_TEXTURE_ADDRESS_BORDER;
 		default:
-			Log::CoreError("Unknown wrap type {}.", type);
+			LI_CORE_ASSERT(false, "Unknown wrap type");
 			return D3D11_TEXTURE_ADDRESS_CLAMP;
 		}
 	}
@@ -51,6 +51,7 @@ namespace Li
 			break;
 		default:
 			Log::CoreError("{} channels not supported!", num_channels);
+			LI_DEBUG_BREAK();
 			return DXGI_FORMAT_UNKNOWN;
 		}
 	}

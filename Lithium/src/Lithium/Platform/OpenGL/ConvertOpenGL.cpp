@@ -12,7 +12,7 @@ namespace Li
 		case BufferUsage::DynamicDraw:
 			return GL_DYNAMIC_DRAW;
 		default:
-			Log::CoreError("Unknown buffer usage {}.", usage);
+			LI_CORE_ASSERT(false, "Unknown buffer usage.");
 			return 0;
 		}
 	}
@@ -32,7 +32,7 @@ namespace Li
 		case DrawMode::TriangleStrip:
 			return GL_TRIANGLE_STRIP;
 		default:
-			Log::CoreError("Unknown draw mode {}.", mode);
+			LI_CORE_ASSERT(false, "Unknown draw mode.");
 			return 0;
 		}
 	}
@@ -50,7 +50,7 @@ namespace Li
 		case WrapType::ClampToBorder:
 			return GL_CLAMP_TO_BORDER;
 		default:
-			Log::CoreError("Unknown wrap type {}.", type);
+			LI_CORE_ASSERT(false, "Unknown wrap type.");
 			return 0;
 		}
 	}
@@ -70,7 +70,7 @@ namespace Li
 		case FilterType::NearestMipmapLinear:
 			return GL_NEAREST_MIPMAP_LINEAR;
 		default:
-			Log::CoreError("Unknown filter type {}.", type);
+			LI_CORE_ASSERT(false, "Unknown filter type.");
 			return 0;
 		}
 	}
@@ -88,6 +88,7 @@ namespace Li
 		case 4:
 			return GL_RGBA8;
 		default:
+			LI_CORE_ASSERT(false, "Unsupported number of channels.");
 			return 0;
 		}
 	}
@@ -106,6 +107,7 @@ namespace Li
 		case 4:
 			return GL_RGBA;
 		default:
+			LI_CORE_ASSERT(false, "Unsupported number of channels.");
 			return 0;
 		}
 	}

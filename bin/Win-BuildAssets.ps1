@@ -5,7 +5,7 @@ param (
 Push-Location "${PSScriptRoot}\..\AssetBase"
 
 try {
-	Get-Command "..\build\Release-windows-x86_64\AssetBase\AssetBase.exe" -ErrorAction Stop | Out-Null
+	Get-Command "..\out\build\x64-Release\AssetBase\AssetBase.exe" -ErrorAction Stop | Out-Null
 }
 catch {
 	Write-Host "AssetBase.exe not found. Please build AssetBase in Release with Visual Studio." -ForegroundColor Red
@@ -14,7 +14,7 @@ catch {
 	EXIT
 }
 
-..\build\Release-windows-x86_64\AssetBase\AssetBase.exe
+..\out\build\x64-Release\AssetBase\AssetBase.exe
 
 function Copy-Assets {
 	Copy-Item ".\output\*" -Destination "..\Article\data\" -Recurse -Force

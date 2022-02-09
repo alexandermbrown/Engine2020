@@ -5,7 +5,6 @@
 #include "glm/glm.hpp"
 #include "ArticleApp.h"
 
-
 ConsoleLayer::ConsoleLayer()
 	: Layer("Console"), m_HistoryBuffer(), m_ConsoleOpen(false), 
 	m_NumHistoryItems(0), m_ScrollToBottom(false),
@@ -56,7 +55,7 @@ void ConsoleLayer::OnImGuiRender()
 	bool reclaimFocus = false;
 
 	constexpr ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-	constexpr auto callback = [](ImGuiTextEditCallbackData* data) -> int { return ((ConsoleLayer*)data->UserData)->InputTextCallback(data); };
+	constexpr auto callback = [](ImGuiInputTextCallbackData* data) -> int { return ((ConsoleLayer*)data->UserData)->InputTextCallback(data); };
 	if (ImGui::InputText("Input", m_InputBuffer, InputBufferSize, flags, callback, this))
 	{
 		if (m_InputBuffer[0] != '\0')

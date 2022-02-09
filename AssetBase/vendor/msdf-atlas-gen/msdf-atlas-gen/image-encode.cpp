@@ -1,7 +1,7 @@
 
 #include "image-encode.h"
 
-#include <lodepng.h>
+#include "lodepng.h"
 
 namespace msdf_atlas {
 

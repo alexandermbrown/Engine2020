@@ -93,7 +93,7 @@ namespace Li
 			break;
 		}
 		default:
-			Log::CoreError("Unknown fullscreen type {}.", type);
+			Log::CoreError("Unknown fullscreen type {}.", static_cast<unsigned int>(type));
 			break;
 		}
 	}

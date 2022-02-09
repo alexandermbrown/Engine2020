@@ -2,16 +2,18 @@
 #include "GlyphGeometry.h"
 
 #include <cmath>
-#include <core/ShapeDistanceFinder.h>
+#include <msdfgen/core/ShapeDistanceFinder.h>
 
 namespace msdf_atlas {
 
-GlyphGeometry::GlyphGeometry() : index(), codepoint(), bounds(), advance(), box() { }
+GlyphGeometry::GlyphGeometry() : index(), codepoint(), geometryScale(), bounds(), advance(), box() { }
 
-bool GlyphGeometry::load(msdfgen::FontHandle *font, msdfgen::GlyphIndex index, bool preprocessGeometry) {
+bool GlyphGeometry::load(msdfgen::FontHandle *font, double geometryScale, msdfgen::GlyphIndex index, bool preprocessGeometry) {
     if (font && msdfgen::loadGlyph(shape, font, index, &advance) && shape.validate()) {
         this->index = index.getIndex();
+        this->geometryScale = geometryScale;
         codepoint = 0;
+        advance *= geometryScale;
         #ifdef MSDFGEN_USE_SKIA
             if (preprocessGeometry)
                 msdfgen::resolveShapeGeometry(shape);
@@ -34,10 +36,10 @@ bool GlyphGeometry::load(msdfgen::FontHandle *font, msdfgen::GlyphIndex index, b
     return false;
 }
 
-bool GlyphGeometry::load(msdfgen::FontHandle *font, unicode_t codepoint, bool preprocessGeometry) {
+bool GlyphGeometry::load(msdfgen::FontHandle *font, double geometryScale, unicode_t codepoint, bool preprocessGeometry) {
     msdfgen::GlyphIndex index;
     if (msdfgen::getGlyphIndex(index, font, codepoint)) {
-        if (load(font, index, preprocessGeometry)) {
+        if (load(font, geometryScale, index, preprocessGeometry)) {
             this->codepoint = codepoint;
             return true;
         }
@@ -45,11 +47,13 @@ bool GlyphGeometry::load(msdfgen::FontHandle *font, unicode_t codepoint, bool pr
     return false;
 }
 
-void GlyphGeometry::edgeColoring(double angleThreshold, unsigned long long seed) {
-    msdfgen::edgeColoringInkTrap(shape, angleThreshold, seed);
+void GlyphGeometry::edgeColoring(void (*fn)(msdfgen::Shape &, double, unsigned long long), double angleThreshold, unsigned long long seed) {
+    fn(shape, angleThreshold, seed);
 }
 
 void GlyphGeometry::wrapBox(double scale, double range, double miterLimit) {
+    scale *= geometryScale;
+    range /= geometryScale;
     box.range = range;
     box.scale = scale;
     if (bounds.l < bounds.r && bounds.b < bounds.t) {
@@ -72,6 +76,10 @@ void GlyphGeometry::wrapBox(double scale, double range, double miterLimit) {
 
 void GlyphGeometry::placeBox(int x, int y) {
     box.rect.x = x, box.rect.y = y;
+}
+
+void GlyphGeometry::setBoxRect(const Rectangle &rect) {
+    box.rect = rect;
 }
 
 int GlyphGeometry::getIndex() const {
@@ -104,6 +112,10 @@ double GlyphGeometry::getAdvance() const {
     return advance;
 }
 
+Rectangle GlyphGeometry::getBoxRect() const {
+    return box.rect;
+}
+
 void GlyphGeometry::getBoxRect(int &x, int &y, int &w, int &h) const {
     x = box.rect.x, y = box.rect.y;
     w = box.rect.w, h = box.rect.h;
@@ -117,6 +129,10 @@ double GlyphGeometry::getBoxRange() const {
     return box.range;
 }
 
+msdfgen::Projection GlyphGeometry::getBoxProjection() const {
+    return msdfgen::Projection(msdfgen::Vector2(box.scale), box.translate);
+}
+
 double GlyphGeometry::getBoxScale() const {
     return box.scale;
 }
@@ -127,10 +143,11 @@ msdfgen::Vector2 GlyphGeometry::getBoxTranslate() const {
 
 void GlyphGeometry::getQuadPlaneBounds(double &l, double &b, double &r, double &t) const {
     if (box.rect.w > 0 && box.rect.h > 0) {
-        l = -box.translate.x+.5/box.scale;
-        b = -box.translate.y+.5/box.scale;
-        r = -box.translate.x+(box.rect.w-.5)/box.scale;
-        t = -box.translate.y+(box.rect.h-.5)/box.scale;
+        double invBoxScale = 1/box.scale;
+        l = geometryScale*(-box.translate.x+.5*invBoxScale);
+        b = geometryScale*(-box.translate.y+.5*invBoxScale);
+        r = geometryScale*(-box.translate.x+(box.rect.w-.5)*invBoxScale);
+        t = geometryScale*(-box.translate.y+(box.rect.h-.5)*invBoxScale);
     } else
         l = 0, b = 0, r = 0, t = 0;
 }

@@ -4,7 +4,7 @@
 #include "layout/layout.h"
 #include "entt/entt.hpp"
 #include "glm/glm.hpp"
-#include "sol.hpp"
+#include "sol/sol.hpp"
 
 #include <functional>
 

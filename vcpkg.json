@@ -1,0 +1,30 @@
+{
+    "name": "article",
+    "version": "0.1.0",
+    "dependencies": [
+        "glad",
+		"glm",
+		"harfbuzz",
+		{"name":"imgui", "features": ["docking-experimental", "dx11-binding", "opengl3-binding", "sdl2-binding"]},
+		"ffmpeg",
+		"libogg",
+		"libvorbis",
+		"readerwriterqueue",
+		"sdl2",
+		"simpleini",
+		"spdlog",
+		"stb",
+
+		"box2d",
+		"entt",
+		"lua",
+		"nativefiledialog",
+		"sol2",
+
+		"assimp",
+		"flatbuffers",
+		"freetype",
+		"msdfgen",
+		"yaml-cpp"
+    ]
+}

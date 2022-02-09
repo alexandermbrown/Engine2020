@@ -12,7 +12,7 @@
 #include "Lithium/Platform/D3D11/D3D11ImGuiRenderer.h"
 #endif
 
-#include "examples/imgui_impl_sdl.h"
+#include "imgui_impl_sdl.h"
 
 namespace Li 
 {

@@ -83,7 +83,7 @@ namespace Li
 			break;
 		}
 		default:
-			Log::CoreError("Unknown fullscreen type {}.", type);
+			LI_CORE_ASSERT(false, "Unknown fullscreen type.");
 			break;
 		}
 	}

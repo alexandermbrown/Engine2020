@@ -2,7 +2,7 @@
 
 #include "Article/ECS/ECS.h"
 #include "Lithium/Core/Layer.h"
-#include "sol.hpp"
+#include "sol/sol.hpp"
 
 class ScriptLayer : public Li::Layer
 {

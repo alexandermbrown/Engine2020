@@ -71,7 +71,7 @@ struct SyncEvent
 		event.type = SyncType::AddComponent;
 
 		event.data = (void*)component;
-		event.data1 = entt::type_info<component_t>::id();
+		event.data1 = entt::type_index<component_t>::value();
 
 		return event;
 	}

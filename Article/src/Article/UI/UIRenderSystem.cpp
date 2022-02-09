@@ -24,7 +24,7 @@ void RenderQuads(entt::registry& registry)
 
 		if (const cp::Quad* quad = registry.try_get<cp::Quad>(entity))
 		{
-			Li::Renderer::UISubmitQuad(quad->texture_alias, quad->color, transform.transform, registry.has<cp::ui_texture_crop>(entity));
+			Li::Renderer::UISubmitQuad(quad->texture_alias, quad->color, transform.transform, registry.all_of<cp::ui_texture_crop>(entity));
 		}
 	}
 	Li::Renderer::EndUI();
