@@ -3,7 +3,8 @@
 **/build-int/
 
 # Visual studio
-.vs/
+.vs/*
+!.vs/launch.vs.json
 **.sln
 **.vcxproj
 **.vcxproj.filters
@@ -24,3 +25,7 @@ _deps
 **/imgui.ini
 
 AssetBase/output/**
+vcpkg_installed/**
+
+lfs
+hooks
