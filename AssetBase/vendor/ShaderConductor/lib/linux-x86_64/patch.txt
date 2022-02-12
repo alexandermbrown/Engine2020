@@ -1,0 +1,3 @@
+patchelf --set-soname libdxcompiler.so libdxcompiler.so
+patchelf --set-rpath '$ORIGIN' libShaderConductor.so
+patchelf libShaderConductor.so --replace-needed libdxcompiler.so.3.7 libdxcompiler.so

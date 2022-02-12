@@ -272,7 +272,7 @@ std::vector<uint8_t> FontLoader::makePng(msdfgen::BitmapConstRef<BitmapStorageTy
 			throw std::runtime_error("Write called more than once.");
 
 		out_ptr->resize(size);
-		memcpy_s(out_ptr->data(), out_ptr->size(), data, size);
+		memcpy(out_ptr->data(), data, size);
 
 	}, &out, bitmap.width, bitmap.height, MSDFChannels, pixels.data(), bitmap.width * MSDFChannels);
 

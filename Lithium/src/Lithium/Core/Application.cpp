@@ -15,6 +15,7 @@
 #endif
 
 #include <iostream>
+#include <filesystem>
 
 namespace Li
 {
@@ -26,6 +27,10 @@ namespace Li
 	{
 		LI_CORE_ASSERT(s_Instance == nullptr, "Instance of Application already exists!");
 		s_Instance = this;
+
+		std::filesystem::path cwd = std::filesystem::current_path();
+		Log::CoreInfo("Starting engine at {}", cwd.string());
+
 
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		{

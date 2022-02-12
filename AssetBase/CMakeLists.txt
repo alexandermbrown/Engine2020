@@ -6,21 +6,24 @@ file(GLOB_RECURSE ASSETBASE_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 add_executable(AssetBase ${ASSETBASE_SOURCES})
 
+set_target_properties(AssetBase PROPERTIES
+	BUILD_RPATH_USE_ORIGIN TRUE
+	INSTALL_RPATH $ORIGIN
+)
+
 target_include_directories(AssetBase PRIVATE
 	${CMAKE_SOURCE_DIR}/AssetBase/src
 	${CMAKE_SOURCE_DIR}/FlatBuffers/include
 )
 
+# Dependencies
+
 if (WIN32)
     target_link_libraries(AssetBase PRIVATE d3d11 dxgi d3dcompiler)
 endif()
 
-# Dependencies
-
 if (WIN32)
 	target_link_libraries(AssetBase PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vendor/ShaderConductor/lib/windows-x86_64/ShaderConductor.lib)
-elseif(UNIX)
-	target_link_libraries(AssetBase PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/AssetBase/vendor/ShaderConductor/lib/linux-x86_64/ShaderConductor.a)
 endif()
 target_include_directories(AssetBase PRIVATE vendor/ShaderConductor/include)
 
@@ -45,22 +48,21 @@ target_include_directories(AssetBase PRIVATE vendor/msdf-atlas-gen)
 
 
 if (WIN32)
-	set(DLLPATHS
+	set(SHARED_LIB_PATHS
 		${CMAKE_CURRENT_SOURCE_DIR}/vendor/ShaderConductor/lib/windows-x86_64/ShaderConductor.dll
 		${CMAKE_CURRENT_SOURCE_DIR}/vendor/ShaderConductor/lib/windows-x86_64/dxcompiler.dll
 	)
+	foreach (SHARED_LIB_PATH ${SHARED_LIB_PATHS})
+	add_custom_command(TARGET AssetBase POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		"${SHARED_LIB_PATH}" $<TARGET_FILE_DIR:AssetBase>
+	)
+	endforeach()
 elseif (UNIX)
-	set(DLLPATHS
+	set(SHARED_LIB_PATHS
 		${CMAKE_CURRENT_SOURCE_DIR}/vendor/ShaderConductor/lib/linux-x86_64/libShaderConductor.so
 		${CMAKE_CURRENT_SOURCE_DIR}/vendor/ShaderConductor/lib/linux-x86_64/libdxcompiler.so
 	)
+	target_link_libraries(AssetBase PRIVATE ${SHARED_LIB_PATHS})
 endif()
-
-foreach (DLLPATH ${DLLPATHS})
-	add_custom_command(TARGET AssetBase POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		"${DLLPATH}" $<TARGET_FILE_DIR:AssetBase>
-	)
-endforeach()
-
 

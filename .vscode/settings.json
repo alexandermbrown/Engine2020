@@ -1,4 +1,12 @@
 {
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "/mnt/e/ProgramFiles/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_MAKE_PROGRAM": "ninja"
+    },
+    "cmake.debugConfig": {
+        "cwd": "${workspaceFolder}/Article"
+    },
+    "cmake.buildDirectory" : "${workspaceRoot}/build/${buildType}",
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",

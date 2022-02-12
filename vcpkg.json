@@ -5,12 +5,20 @@
         "glad",
 		"glm",
 		"harfbuzz",
-		{"name":"imgui", "features": ["docking-experimental", "dx11-binding", "opengl3-binding", "sdl2-binding"]},
+		{
+			"name":"imgui", "features": ["docking-experimental", "dx11-binding", "opengl3-binding", "sdl2-binding"],
+			"platform": "windows"
+		},
+		{
+			"name":"imgui", "features": ["docking-experimental", "opengl3-binding", "sdl2-binding"],
+			"platform": "!windows"
+		},
 		"ffmpeg",
 		"libogg",
 		"libvorbis",
 		"readerwriterqueue",
-		"sdl2",
+		{ "name":"sdl2", "platform": "!linux" },
+		{ "name":"sdl2", "features": ["x11"], "platform": "linux" },
 		"simpleini",
 		"spdlog",
 		"stb",

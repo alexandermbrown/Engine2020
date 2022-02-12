@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
@@ -14,7 +14,7 @@ if (WIN32)
     add_compile_definitions(LI_PLATFORM_WINDOWS)
 elseif (UNIX)
     add_compile_definitions(LI_PLATFORM_LINUX)
-endif(UNIX)
+endif()
 
 add_compile_definitions(
     $<$<CONFIG:Debug>:LI_DEBUG>
@@ -23,8 +23,8 @@ add_compile_definitions(
     $<$<CONFIG:MinSizeRel>:LI_RELEASE>
 )
 
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+
 add_subdirectory(Lithium)
 add_subdirectory(Article)
 add_subdirectory(AssetBase)
-
-

@@ -83,7 +83,7 @@ struct SyncEvent
 		event.sync_id = sync_id;
 		event.type = SyncType::RemoveComponent;
 
-		event.data1 = entt::type_info<component_t>::id();
+		event.data1 = entt::type_index<component_t>::value();
 
 		return event;
 	}

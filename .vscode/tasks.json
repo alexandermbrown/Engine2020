@@ -2,43 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "make",
+            "label": "Build AssetBase Release",
             "type": "shell",
-            "command": "make",
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": {
-                "owner": "cpp",
-                "fileLocation": [
-                    "absolute"
-                ],
-                "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                    "file": 1,
-                    "line": 2,
-                    "column": 3,
-                    "severity": 4,
-                    "message": 5
-                }
-            },
-            "dependsOn": [
-                "premake"
-            ]
-        },
-        {
-            "label": "premake",
-            "type": "process",
-            "command": "${workspaceFolder}/bin/premake/linux64/premake5",
-            "args": [
-                "gmake2"
-            ],
+            "command": "cmake --build ${workspaceFolder}/build/Release --config Release --target AssetBase -j 6 --",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -50,40 +16,9 @@
             "problemMatcher": []
         },
         {
-            "label": "make AssetBase release",
-            "type": "shell",
-            "command": "make config=release AssetBase",
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": {
-                "owner": "cpp",
-                "fileLocation": [
-                    "absolute"
-                ],
-                "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                    "file": 1,
-                    "line": 2,
-                    "column": 3,
-                    "severity": 4,
-                    "message": 5
-                }
-            },
-            "dependsOn": [
-                "premake"
-            ]
-        },
-        {
-            "label": "build assets",
+            "label": "Build Assets",
             "type": "process",
-            "command": "${workspaceFolder}/build/Release-linux-x86_64/AssetBase/AssetBase",
+            "command": "${workspaceFolder}/build/Release/AssetBase/AssetBase",
             "options": {
                 "cwd": "${workspaceFolder}/AssetBase"
             },
@@ -95,13 +30,11 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "dependsOn": [
-                "make AssetBase release"
-            ],
+            "dependsOn": ["Build AssetBase Release"],
             "problemMatcher": []
         },
         {
-            "label": "build and copy assets",
+            "label": "Build and Copy Assets",
             "type": "shell",
             "command": "cp -R ${workspaceFolder}/AssetBase/output/* ${workspaceFolder}/Article/data",
             "presentation": {
@@ -112,24 +45,8 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "dependsOn": [
-                "build assets"
-            ],
+            "dependsOn": ["Build Assets"],
             "problemMatcher": []
         },
-        {
-            "label": "setup linux",
-            "type": "shell",
-            "command": "${workspaceFolder}/bin/Linux-Setup.sh",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        }
     ]
 }

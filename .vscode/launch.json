@@ -1,16 +1,16 @@
 {
-    "version": "2.0.0",
+    "version": "0.2.0",
     "configurations": [
         {
             "name": "(gdb) Launch Article",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Debug-linux-x86_64/Article/Article",
+            // Resolved by CMake Tools:
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}/Article",
-            "environment": [
-                { "name": "MESA_GL_VERSION_OVERRIDE", "value": "4.5" },
-                { "name": "MESA_GLSL_VERSION_OVERRIDE", "value": "450" }
-            ],
+            "externalConsole": true,
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -18,15 +18,18 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ],
-            "preLaunchTask": "make"
+            ]
         },
         {
-            "name": "(gdb) Build Assets",
+            "name": "(gdb) Launch AssetBase",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Debug-linux-x86_64/AssetBase/AssetBase",
+            // Resolved by CMake Tools:
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}/AssetBase",
+            "externalConsole": true,
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -34,8 +37,7 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ],
-            "preLaunchTask": "make"
+            ]
         }
     ]
 }
