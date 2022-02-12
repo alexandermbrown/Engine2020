@@ -23,8 +23,6 @@ add_compile_definitions(
     $<$<CONFIG:MinSizeRel>:LI_RELEASE>
 )
 
-message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
-
 add_subdirectory(Lithium)
 add_subdirectory(Article)
 add_subdirectory(AssetBase)
