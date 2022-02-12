@@ -2,14 +2,16 @@ cmake_minimum_required(VERSION 3.12)
 
 project(Lithium)
 
-set (EXCLUDE_DIR "src/Lithium/Platform/D3D11")
 file (GLOB_RECURSE LITHIUM_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
-foreach (TMP_PATH ${LITHIUM_SOURCES})
-    string (FIND ${TMP_PATH} ${EXCLUDE_DIR} EXCLUDE_DIR_FOUND)
-    if (NOT ${EXCLUDE_DIR_FOUND} EQUAL -1)
-        list (REMOVE_ITEM LITHIUM_SOURCES ${TMP_PATH})
-    endif ()
-endforeach(TMP_PATH)
+if (!WIN32)
+    set (EXCLUDE_DIR "src/Lithium/Platform/D3D11")
+    foreach (TMP_PATH ${LITHIUM_SOURCES})
+        string (FIND ${TMP_PATH} ${EXCLUDE_DIR} EXCLUDE_DIR_FOUND)
+        if (NOT ${EXCLUDE_DIR_FOUND} EQUAL -1)
+            list (REMOVE_ITEM LITHIUM_SOURCES ${TMP_PATH})
+        endif ()
+    endforeach(TMP_PATH)
+endif()
 
 add_library(Lithium ${LITHIUM_SOURCES})
 
