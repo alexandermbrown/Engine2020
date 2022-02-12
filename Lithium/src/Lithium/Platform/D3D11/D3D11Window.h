@@ -2,7 +2,6 @@
 
 #include "Lithium/Core/Memory.h"
 #include "Lithium/Renderer/GraphicsContext.h"
-#include "Lithium/Renderer/RendererAPI.h"
 #include "Lithium/Core/Window.h"
 
 #include "D3D11Context.h"

@@ -7,6 +7,14 @@
 
 namespace Li 
 {
+	struct TextureProps
+	{
+		WrapType WrapS{ WrapType::ClampToEdge };
+		WrapType WrapT{ WrapType::ClampToEdge };
+		FilterType MinFilter{ FilterType::Linear };
+		FilterType MagFilter{ FilterType::Nearest };
+	};
+
 	class Texture
 	{
 	public:
@@ -23,19 +31,5 @@ namespace Li
 		virtual void* GetInternalTexture() const = 0;
 	};
 
-	class Texture2D : public Texture
-	{
-	public:
-		static Ref<Texture2D> Create(int width, int height, int channels, void* data,
-			WrapType wrap_s = WrapType::ClampToEdge, WrapType wrap_t = WrapType::ClampToEdge,
-			FilterType min_filter = FilterType::Linear, FilterType mag_filter = FilterType::Nearest, bool dynamic = false);
-
-		static Ref<Texture2D> Create(const std::string& path, int desired_channels,
-			WrapType wrap_s = WrapType::ClampToEdge, WrapType wrap_t = WrapType::ClampToEdge,
-			FilterType min_filter = FilterType::Linear, FilterType mag_filter = FilterType::Nearest);
-
-		static Ref<Texture2D> Create(size_t image_size, const uint8_t* encoded_data, int desired_channels,
-			WrapType wrap_s = WrapType::ClampToEdge, WrapType wrapT = WrapType::ClampToEdge,
-			FilterType min_filter = FilterType::Linear, FilterType mag_filter = FilterType::Nearest);
-	};
+	class Texture2D : public Texture {};
 }

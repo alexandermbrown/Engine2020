@@ -32,8 +32,6 @@ namespace Li
 		virtual void Bind(const BindArray& vertex_buffers) const = 0;
 		const Spec& GetSpec() const { return m_Spec; }
 
-		static Ref<Pipeline> Create(const Pipeline::Spec& spec);
-
 	protected:
 		Pipeline::Spec m_Spec;
 	};

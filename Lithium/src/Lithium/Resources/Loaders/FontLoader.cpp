@@ -1,6 +1,8 @@
 #include "lipch.h"
 #include "FontLoader.h"
 
+#include "Lithium/Renderer/GraphicsFactory.h"
+
 namespace Li::Loaders
 {
 	Ref<Font> LoadFont(const Assets::Font* font)
@@ -27,8 +29,12 @@ namespace Li::Loaders
 		for (const Assets::FontImage* image : *font->images())
 		{
 			const flatbuffers::Vector<uint8_t>* image_vec = image->image();
-			textures[i++] = Texture2D::Create(image_vec->size(), image_vec->data(), 4,
-				WrapType::ClampToEdge, WrapType::ClampToEdge, FilterType::Linear, FilterType::Linear);
+
+			TextureProps props{
+				WrapType::ClampToEdge, WrapType::ClampToEdge,
+				FilterType::Linear, FilterType::Linear
+			};
+			textures[i++] = GraphicsFactory::Get()->MakeTexture2DFromEncoded(image_vec->size(), image_vec->data(), 4, props);
 		}
 		
 		const auto* ttf = font->ttf();

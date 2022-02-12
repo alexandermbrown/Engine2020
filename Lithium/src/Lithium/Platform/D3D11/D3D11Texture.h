@@ -10,14 +10,9 @@ namespace Li
 	class D3D11Texture2D : public Texture2D
 	{
 	public:
-		D3D11Texture2D(int width, int height, int channels, void* data, WrapType wrap_s, WrapType wrap_t,
-			FilterType min_filter, FilterType magFilter, bool dynamic, bool render_target);
-
-		D3D11Texture2D(const std::string& path, int desired_channels, WrapType wrap_s, WrapType wrap_t,
-			FilterType min_filter, FilterType mag_filter);
-
-		D3D11Texture2D(size_t image_size, const uint8_t* rawData, int desired_channels, WrapType wrap_s, WrapType wrap_t,
-			FilterType min_filter, FilterType mag_filter);
+		D3D11Texture2D(int width, int height, int channels, void* data, const TextureProps& props, bool dynamic, bool render_target);
+		D3D11Texture2D(const std::string& path, int desired_channels, const TextureProps& props);
+		D3D11Texture2D(size_t image_size, const uint8_t* rawData, int desired_channels, const TextureProps& props);
 
 		virtual ~D3D11Texture2D() = default;
 

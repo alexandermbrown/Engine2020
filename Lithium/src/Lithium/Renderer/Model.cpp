@@ -2,6 +2,7 @@
 #include "Model.h"
 
 #include "Renderer.h"
+#include "GraphicsFactory.h"
 
 #include "flatbuffers/flatbuffers.h"
 #include "lab_serial/assets_generated.h"
@@ -40,8 +41,8 @@ namespace Li
 		const fb::Vector<float>* vertices = model->vertices();
 		const fb::Vector<uint32_t>* indices = model->indices();
 
-		m_Vertices = VertexBuffer::Create(vertices->data(), vertices->size() * sizeof(float), BufferUsage::StaticDraw);
-		m_Indices = IndexBuffer::Create(indices->data(), indices->size(), BufferUsage::StaticDraw);
+		m_Vertices = GraphicsFactory::Get()->MakeVertexBuffer(vertices->data(), vertices->size() * sizeof(float), BufferUsage::StaticDraw);
+		m_Indices = GraphicsFactory::Get()->MakeIndexBuffer(indices->data(), indices->size(), BufferUsage::StaticDraw);
 
 		m_Vertices->SetLayout(Renderer::GetModelPipeline()->GetSpec().Layouts[0]);
 	}

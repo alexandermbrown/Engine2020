@@ -2,7 +2,6 @@
 
 #include "Lithium/Core/Memory.h"
 #include "Lithium/Renderer/GraphicsContext.h"
-#include "Lithium/Renderer/RendererAPI.h"
 
 #include "SDL2/SDL.h"
 
@@ -55,7 +54,5 @@ namespace Li
 		virtual void SetIcon(const char* path) = 0;
 
 		virtual void OnWindowResize(int width, int height) = 0;
-
-		static Li::Unique<Window> Create(RendererAPI api, const WindowProps& props);
 	};
 }

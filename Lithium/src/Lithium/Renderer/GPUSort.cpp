@@ -13,8 +13,8 @@ namespace Li
 		m_SortInner  (ResourceManager::GetShader("shader_gpusort_sort_inner")),
 		m_SortStep   (ResourceManager::GetShader("shader_gpusort_sort_step"))
 	{
-		m_IndirectBuffer = IndirectBuffer::Create(sizeof(IndirectDispatchArgs), IndirectTarget::Compute);
-		m_SortUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(SortCB), sizeof(SortCB));
+		m_IndirectBuffer = GraphicsFactory::Get()->MakeIndirectBuffer(sizeof(IndirectDispatchArgs), IndirectTarget::Compute);
+		m_SortUB = GraphicsFactory::Get()->MakeUniformBuffer(LI_CB_GETBINDSLOT(SortCB), sizeof(SortCB));
 	}
 
 	void GPUSort::Sort(uint32_t max_count,

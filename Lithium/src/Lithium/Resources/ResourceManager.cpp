@@ -7,6 +7,7 @@
 #include "Loaders/LocaleLoader.h"
 
 #include "Lithium/Core/Exceptions.h"
+#include "Lithium/Renderer/GraphicsFactory.h"
 
 #include <fstream>
 
@@ -21,7 +22,7 @@ namespace Li
 
 		// SETUP WHITE TEXTURE
 		uint32_t data = 0xffffffff;
-		Ref<Texture2D> texture_white = Texture2D::Create(1, 1, 4, &data);
+		Ref<Texture2D> texture_white = GraphicsFactory::Get()->MakeTexture2D(1, 1, 4, &data, TextureProps{});
 
 		// SETUP SCENE FLAT COLOR TEXTURE ALTAS
 		Ref<TextureAtlas> texture_white_atlas = MakeRef<TextureAtlas>(TextureAtlas(texture_white, {
@@ -65,8 +66,11 @@ namespace Li
 		for (const Assets::Texture2D* texture : *asset_bundle->textures())
 		{
 			const auto* data = texture->data();
-			s_Data->Textures[texture->name()->c_str()] = Texture2D::Create((size_t)data->size(), data->data(), 4,
-				(WrapType)texture->wrap_s(), (WrapType)texture->wrap_t(), (FilterType)texture->min_filter(), (FilterType)texture->mag_filter());
+			TextureProps props{
+				(WrapType)texture->wrap_s(), (WrapType)texture->wrap_t(),
+				(FilterType)texture->min_filter(), (FilterType)texture->mag_filter()
+			};
+			s_Data->Textures[texture->name()->c_str()] = GraphicsFactory::Get()->MakeTexture2DFromEncoded((size_t)data->size(), data->data(), 4, props);
 		}
 
 		for (const Assets::Shader* shader : *asset_bundle->shaders())
@@ -132,8 +136,12 @@ namespace Li
 		{
 			const Assets::Texture2D* texture = *s_Data->LoadData.TextureIt;
 			const auto* data = texture->data();
-			s_Data->Textures[texture->name()->c_str()] = Texture2D::Create((size_t)data->size(), data->data(), 4,
-				(WrapType)texture->wrap_s(), (WrapType)texture->wrap_t(), (FilterType)texture->min_filter(), (FilterType)texture->mag_filter());
+
+			TextureProps props{
+				(WrapType)texture->wrap_s(), (WrapType)texture->wrap_t(),
+				(FilterType)texture->min_filter(), (FilterType)texture->mag_filter()
+			};
+			s_Data->Textures[texture->name()->c_str()] = GraphicsFactory::Get()->MakeTexture2DFromEncoded((size_t)data->size(), data->data(), 4, props);
 
 			s_Data->LoadData.TextureIt++;
 		}

@@ -17,7 +17,7 @@
 #include "Lithium/Renderer/Camera.h"
 #include "Lithium/Renderer/ParticleEmitter.h"
 #include "Lithium/Renderer/Renderer.h"
-#include "Lithium/Renderer/RendererAPI.h"
+#include "Lithium/Renderer/GraphicsFactory.h"
 #include "Lithium/Renderer/Shader.h"
 #include "Lithium/Renderer/Texture.h"
 #include "Lithium/Renderer/Pipeline.h"

@@ -140,18 +140,18 @@ namespace Li
 	{
 		if (dynamic)
 		{
-			m_VertexBuffer = VertexBuffer::Create((uint32_t)(sizeof(GlyphVertex) * m_BufferLength * 4), BufferUsage::DynamicDraw);
+			m_VertexBuffer = GraphicsFactory::Get()->MakeVertexBufferEmpty((uint32_t)(sizeof(GlyphVertex) * m_BufferLength * 4), BufferUsage::DynamicDraw);
 			m_VertexBuffer->SetSubData((float*)m_GlyphVertices.data(), (uint32_t)(sizeof(GlyphVertex) * m_GlyphVertices.size()), 0, true);
 
-			m_IndexBuffer = IndexBuffer::Create((uint32_t)(sizeof(uint32_t) * m_BufferLength * 6), BufferUsage::DynamicDraw);
+			m_IndexBuffer = GraphicsFactory::Get()->MakeIndexBufferEmpty((uint32_t)(sizeof(uint32_t) * m_BufferLength * 6), BufferUsage::DynamicDraw);
 			m_IndexBuffer->SetSubData(m_GlyphIndices.data(), (uint32_t)(sizeof(uint32_t) * m_GlyphIndices.size()), 0, true);
 		}
 		else
 		{
-			m_VertexBuffer = VertexBuffer::Create((float*)m_GlyphVertices.data(),
+			m_VertexBuffer = GraphicsFactory::Get()->MakeVertexBuffer((float*)m_GlyphVertices.data(),
 				(uint32_t)(sizeof(GlyphVertex) * m_GlyphVertices.size()), BufferUsage::StaticDraw);
 
-			m_IndexBuffer = IndexBuffer::Create(m_GlyphIndices.data(),
+			m_IndexBuffer = GraphicsFactory::Get()->MakeIndexBuffer(m_GlyphIndices.data(),
 				(uint32_t)m_GlyphIndices.size(), BufferUsage::StaticDraw);
 		}
 		m_VertexBuffer->SetLayout(Renderer::GetFontPipeline()->GetSpec().Layouts[0]);

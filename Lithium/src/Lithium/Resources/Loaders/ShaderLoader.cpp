@@ -3,8 +3,11 @@
 
 #include "Lithium/Core/Assert.h"
 #include "Lithium/Core/Application.h"
+
+#include "Lithium/Renderer/GraphicsFactory.h"
+
 #ifdef LI_INCLUDE_OPENGL
-#include "Lithium/Platform/OpenGL/OpenGLShader.h"
+#include "Lithium/Platform/OpenGL/GLShader.h"
 #endif
 #ifdef LI_INCLUDE_D3D11
 #include "Lithium/Platform/D3D11/D3D11Shader.h"
@@ -32,17 +35,17 @@ namespace Li::Loaders
 	{
 		std::string name = shader->name()->str();
 		
-		switch (Application::Get().GetAPI())
+		switch (GraphicsFactory::Get()->GetAPI())
 		{
 #ifdef LI_INCLUDE_OPENGL
-		case RendererAPI::OpenGL:
+		case GraphicsAPI::OpenGL:
 		{
 			GLSLInput input;
 			input.VertexSrc = FillGLSLInput(shader->glsl_vert());
 			input.FragmentSrc = FillGLSLInput(shader->glsl_frag());
 			input.ComputeSrc = FillGLSLInput(shader->glsl_comp());
 
-			Ref<OpenGLShader> shader_ref = MakeRef<OpenGLShader>(name, input);
+			Ref<GLShader> shader_ref = MakeRef<GLShader>(name, input);
 			shader_ref->Bind();
 			for (const Assets::ShaderSampler* sampler : *shader->samplers())
 				shader_ref->SetTexture(sampler->name()->str(), sampler->binding());
@@ -51,7 +54,7 @@ namespace Li::Loaders
 		}
 #endif
 #ifdef LI_INCLUDE_D3D11
-		case RendererAPI::D3D11:
+		case GraphicsAPI::D3D11:
 		{
 			DXILInput input;
 			FillDXILInput(&input.VSData, &input.VSSize, shader->hlsl_vs());

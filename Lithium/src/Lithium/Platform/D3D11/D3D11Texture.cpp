@@ -11,8 +11,7 @@
 
 namespace Li
 {
-	D3D11Texture2D::D3D11Texture2D(int width, int height, int channels, void* data,
-		WrapType wrap_s, WrapType wrap_t, FilterType min_filter, FilterType mag_filter, bool dynamic, bool render_target)
+	D3D11Texture2D::D3D11Texture2D(int width, int height, int channels, void* data, const TextureProps& props, bool dynamic, bool render_target)
 		: m_Width(width), m_Height(height), m_Channels(channels), m_Dynamic(dynamic), m_RenderTarget(render_target)
 	{
 		D3D11Context* context = (D3D11Context*)Application::Get().GetWindow().GetContext();
@@ -53,10 +52,10 @@ namespace Li
 		D3D11Call(m_DeviceHandle->CreateShaderResourceView(m_Texture.Get(), &view_desc, &m_ResourceView));
 
 		D3D11_SAMPLER_DESC sampler_desc;
-		sampler_desc.Filter = CalculateFilter(min_filter, mag_filter);
-		sampler_desc.AddressU = ConvertD3D11::WrapType(wrap_s);
-		sampler_desc.AddressV = ConvertD3D11::WrapType(wrap_t);
-		sampler_desc.AddressW = ConvertD3D11::WrapType(wrap_t);
+		sampler_desc.Filter = CalculateFilter(props.MinFilter, props.MagFilter);
+		sampler_desc.AddressU = ConvertD3D11::WrapType(props.WrapS);
+		sampler_desc.AddressV = ConvertD3D11::WrapType(props.WrapT);
+		sampler_desc.AddressW = ConvertD3D11::WrapType(props.WrapT);
 		sampler_desc.MipLODBias = 0.0f;
 		sampler_desc.MaxAnisotropy = 1;
 		sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
@@ -65,8 +64,7 @@ namespace Li
 		D3D11Call( m_DeviceHandle->CreateSamplerState(&sampler_desc, &m_SamplerState) );
 	}
 
-	D3D11Texture2D::D3D11Texture2D(const std::string& path, int desired_channels,
-		WrapType wrap_s, WrapType wrap_t, FilterType min_filter, FilterType mag_filter)
+	D3D11Texture2D::D3D11Texture2D(const std::string& path, int desired_channels, const TextureProps& props)
 		: m_Dynamic(false), m_RenderTarget(false)
 	{
 		stbi_set_flip_vertically_on_load(1);
@@ -115,10 +113,10 @@ namespace Li
 		D3D11Call(m_DeviceHandle->CreateShaderResourceView(m_Texture.Get(), &view_desc, &m_ResourceView));
 
 		D3D11_SAMPLER_DESC sampler_desc;
-		sampler_desc.Filter = CalculateFilter(min_filter, mag_filter);
-		sampler_desc.AddressU = ConvertD3D11::WrapType(wrap_s);
-		sampler_desc.AddressV = ConvertD3D11::WrapType(wrap_t);
-		sampler_desc.AddressW = ConvertD3D11::WrapType(wrap_t);
+		sampler_desc.Filter = CalculateFilter(props.MinFilter, props.MagFilter);
+		sampler_desc.AddressU = ConvertD3D11::WrapType(props.WrapS);
+		sampler_desc.AddressV = ConvertD3D11::WrapType(props.WrapT);
+		sampler_desc.AddressW = ConvertD3D11::WrapType(props.WrapT);
 		sampler_desc.MipLODBias = 0.0f;
 		sampler_desc.MaxAnisotropy = 1;
 		sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
@@ -127,8 +125,7 @@ namespace Li
 		D3D11Call(m_DeviceHandle->CreateSamplerState(&sampler_desc, &m_SamplerState));
 	}
 
-	D3D11Texture2D::D3D11Texture2D(size_t image_size, const uint8_t* encoded_data, int desired_channels,
-		WrapType wrap_s, WrapType wrap_t, FilterType min_filter, FilterType mag_filter)
+	D3D11Texture2D::D3D11Texture2D(size_t image_size, const uint8_t* encoded_data, int desired_channels, const TextureProps& props)
 		: m_Dynamic(false), m_RenderTarget(false)
 	{
 		stbi_set_flip_vertically_on_load(1);
@@ -175,10 +172,10 @@ namespace Li
 		D3D11Call(m_DeviceHandle->CreateShaderResourceView(m_Texture.Get(), &view_desc, &m_ResourceView));
 
 		D3D11_SAMPLER_DESC sampler_desc;
-		sampler_desc.Filter = CalculateFilter(min_filter, mag_filter);
-		sampler_desc.AddressU = ConvertD3D11::WrapType(wrap_s);
-		sampler_desc.AddressV = ConvertD3D11::WrapType(wrap_t);
-		sampler_desc.AddressW = ConvertD3D11::WrapType(wrap_t);
+		sampler_desc.Filter = CalculateFilter(props.MinFilter, props.MagFilter);
+		sampler_desc.AddressU = ConvertD3D11::WrapType(props.WrapS);
+		sampler_desc.AddressV = ConvertD3D11::WrapType(props.WrapT);
+		sampler_desc.AddressW = ConvertD3D11::WrapType(props.WrapT);
 		sampler_desc.MipLODBias = 0.0f;
 		sampler_desc.MaxAnisotropy = 1;
 		sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;

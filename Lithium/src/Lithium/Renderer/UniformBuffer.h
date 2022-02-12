@@ -19,7 +19,5 @@ namespace Li
 		virtual void Bind(ShaderType type) const = 0;
 		virtual uint32_t GetSlot() const = 0;
 		virtual void SetData(const void* data) = 0;
-
-		static Ref<UniformBuffer> Create(uint32_t slot, uint32_t size);
 	};
 }

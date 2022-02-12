@@ -2,6 +2,7 @@
 #include "SimplexNoise.h"
 
 #include "Lithium/Core/Assert.h"
+#include "Lithium/Renderer/GraphicsFactory.h"
 
 #include "glm/glm.hpp"
 #include "SDL2/SDL.h"
@@ -86,7 +87,10 @@ Li::Ref<Li::Texture2D> SimplexNoise::GenerateSimplexNoiseTexture(int width, int 
 		}
 	}
 
-	Li::Ref<Li::Texture2D> texture = Li::Texture2D::Create(width, height, 1, pixels.data(), Li::WrapType::Repeat, Li::WrapType::Repeat, Li::FilterType::Linear, Li::FilterType::Nearest);
+	Li::TextureProps props{
+		Li::WrapType::Repeat, Li::WrapType::Repeat, Li::FilterType::Linear, Li::FilterType::Nearest
+	};
+	Li::Ref<Li::Texture2D> texture = Li::GraphicsFactory::Get()->MakeTexture2D(width, height, 1, pixels.data(), props);
 	return texture;
 }
 

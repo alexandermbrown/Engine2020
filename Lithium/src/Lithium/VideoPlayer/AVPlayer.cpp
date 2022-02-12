@@ -2,6 +2,8 @@
 #include "AVPlayer.h"
 
 #include "Lithium/Core/Assert.h"
+#include "Lithium/Renderer/GraphicsFactory.h"
+
 extern "C"
 {
 #include "libavcodec/avcodec.h"
@@ -105,8 +107,12 @@ namespace Li
 		m_Video.PixelBuffer = new uint8_t[px_buffer_size];
 		memset(m_Video.PixelBuffer, 0, px_buffer_size);
 
-		m_Video.Texture = Texture2D::Create(m_Video.Width, m_Video.Height, VideoData::NumOutChannels, nullptr,
-			WrapType::ClampToEdge, WrapType::ClampToEdge, min_filter, mag_filter, true);
+		TextureProps props{
+			WrapType::ClampToEdge, WrapType::ClampToEdge, min_filter, mag_filter
+		};
+		m_Video.Texture = GraphicsFactory::Get()->MakeTexture2D(
+			m_Video.Width, m_Video.Height, VideoData::NumOutChannels, nullptr, props, true
+		);
 
 		m_Video.TimeBase = RationalToFloat(m_Reader->GetVideoStream()->time_base);
 		LI_CORE_ASSERT(m_Video.TimeBase > 0.0f, "Invalid time base.");

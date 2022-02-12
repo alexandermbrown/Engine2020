@@ -7,11 +7,11 @@
 #include "Lithium/Core/Scene.h"
 #include "Lithium/Core/Window.h"
 
-#include "Lithium/Renderer/RendererAPI.h"
+#include "Lithium/Renderer/GraphicsFactory.h"
 #include "Lithium/Utility/Random.h"
 
 #ifndef LI_DIST
-#include "Lithium/ImGui/ImGuiRenderer.h"
+#include "Lithium/Renderer/ImGuiRenderer.h"
 #endif
 
 #include <functional>
@@ -58,7 +58,6 @@ namespace Li
 		inline const Input& GetInput() { return m_Input; }
 		inline void SetCursor(SDL_SystemCursor cursor) { m_Cursor.Set(cursor); }
 		inline Random& GetRandom() { return m_Random; }
-		inline RendererAPI GetAPI() const { return m_RendererAPI; }
 #ifndef LI_DIST
 		inline const Unique<ImGuiRenderer>& GetImGuiRenderer() { return m_ImGuiRenderer; }
 #endif
@@ -79,7 +78,7 @@ namespace Li
 		std::chrono::time_point<std::chrono::steady_clock> m_StartTime;
 		std::chrono::time_point<std::chrono::steady_clock> m_LastUpdateTime;
 
-		RendererAPI m_RendererAPI;
+		Unique<GraphicsFactory> m_GraphicsFactory;
 		Unique<Window> m_Window;
 		Input m_Input;
 		Random m_Random;

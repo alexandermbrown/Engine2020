@@ -20,8 +20,6 @@ namespace Li
 		virtual void Bind(uint32_t slot) const = 0;
 		virtual void DispatchComputeIndirect(uint32_t args_offset) const = 0;
 		virtual void DrawInstancedIndirect(DrawMode mode, uint32_t args_offset) const = 0;
-
-		static Ref<IndirectBuffer> Create(uint32_t size, IndirectTarget target);
 	};
 
 	struct IndirectDrawInstancedArgs

@@ -17,7 +17,8 @@ namespace Li
 		m_ShaderUpdateEnd  (ResourceManager::GetShader("shader_emitter_update_end")),
 		m_ShaderDraw       (ResourceManager::GetShader("shader_emitter_draw"))
 	{
-		m_EmitterUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(EmitterCB), sizeof(EmitterCB));
+		const GraphicsFactory* factory = GraphicsFactory::Get();
+		m_EmitterUB = factory->MakeUniformBuffer(LI_CB_GETBINDSLOT(EmitterCB), sizeof(EmitterCB));
 
 		m_Uniforms.u_LifeSpan        = props.LifeSpan;
 		m_Uniforms.u_SpeedRange      = props.SpeedRange;
@@ -45,18 +46,18 @@ namespace Li
 			particle.life_left = 0.0f;
 			particle.color = { 1.0f, 0.0f, 0.0f, 1.0f };
 		}
+		
+		m_Particles = factory->MakeShaderBuffer(particles.data(), m_MaxCount * sizeof(Particle), sizeof(Particle), ShaderBufferType::Structured);
 
-		m_Particles = ShaderBuffer::Create(particles.data(), m_MaxCount * sizeof(Particle), sizeof(Particle), ShaderBufferType::Structured);
-
-		m_AliveList[0] = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
-		m_AliveList[1] = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+		m_AliveList[0] = factory->MakeShaderBuffer(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+		m_AliveList[1] = factory->MakeShaderBuffer(nullptr, m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
 
 		std::vector<uint32_t> dead_indices(m_MaxCount);
 		for (uint32_t i = 0; i < m_MaxCount; i++)
 			dead_indices[i] = i;
-		m_DeadList = ShaderBuffer::Create(dead_indices.data(), m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
+		m_DeadList = factory->MakeShaderBuffer(dead_indices.data(), m_MaxCount * sizeof(uint32_t), sizeof(uint32_t), ShaderBufferType::Structured);
 
-		m_DistanceBuffer = ShaderBuffer::Create(nullptr, m_MaxCount * sizeof(float), sizeof(float), ShaderBufferType::Structured);
+		m_DistanceBuffer = factory->MakeShaderBuffer(nullptr, m_MaxCount * sizeof(float), sizeof(float), ShaderBufferType::Structured);
 
 		ParticleCounters counters;
 		counters.alive_count = 0;
@@ -64,11 +65,11 @@ namespace Li
 		counters.real_emit_count = 0;
 		counters.alive_count_after_sim = 0;
 
-		m_CounterBuffer = ShaderBuffer::Create(&counters, sizeof(counters), sizeof(uint32_t), ShaderBufferType::Raw);
-		m_ReadbackBuffer = ReadbackBuffer::Create(sizeof(counters));
+		m_CounterBuffer = factory->MakeShaderBuffer(&counters, sizeof(counters), sizeof(uint32_t), ShaderBufferType::Raw);
+		m_ReadbackBuffer = factory->MakeReadbackBuffer(sizeof(counters));
 
-		m_ComputeIAB = IndirectBuffer::Create(sizeof(IndirectDispatchArgs) * 2, IndirectTarget::Compute);
-		m_DrawIAB = IndirectBuffer::Create(sizeof(IndirectDrawInstancedArgs), IndirectTarget::Draw);
+		m_ComputeIAB = factory->MakeIndirectBuffer(sizeof(IndirectDispatchArgs) * 2, IndirectTarget::Compute);
+		m_DrawIAB = factory->MakeIndirectBuffer(sizeof(IndirectDrawInstancedArgs), IndirectTarget::Draw);
 	}
 
 	void ParticleEmitter::Update(Li::Duration::us dt, const glm::mat4& transform)

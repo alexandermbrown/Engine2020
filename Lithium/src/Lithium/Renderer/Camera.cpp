@@ -13,12 +13,12 @@ namespace Li
 
 	void Camera::SetOrtho(float left, float right, float bottom, float top)
 	{
-		switch (Application::Get().GetAPI())
+		switch (GraphicsFactory::Get()->GetAPI())
 		{
-		case RendererAPI::OpenGL:
+		case GraphicsAPI::OpenGL:
 			m_ProjectionMatrix = glm::orthoRH_NO(left, right, bottom, top, -100.0f, 100.0f);
 			break;
-		case RendererAPI::D3D11:
+		case GraphicsAPI::D3D11:
 			m_ProjectionMatrix = glm::orthoRH_ZO(left, right, bottom, top, -100.0f, 100.0f);
 			break;
 		}
@@ -27,12 +27,12 @@ namespace Li
 
 	void Camera::SetPerspective(float fov, float aspect, float z_near, float z_far)
 	{
-		switch (Application::Get().GetAPI())
+		switch (GraphicsFactory::Get()->GetAPI())
 		{
-		case RendererAPI::OpenGL:
+		case GraphicsAPI::OpenGL:
 			m_ProjectionMatrix = glm::perspectiveRH_NO(glm::radians(fov), aspect, z_near, z_far);
 			break;
-		case RendererAPI::D3D11:
+		case GraphicsAPI::D3D11:
 			m_ProjectionMatrix = glm::perspectiveRH_ZO(glm::radians(fov), aspect, z_near, z_far);
 			break;
 		}

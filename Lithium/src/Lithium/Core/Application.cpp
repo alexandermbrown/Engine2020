@@ -59,7 +59,7 @@ namespace Li
 		m_Window = MakeWindow(props);
 		m_Window->GetContext()->ResizeView(props.Width, props.Height);
 #ifndef LI_DIST
-		m_ImGuiRenderer = ImGuiRenderer::Create();
+		m_ImGuiRenderer = m_GraphicsFactory->MakeImGuiRenderer();
 #endif
 		// m_AudioContext = MakeUnique<AudioContext>(nullptr);
 
@@ -224,19 +224,19 @@ namespace Li
 #if 1
 #ifdef LI_PLATFORM_WINDOWS
 		try {
-			m_RendererAPI = RendererAPI::D3D11;
-			return Window::Create(m_RendererAPI, props);
+			m_GraphicsFactory = GraphicsFactory::Create(GraphicsAPI::D3D11);
+			return m_GraphicsFactory->MakeWindow(props);
 		}
 		catch (const SDLWindowInitError& e) {
-			Li::Log::CoreWarn("Failed to create D3D11 SDL window. {}", e.what());
+			Log::CoreError("Failed to create D3D11 SDL window. {}", e.what());
 		}
 		catch (const GraphicsInitError& e) {
-			Li::Log::CoreWarn("Failed to init Direct3D 11. {}", e.what());
+			Log::CoreError("Failed to init Direct3D 11. {}", e.what());
 		}
-		Li::Log::CoreWarn("Trying OpenGL...");
+		Log::CoreWarn("Trying OpenGL...");
 #endif
 #endif
-		m_RendererAPI = RendererAPI::OpenGL;
-		return Window::Create(m_RendererAPI, props);
+		m_GraphicsFactory = GraphicsFactory::Create(GraphicsAPI::OpenGL);
+		return m_GraphicsFactory->MakeWindow(props);
 	}
 }

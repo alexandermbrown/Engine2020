@@ -22,22 +22,23 @@ namespace Li
 	void Renderer::Init()
 	{
 		s_Data = MakeUnique<Renderer::RendererData>();
+		const GraphicsFactory* factory = GraphicsFactory::Get();
 
 		Window& window = Application::Get().GetWindow();
 		int window_width = window.GetWidth();
 		int window_height = window.GetHeight();
 
 		window.GetContext()->SetClearColor({ 0.7f, 0.7f, 0.7f, 1.0f });
-		s_Data->FrameUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
+		s_Data->FrameUB = factory->MakeUniformBuffer(LI_CB_GETBINDSLOT(FrameCB), sizeof(FrameCB));
 		s_Data->FrameUB->BindBase();
 
-		s_Data->CameraUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(CameraCB), sizeof(CameraCB));
+		s_Data->CameraUB = factory->MakeUniformBuffer(LI_CB_GETBINDSLOT(CameraCB), sizeof(CameraCB));
 		s_Data->CameraUB->BindBase();
 
-		s_Data->TransformMatrixUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(TransformCB), sizeof(TransformCB));
+		s_Data->TransformMatrixUB = factory->MakeUniformBuffer(LI_CB_GETBINDSLOT(TransformCB), sizeof(TransformCB));
 		s_Data->TransformMatrixUB->BindBase();
 
-		s_Data->FontUB = UniformBuffer::Create(LI_CB_GETBINDSLOT(FontCB), sizeof(FontCB));
+		s_Data->FontUB = factory->MakeUniformBuffer(LI_CB_GETBINDSLOT(FontCB), sizeof(FontCB));
 		s_Data->FontUB->BindBase();
 
 		s_Data->Sorter = MakeRef<GPUSort>();
@@ -56,7 +57,7 @@ namespace Li
 		quad_spec.VertexBufferCount = 1;
 		quad_spec.Layouts[0] = quad_layout;
 		quad_spec.ShaderRef = s_Data->TextureShader;
-		s_Data->QuadPipeline = Pipeline::Create(quad_spec);
+		s_Data->QuadPipeline = factory->MakePipeline(quad_spec);
 
 		constexpr float quad_vertices[16] = {
 			0.0, 0.0, 0.0f, 0.0f,
@@ -64,11 +65,11 @@ namespace Li
 			1.0, 1.0, 1.0f, 1.0f,
 			0.0, 1.0, 0.0f, 1.0f
 		};
-		s_Data->QuadVB = VertexBuffer::Create(quad_vertices, sizeof(quad_vertices), BufferUsage::StaticDraw);
+		s_Data->QuadVB = factory->MakeVertexBuffer(quad_vertices, sizeof(quad_vertices), BufferUsage::StaticDraw);
 		s_Data->QuadVB->SetLayout(quad_layout);
 
 		constexpr uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
-		s_Data->QuadIB = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+		s_Data->QuadIB = factory->MakeIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t), BufferUsage::StaticDraw);
 
 
 		// 2D BATCH RENDERER //
@@ -91,7 +92,7 @@ namespace Li
 		model_spec.VertexBufferCount = 1;
 		model_spec.Layouts[0] = model_layout;
 		model_spec.ShaderRef = s_Data->ModelShader;
-		s_Data->ModelPipeline = Pipeline::Create(model_spec);
+		s_Data->ModelPipeline = factory->MakePipeline(model_spec);
 
 		// FONT //
 		s_Data->FontShader = ResourceManager::GetShader("shader_label");
@@ -105,7 +106,7 @@ namespace Li
 		font_spec.VertexBufferCount = 1;
 		font_spec.Layouts[0] = font_layout;
 		font_spec.ShaderRef = s_Data->FontShader;
-		s_Data->FontPipeline = Pipeline::Create(font_spec);
+		s_Data->FontPipeline = factory->MakePipeline(font_spec);
 
 		// POST PROCESSING //
 		//s_Data->PostprocessFB = Framebuffer::Create(window_width, window_height);

@@ -8,7 +8,6 @@
 #include "Lithium/Renderer/LineBatchRenderer.h"
 #include "Lithium/Renderer/Model.h"
 #include "Lithium/Renderer/Pipeline.h"
-#include "Lithium/Renderer/RendererAPI.h"
 #include "Lithium/Renderer/RenderStage.h"
 #include "Lithium/Renderer/Shader.h"
 #include "Lithium/Renderer/Texture.h"

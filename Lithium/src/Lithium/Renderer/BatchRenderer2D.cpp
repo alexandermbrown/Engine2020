@@ -35,10 +35,10 @@ namespace Li
 			indices[index + 5] = offset + 3;
 			offset += 4;
 		}
-		m_IndexBuffer = IndexBuffer::Create(indices.data(), MaxBatchQuads * 6, BufferUsage::StaticDraw);
+		m_IndexBuffer = GraphicsFactory::Get()->MakeIndexBuffer(indices.data(), MaxBatchQuads * 6, BufferUsage::StaticDraw);
 
 		m_Vertices = new BatchVertex[MaxBatchQuads * 4];
-		m_VertexBuffer = VertexBuffer::Create(sizeof(BatchVertex[MaxBatchQuads * 4]), BufferUsage::DynamicDraw);
+		m_VertexBuffer = GraphicsFactory::Get()->MakeVertexBufferEmpty(sizeof(BatchVertex[MaxBatchQuads * 4]), BufferUsage::DynamicDraw);
 
 		VertexBufferLayout layout = {
 			{ ShaderDataType::Float3, "POSITION", 0 },
@@ -53,7 +53,7 @@ namespace Li
 		spec.VertexBufferCount = 1;
 		spec.Layouts[0] = layout;
 		spec.ShaderRef = m_Shader;
-		m_Pipeline = Pipeline::Create(spec);
+		m_Pipeline = GraphicsFactory::Get()->MakePipeline(spec);
 	}
 
 	BatchRenderer2D::~BatchRenderer2D()

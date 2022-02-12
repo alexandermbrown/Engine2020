@@ -21,14 +21,14 @@ namespace Li
 			{ ShaderDataType::Float4, "COLOR", 1 }
 		};
 
-		m_VertexBuffer = VertexBuffer::Create(sizeof(LineVertex) * MaxBatchVertices, BufferUsage::DynamicDraw);
+		m_VertexBuffer = GraphicsFactory::Get()->MakeVertexBufferEmpty(sizeof(LineVertex) * MaxBatchVertices, BufferUsage::DynamicDraw);
 		m_VertexBuffer->SetLayout(layout);
 
 		Pipeline::Spec spec;
 		spec.VertexBufferCount = 1;
 		spec.Layouts[0] = layout;
 		spec.ShaderRef = m_Shader;
-		m_Pipeline = Pipeline::Create(spec);
+		m_Pipeline = GraphicsFactory::Get()->MakePipeline(spec);
 	}
 
 	void LineBatchRenderer::BeginScene()
