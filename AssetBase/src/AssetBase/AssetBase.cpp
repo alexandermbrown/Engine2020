@@ -12,6 +12,8 @@ AssetBase::AssetBase()
 	s_Instance = this;
 
 	std::cout << "-------------------\n AssetBase v0.4.1 \n-------------------\n";
+	std::filesystem::path cwd = std::filesystem::current_path();
+	std::cout << "Starting at " << cwd.string() << '\n';
 
 	YAML::Node config = YAML::LoadFile("config.yaml");
 	if (!config || !config.IsMap())
