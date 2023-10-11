@@ -1,4 +1,4 @@
-This repository contains a game and game engine prototype I developed in 2020/2021 a hobby project.
+This repository contains a game and game engine prototype I developed in 2020/2021 as a hobby project.
 
 ## Overview
 `Lithium/` - A game engine written in C++.
